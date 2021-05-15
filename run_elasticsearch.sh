@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 . ./dc-internals/common.sh
 
 echo $'Elasticsearch version: \e[32m'$ELASTICSEARCH_VERSION$'\e[0m'

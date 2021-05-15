@@ -17,8 +17,8 @@ To use this sandbox you will need two things installed on your system: Docker an
 ### Quick start
 
 Sandbox comes pre-configured with some default settings, which enable you to start it out of the box. Here's how you can do it:
-1. Make sure that you have Docker and Docker Compose installed on your system.
 1. Open terminal.
+1. Make sure that you have Docker and Docker Compose installed on your system. You can do that by executing `docker --version` and `docker-compose --version`. If both commands succeeds and return something like `Docker version x.y.z, build XXX` and `docker-compose version x.y.z, build XXX` it means you're good to go. If not, please go back to `Requirements` section where you can find links to instructions.
 1. Go to the root directory of the sandbox using `cd`.
 1. Execute `./run_elasticsearch_and_kibana.sh`. After a few seconds, or when you see the log message `Status changed from red to green - Ready` Elasticsearch and Kibana should be ready to use.
 1. Go to http://localhost:5601 URL to open Kibana's web UI. Default admin credentials are:
@@ -77,7 +77,7 @@ There are few dedicated scripts to run services, prepare env for custom use and 
 Each script was intended to be executed from the root sandbox directory. Using it from other directories will mess up hardcoded paths. Here's a list of all scripts:
 
 * `run_elasticsearch.sh` - will build and run Elasticsearch service.
-* `run_kibana.sh` - will build and run the Kibana service. You can use the optional `--eshome` or `-e` parameter to run Kibana OSS dedicated to work with `eshome` ES instance located in `elasticsearch-readonlyrest-plugin` repository. 
+* `run_kibana.sh` - will build and run the Kibana service. You can use the optional `--eshome` or `-e` parameter to run Kibana OSS dedicated to work with `eshome` ES instance located in `elasticsearch-readonlyrest-plugin` repository. You can find example of how to use it under `Use cases` section.
 * `run_elasticsearch_and_kibana.sh` - will build and run both Elasticsearch and Kibana. Using `Ctrl+C` on this script will stop both services, so if you want to have possibility to restart just one service use the above scripts starting a single service.
 * `prepare_dc_for_custom_use.sh` - will prepare sandbox to use docker-compose manually. Remember to use it with `source ./prepare_dc_for_custom_use.sh`
 * `clean.sh` - will bring down and remove all containers. Elasticsearch data will be removed by this command.

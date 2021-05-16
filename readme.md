@@ -37,7 +37,6 @@ Here's description of each file under the `conf` directory:
   * `env_configuration` - file which is used to configure version of Elasticsearch and Kibana, location of ROR plugins, etc.
   * `elasticsearch/`
     * `elasticsearch.yml` - minimal single node Elasticsearch configuration file.
-    * `jvm.options` - default file with added remote debugging on port 8888.
     * `log4j2.properties` - log4j properties file which could be used to change log level for Elasticsearch.
     * `readonlyrest.yml` - sample ROR configuration file which allows Kibana to access it.
   * `kibana/`

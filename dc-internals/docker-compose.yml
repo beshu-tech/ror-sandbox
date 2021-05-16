@@ -9,7 +9,7 @@ services:
   volumes:
    - ../conf/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
    - ../conf/elasticsearch/readonlyrest.yml:/usr/share/elasticsearch/config/readonlyrest.yml
-   - ../conf/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options
+   # - ../conf/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options
    - ../conf/elasticsearch/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
   ports:
    - 9200:9200

@@ -1,11 +1,13 @@
-ELASTICSEARCH_VERSION=7.11.2
-KIBANA_VERSION=7.11.2
+ELASTICSEARCH_VERSION=7.12.1
+KIBANA_VERSION=7.12.1
 
 # Set to y when you are using Docker for Mac or Docker for Windows 
-USING_DOCKER_FOR_MAC_OR_WINDOWS=n
+USING_DOCKER_FOR_MAC_OR_WINDOWS=y
 
 # Leave empty if you want to use latest version from https://api.beshu.tech/download/es
-CUSTOM_ROR_ELASTICSEARCH_LOCATION=
+CUSTOM_ROR_ELASTICSEARCH_LOCATION='https://readonlyrest-data.s3.amazonaws.com/build/1.31.0-pre2/readonlyrest-1.31.0-pre2_es7.12.1.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5SJIWBO54AGBERLX/20210524/eu-west-1/s3/aws4_request&X-Amz-Date=20210524T202634Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=90c008a2893f04980a37dd9eaaffcd46d577d2c9f2694063cdcf7c1f8c759c7c'
+
+#CUSTOM_ROR_ELASTICSEARCH_LOCATION='https://readonlyrest-data.s3.amazonaws.com/build/1.29.0/readonlyrest-1.29.0_es7.12.1.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5SJIWBO54AGBERLX/20210524/eu-west-1/s3/aws4_request&X-Amz-Date=20210524T201815Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fc8951273426477dfeec508fe4da04c010cc405f5223d7c3f94a24a73d1aa6f5'
 
 # Leave empty if you want to use latest version from https://api.beshu.tech/download/trial
-CUSTOM_ROR_KIBANA_LOCATION=
+CUSTOM_ROR_KIBANA_LOCATION='https://readonlyrest-data.s3.amazonaws.com/build/1.30.0/enterprise/readonlyrest_kbn_enterprise-1.30.0_es7.12.1.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5SJIWBO54AGBERLX/20210524/eu-west-1/s3/aws4_request&X-Amz-Date=20210524T181157Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=2b2b874460e355a571a0e0c679c0f861815b6e7e56d8a5b5f8ebcbf74d8af5db'

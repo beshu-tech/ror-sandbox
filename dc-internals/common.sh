@@ -10,7 +10,7 @@ else
 fi
 
 if [ -z "$CUSTOM_ROR_KIBANA_LOCATION" ]; then
-  export KIBANA_LOCATION="https://api.beshu.tech/download/trial?esVersion=$ELASTICSEARCH_VERSION"
+  export KIBANA_LOCATION="https://api.beshu.tech/download/trial?esVersion=$KIBANA_VERSION"
 else
   export KIBANA_LOCATION=$CUSTOM_ROR_KIBANA_LOCATION
 fi

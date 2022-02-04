@@ -6,33 +6,6 @@ readonlyrest:
      auth_key: kibana:kibana
      verbosity: error
 
-   - name: PERSONAL_GRP
-     groups: [ Personal ]
-     kibana_access: rw
-     kibana_hide_apps: [readonlyrest_kbn, timelion]
-     kibana_index: '.kibana_@{user}'
-     verbosity: error
-
-   - name: ADMIN_GRP
-     groups: [Administrators]
-     kibana_access: admin
-     verbosity: error
-
-   - name: Infosec
-     groups: [ Infosec ]
-     kibana_access: rw
-     kibana_hide_apps: [ readonlyrest_kbn, timelion]
-     kibana_index: .kibana_infosec
-     verbosity: error
-
-  # USERS TO GROUPS ############
-  users:
-  - username: admin
-    auth_key: admin:passwd
-    groups: [Administrators, Infosec]
-
-  - username: user1
-    auth_key: user1:passwd
-    groups: [Administrators, Personal, Infosec]
-
-
+   - name: "Custom data access rule"
+     indices: ["roa-logs-random-*"]
+     auth_key: user:test

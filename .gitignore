@@ -1,0 +1,6 @@
+.idea
+**/ror-cluster.log
+**/.DS_Store
+**/elastic-cloud-ca.cer
+ror-cluster-elastic-cloud-demo/certs-generator/output
+ror-cluster-elastic-cloud-demo/certs-generator/input

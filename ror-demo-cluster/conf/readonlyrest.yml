@@ -1,0 +1,18 @@
+readonlyrest:
+
+  access_control_rules:
+
+    - name: "KIBANA"
+      type: allow
+      auth_key: kibana:kibana
+
+    - name: "ADMIN"
+      type: allow
+      auth_key: admin:admin
+      kibana_access: admin
+
+    - name: "User 1"
+      type: allow
+      auth_key: "user1:test"
+      indices: ["my*"]
+      kibana_access: ro

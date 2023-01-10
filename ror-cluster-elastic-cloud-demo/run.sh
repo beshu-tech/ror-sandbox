@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if ! command -v docker-compose; then
+if ! command -v docker-compose > /dev/null; then
   echo "The script require docker-compose to be installed on your machine."
   exit 1
 fi
@@ -35,9 +35,10 @@ echo -e "
 "
 
 echo -e "To download your Elastic cloud cluster CA file, please:
-1. go to https://cloud.elastic.co/login and log in
-2. go to your deployment and click \"Manage deployments\" and go to \"Security\" tab
-3. in \"CA certificates\" section you should find a CA cert that you should download
+1. go to https://cloud.elastic.co/home
+2. pick one of your deployments and click \"Manage deployments\"
+3. go to \"Security\" tab
+4. in \"CA certificates\" section you should find a CA cert that you should download
 "
 
 while true; do
@@ -84,7 +85,7 @@ cp -R output ../certs
 cd ..
 
 echo -e "\nCertificates and CA are generated:"
-echo -d "$(pwd)/certs"
+echo "$(pwd)/certs"
 ls -l certs | grep -v '^total'
 
 echo -e "
@@ -96,15 +97,15 @@ echo -e "
 "
 
 echo -e "Now, we have to tell Elastic Cloud cluster that our cluster is trusted:
-1. go to https://cloud.elastic.co/login and log in
-2. go to your deployment and click \"Manage deployments\" and go to \"Security\" tab
-3. in \"Trusted environments\" section click \"Add trusted environment\"
-4. Pick \"Self-managed\" option and click \"Next\":
-5. You will see a new page when you should configure a new trusted environment:
-5a. in 1st input - drag and drop ROR CA cert from '$(pwd)/certs/ca/ca.crt'
-5b. in 2nd input - check \"Trust clusters whose Common Name follows the Elastic pattern\", enter 'ror-test' as Scope ID and check \"All deployments\"
-5c. in 3rd input - pick your environment name (anything you want)
-6. Click \"Create trust\" and then \"Done\" - ROR cluster should be added as trusted environment
+0. we assume that you are still in the \"Security\" tab
+1. in \"Trusted environments\" section click \"Add trusted environment\"
+2. Pick \"Self-managed\" option and click \"Next\":
+3. You will see a new page where you should configure a new trusted environment:
+  a. in \"Add trusted CA certificate\" - drag and drop ROR CA cert from '$(pwd)/certs/ca/ca.crt'
+  b. in \"Select trusted clusters\" - tick \"Trust clusters whose Common Name follows the Elastic pattern\", enter 'ror-test' as Scope ID and tick \"All deployments\"
+  c. in \"Name your environment\" - pick your environment name (eg. my-local-ror-cluster)
+4. Click \"Create trust\"
+5. On the next page, click \"Done\". ROR cluster is added as the trusted environment.
 \n"
 
 read -p "When all steps are done, please enter anything to continue ..."
@@ -119,9 +120,9 @@ echo -e "
 
 echo -e "We're almost there. The last thing we need to do is configuring Elastic Cloud cluster as a remote cluster
 in our nodes settings. To do that we need to have a Proxy Address and Server Name:
-1. go to https://cloud.elastic.co/login and log in
-2. go to your deployment and click \"Manage deployments\" and go to \"Security\" tab
-3. in \"Remote cluster parameters\" section you will find \"Proxy address\" and \"Server name\"'
+0. we assume that you are now in the \"Security\" tab
+1. in \"Remote cluster parameters\" section you will find the \"Proxy address\" (click it to copy)
+2. in \"Remote cluster parameters\" section you will find also the \"Server name\"' (click it to copy)
 "
 
 while true; do
@@ -146,7 +147,8 @@ while true; do
   break
 done
 
-echo "Great. This is all we need to run the ROR cluster ..."
+echo "
+Great. This is all we need to run the ROR cluster ..."
 
 echo -e "
 ***********************************************************************

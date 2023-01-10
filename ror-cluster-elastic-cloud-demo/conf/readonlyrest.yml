@@ -1,15 +1,5 @@
 readonlyrest:
 
-  ssl_internode:
-    enable: true
-    keystore_file: "ror-cluster/ror-es01/ror-es01.p12"
-    keystore_pass: "mypassword"
-    truststore_file: "ror-cluster/ror-es01/ror-es01.p12"
-    truststore_pass: "mypassword"
-    key_pass: "mypassword"
-    client_authentication: true
-    certificate_verification: true
-
   access_control_rules:
 
     - name: "KIBANA"

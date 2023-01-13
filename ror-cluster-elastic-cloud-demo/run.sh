@@ -158,12 +158,7 @@ echo -e "
 ***********************************************************************
 "
 
-if ! command -v jq > /dev/null; then
-  source ./collect-info-about-ror-es-kbn.sh
-else
-  source ./collect-info-about-ror-es-kbn-with-hints.sh
-fi
-
+source ../utils/collect-info-about-ror-es-kbn.sh
 
 docker-compose up -d --build --remove-orphans --force-recreate
 docker-compose logs -f > ror-cluster.log 2>&1 &

@@ -1,9 +1,0 @@
-server.name: kibana
-server.host: "0"
-elasticsearch.hosts: [ "http://elasticsearch:9200" ]
-elasticsearch.username: kibana
-elasticsearch.password: kibana
-logging.json: false
-xpack.security.enabled: false
-readonlyrest_kbn.cookiePass: '12345678901234567890123456789012'
-readonlyrest_kbn.logLevel: 'debug'

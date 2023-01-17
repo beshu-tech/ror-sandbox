@@ -1,0 +1,19 @@
+ARG KBN_VERSION
+
+FROM docker.elastic.co/kibana/kibana:${KBN_VERSION}
+
+ARG KBN_VERSION
+ARG ROR_FILE
+ARG ROR_ACTIVATION_KEY
+
+COPY conf/kibana.yml /usr/share/kibana/config/kibana.yml
+COPY images/install-ror-kbn-using-file.sh /tmp/install-ror.sh
+COPY $ROR_FILE /tmp/ror.zip
+
+ENV ROR_ACTIVATION_KEY=$ROR_ACTIVATION_KEY
+
+RUN /tmp/install-ror.sh
+
+USER root
+RUN chown -R kibana:kibana /usr/share/kibana/config
+USER kibana

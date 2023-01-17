@@ -1,4 +1,0 @@
-node.name: n1_it
-xpack.security.enabled: false
-cluster.initial_master_nodes: n1_it
-network.host: _local_,_site_

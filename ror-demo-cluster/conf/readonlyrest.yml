@@ -1,5 +1,7 @@
 readonlyrest:
 
+  enable: true
+
   access_control_rules:
 
     - name: "KIBANA"
@@ -11,8 +13,13 @@ readonlyrest:
       auth_key: admin:admin
       kibana_access: admin
 
-    - name: "User 1"
-      type: allow
+    - name: "Permit specific group to kibana_sample_data_logs"
       auth_key: "user1:test"
-      indices: ["my*"]
-      kibana_access: ro
+      indices: [ ".kibana*", "kibana_sample_data_logs" ]
+      actions: [ "cluster:ror/user_metadata/get", "indices:data/read/*" ]
+      type: allow
+
+    - name: "Deny everyone else to kibana_sample_data_logs"
+      indices: [ ".kibana*", "kibana_sample_data_logs" ]
+      actions: [ "cluster:ror/user_metadata/get", "indices:data/read/*" ]
+      type: forbid

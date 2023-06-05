@@ -7,7 +7,7 @@ ARG ROR_FILE
 ARG ROR_ACTIVATION_KEY
 
 COPY conf/kibana.yml /usr/share/kibana/config/kibana.yml
-COPY images/install-ror-kbn-using-file.sh /tmp/install-ror.sh
+COPY images/kbn/install-ror-kbn-using-file.sh /tmp/install-ror.sh
 COPY $ROR_FILE /tmp/ror.zip
 
 ENV ROR_ACTIVATION_KEY=$ROR_ACTIVATION_KEY

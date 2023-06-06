@@ -8,6 +8,7 @@ readonlyrest:
 
     - name: "ADMIN"
       type: allow
+      verbosity: error
       auth_key: admin:admin
       kibana_access: admin
 

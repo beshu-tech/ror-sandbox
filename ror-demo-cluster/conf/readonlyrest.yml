@@ -22,7 +22,7 @@ readonlyrest:
   access_control_rules:
     - name: KIBANA_SERVER
       auth_key: kibana:kibana
-      verbosity: error
+      verbosity: info
 
     - name: PERSONAL_GRP
       groups: [ Personal ]

@@ -1,5 +1,6 @@
 server.name: kibana-ror
 server.host: 0.0.0.0
+kibana.index: .kibana_custom
 elasticsearch.hosts: [ "${ES_API_URL}" ]
 monitoring.ui.container.elasticsearch.enabled: true
 

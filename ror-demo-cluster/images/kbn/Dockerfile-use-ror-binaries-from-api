@@ -8,7 +8,10 @@ ARG KBN_VERSION
 ARG ROR_VERSION
 ARG ROR_ACTIVATION_KEY
 
-COPY conf/kibana.yml /usr/share/kibana/config/kibana.yml
+USER root
+RUN apt-get update && apt-get -y install curl git sudo
+USER kibana
+
 COPY images/kbn/install-ror-kbn-using-api.sh /tmp/install-ror.sh
 
 ENV ROR_ACTIVATION_KEY=$ROR_ACTIVATION_KEY
@@ -17,4 +20,6 @@ RUN /tmp/install-ror.sh
 
 USER root
 RUN chown -R kibana:kibana /usr/share/kibana/config
+
 USER kibana
+COPY conf/kibana.yml /usr/share/kibana/config/kibana.yml

@@ -16,7 +16,7 @@ readonlyrest:
     - name: "User 1"
       type: allow
       auth_key: "user1:test"
-      indices: [".kibana", "my*"]
+      indices: [".kibana*", "my*"]
       kibana_access: ro
       kibana_index: '.kibana'
       verbosity: error

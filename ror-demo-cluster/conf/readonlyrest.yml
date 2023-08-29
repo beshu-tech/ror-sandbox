@@ -13,10 +13,38 @@ readonlyrest:
       kibana_access: admin
       verbosity: error
 
-    - name: "User 1"
-      type: allow
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
-      verbosity: error
+    - name: "Full Admin Kibana"
+      groups: ["full-admin"]
+      indices: ["*"]
+      kibana_access: "admin"
+
+    - name: "Full Admin Users"
+      groups: ["full-admin"]
+      indices: ["*"]
+      actions: ["*"]
+  
+    - name: "Client Admin Group Kibana"
+      groups: ["client_admin"]
+      indices: ["kibana_client_admin", "*"]
+      kibana_access: "rw"
+      kibana_index: "kibana_client_admin"
+
+    - name: "Client Admin Group 0"
+      groups: ["client_admin"]
+      indices: ["*"]
+      actions: ["*"]
+
+  users:
+    - username: "fulladmin"
+      groups: ["full-admin"]
+      auth_key: fulladmin:admin
+
+    - username: "es-ror:9200"
+      groups: ["client_admin"]
+      proxy_auth:
+        proxy_auth_config: "px1"
+        users: ["es-ror:9200"]
+    
+  proxy_auth_configs:
+    - name: "px1"
+      user_id_header: "Host"

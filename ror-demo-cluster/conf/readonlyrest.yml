@@ -13,10 +13,18 @@ readonlyrest:
       kibana_access: admin
       verbosity: error
 
-    - name: "User 1"
+    - name: "::BSP 1BASIC AUTH::"
+      auth_key: bsp1:test
+      indices: [".kibana*", "crm-bsp1*"]
+      # verbosity: error
+      kibana_access: rw
+      kibana_index: ".kibana-bsp1"
       type: allow
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
-      verbosity: error
+
+    - name: "::BSP 2 BASIC AUTH::"
+      auth_key: bsp2:test
+      indices: [".kibana*", "crm-bsp2*"]
+      # verbosity: error
+      kibana_access: rw
+      kibana_index: ".kibana-bsp2"
+      type: allow

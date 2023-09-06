@@ -9,7 +9,7 @@ ARG ROR_VERSION
 ARG ROR_ACTIVATION_KEY
 
 USER root
-RUN apt-get update && apt-get -y install curl git sudo
+# RUN apt-get update && apt-get -y install curl git sudo
 USER kibana
 
 COPY images/kbn/install-ror-kbn-using-api.sh /tmp/install-ror.sh

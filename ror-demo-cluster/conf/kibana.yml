@@ -5,3 +5,5 @@ monitoring.ui.container.elasticsearch.enabled: true
 
 elasticsearch.username: kibana
 elasticsearch.password: kibana
+
+readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'

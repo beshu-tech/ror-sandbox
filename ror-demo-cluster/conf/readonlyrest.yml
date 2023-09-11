@@ -1,22 +1,39 @@
 readonlyrest:
+  prompt_for_basic_auth: false
 
   access_control_rules:
-
-    - name: "KIBANA"
-      type: allow
-      auth_key: kibana:kibana
-      verbosity: error
-
-    - name: "ADMIN"
-      type: allow
-      auth_key: admin:admin
-      kibana_access: admin
-      verbosity: error
-
-    - name: "User 1"
-      type: allow
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
-      verbosity: error
+  - name: "Full Admin Kibana"
+    groups: ["full-admin"]
+    indices: ["*"]
+    kibana_access: "admin"
+  - name: "Full Admin Users"
+    groups: ["full-admin"]
+    indices: ["*"]
+    actions: ["*"]
+  - name: "Client Admin Group Kibana"
+    groups: ["client_admin"]
+    indices: ["kibana_client_admin", "*"]
+    kibana_access: "rw"
+    kibana_index: "kibana_client_admin"
+  - name: "Client Admin Group 0"
+    groups: ["client_admin"]
+    indices: ["*"]
+    actions: ["*"]
+  - name: "rwgroup Kibana"
+    groups: ["rwgroup"]
+    indices: ["kibana_rwgroup", "elast*", "diana*"]
+    kibana_access: "rw"
+    kibana_index: "kibana_rwgroup"
+  - name: "rwgroup 0"
+    groups: ["rwgroup"]
+    indices: ["elast*", "diana*"]
+    actions: ["indices:data/read/*", "indices:admin/*", "indices:data/write/*", "indices:monitor/data_stream/stats"]
+    
+  users:
+  - username: "kibana"
+    groups: ["full-admin"]
+    auth_key: "kibana:kibana"
+  - username: "diana"
+    groups: ["client_admin", "rwgroup"]
+    auth_key: "diana:diana"
+  

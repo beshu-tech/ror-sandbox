@@ -1,12 +1,11 @@
 server.name: "${KIBANA_NAME}"
 server.host: 0.0.0.0
 elasticsearch.hosts: [ "${ES_API_URL}" ]
-monitoring.ui.container.elasticsearch.enabled: true
 
 elasticsearch.username: kibana
 elasticsearch.password: kibana
 
-kibana.index: ".kibana_${KIBANA_NAME}"
+kibana.index: ".kibana-${KIBANA_NAME}"
 
 # server.defaultRoute: "/app/kibana"
 # server.basePath: "/${KIBANA_NAME}"
@@ -15,7 +14,7 @@ readonlyrest_kbn.cookiePass: "12341231231232112341231231232112341231231232112341
 readonlyrest_kbn.cookieName: "12345-${KIBANA_NAME}"
 readonlyrest_kbn.sessions_probe_interval_seconds: 36000
 readonlyrest_kbn.session_timeout_minutes: 4320
-readonlyrest_kbn.logLevel: "trace"
+readonlyrest_kbn.logLevel: "debug"
 
 elasticsearch.requestTimeout: 300000
 elasticsearch.requestHeadersWhitelist: ['Cookie', 'Authorization']

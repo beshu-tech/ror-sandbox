@@ -5,7 +5,7 @@ readonlyrest:
     - name: "KIBANA"
       type: allow
       auth_key: kibana:kibana
-      # verbosity: error
+      verbosity: error
 
     - name: "ADMIN"
       type: allow
@@ -13,23 +13,30 @@ readonlyrest:
       kibana_access: admin
       # verbosity: error
 
-    - name: "User 1"
-      type: allow
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
-      # verbosity: error
+    # - name: "User 1"
+    #   type: allow
+    #   auth_key: "user1:test"
+    #   indices: [".kibana*", "my*"]
+    #   kibana_access: ro
+    #   kibana_index: '.kibana'
+    #   # verbosity: error
 
-    - name: "User 2"
-      type: allow
-      auth_key: "user2:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      # verbosity: error
+    # - name: "User 2"
+    #   type: allow
+    #   auth_key: "user2:test"
+    #   indices: [".kibana*", "my*"]
+    #   kibana_access: ro
+    #   # verbosity: error
 
-    - name: "Example"
+    - name: "Example3"
       auth_key: "user3:test"
+      indices: [".kibana_tenant1", "my*"]
+      kibana:
+        access: ro
+        index: .kibana_tenant1
+
+    - name: "Example4"
+      auth_key: "user4:test"
       indices: [".kibana_tenant1*", "my*"]
       kibana:
         access: ro

@@ -1,10 +1,11 @@
 server.name: kibana-ror
 server.host: 0.0.0.0
-elasticsearch.hosts: [ "${ES_API_URL}" ]
-monitoring.ui.container.elasticsearch.enabled: true
 
+elasticsearch.hosts: [ "${ES_API_URL}" ]
 elasticsearch.username: kibana
 elasticsearch.password: kibana
 
-readonlyrest_kbn.logLevel: trace
+monitoring.ui.container.elasticsearch.enabled: true
+
+readonlyrest_kbn.logLevel: info
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'

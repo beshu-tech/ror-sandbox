@@ -14,4 +14,3 @@ USER elasticsearch
 COPY conf/readonlyrest.yml /usr/share/elasticsearch/config/readonlyrest.yml
 COPY conf/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 COPY conf/log4j2.properties /usr/share/elasticsearch/config/log4j2.properties
-

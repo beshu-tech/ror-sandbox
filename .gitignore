@@ -1,5 +1,6 @@
 .idea
 **/ror-cluster.log
+**/xpack-cluster.log
 **/.DS_Store
 **/elastic-cloud-ca.cer
 ror-cluster-elastic-cloud-demo/certs-generator/output

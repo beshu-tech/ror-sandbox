@@ -9,14 +9,14 @@ readonlyrest:
 
     - name: "ADMIN"
       type: allow
+      verbosity: error
       auth_key: admin:admin
       kibana_access: admin
-      verbosity: error
 
     - name: "User 1"
       type: allow
+      verbosity: error
       auth_key: "user1:test"
       indices: [".kibana*", "my*"]
       kibana_access: ro
       kibana_index: '.kibana'
-      verbosity: error

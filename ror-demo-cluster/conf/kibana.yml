@@ -9,3 +9,9 @@ monitoring.ui.container.elasticsearch.enabled: true
 
 readonlyrest_kbn.logLevel: info
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
+
+logging.loggers:
+  ### responses to an HTTP request
+  - name: http.server.response
+    level: debug
+    appenders: [console]

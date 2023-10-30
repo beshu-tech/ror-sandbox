@@ -20,3 +20,20 @@ readonlyrest:
       indices: [".kibana*", "my*"]
       kibana_access: ro
       kibana_index: '.kibana'
+
+    - name: "Admin Tenancy"
+      groups: ["Admins"]
+      kibana:
+        access: admin
+        index: ".kibana"
+     
+    - name: "Template Tenancy"
+      groups: ["Template"]
+      kibana:
+        access: admin
+        index: ".kibana_template"
+     
+  users:
+    - username: administrator
+      auth_key: administrator:dev
+      groups: ["Admins", "Template"]

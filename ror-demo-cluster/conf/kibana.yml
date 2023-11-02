@@ -1,11 +1,23 @@
-server.name: kibana-ror
+server.name: "${KIBANA_NAME}"
 server.host: 0.0.0.0
-
 elasticsearch.hosts: [ "${ES_API_URL}" ]
+
 elasticsearch.username: kibana
 elasticsearch.password: kibana
 
-monitoring.ui.container.elasticsearch.enabled: true
+kibana.index: ".kibana-${KIBANA_NAME}"
 
-readonlyrest_kbn.logLevel: info
-readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
+readonlyrest_kbn.cookiePass: "123412312312321123412312312321123412312312321123412312312321123412312312321"
+readonlyrest_kbn.cookieName: "12345-${KIBANA_NAME}"
+readonlyrest_kbn.sessions_probe_interval_seconds: 36000
+readonlyrest_kbn.session_timeout_minutes: 4320
+readonlyrest_kbn.logLevel: "debug"
+
+elasticsearch.requestTimeout: 300000
+elasticsearch.requestHeadersWhitelist: ['Cookie', 'Authorization']
+
+xpack.monitoring.enabled: True
+xpack.security.enabled: False
+xpack.watcher.enabled: False
+
+xpack.reporting.encryptionKey: "1234512345123451234512345123451234512345"

@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 if ! command -v docker-compose > /dev/null; then
   echo "The script require docker-compose to be installed on your machine."

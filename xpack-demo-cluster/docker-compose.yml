@@ -31,7 +31,7 @@ services:
         soft: -1
         hard: -1
 
-  kbn-xpack:
+  kbn-xpack-bsp1:
     build:
       context: .
       dockerfile: images/kbn/Dockerfile
@@ -44,6 +44,28 @@ services:
       - "25601:5601"
     environment:
       ES_API_URL: https://es-xpack:9200
+      KIBANA_NAME: bsp1
+    networks:
+      - es-xpack-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kbn-xpack-bsp2:
+    build:
+      context: .
+      dockerfile: images/kbn/Dockerfile
+      args:
+        KBN_VERSION: $KBN_VERSION
+    depends_on:
+      es-xpack:
+        condition: service_healthy
+    ports:
+      - "35601:5601"
+    environment:
+      ES_API_URL: https://es-xpack:9200
+      KIBANA_NAME: bsp2
     networks:
       - es-xpack-network
     ulimits:

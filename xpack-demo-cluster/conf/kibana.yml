@@ -1,4 +1,4 @@
-server.name: kibana-xpack
+server.name: "${KIBANA_NAME}"
 server.host: 0.0.0.0
 
 elasticsearch.hosts: [ "${ES_API_URL}" ]
@@ -6,4 +6,8 @@ elasticsearch.username: kibana_system
 elasticsearch.password: elastic
 elasticsearch.ssl.verificationMode: none
 
+logging.root.level: debug
+
 monitoring.ui.container.elasticsearch.enabled: true
+
+xpack.reporting.encryptionKey: "1234512345123451234512345123451234512345"

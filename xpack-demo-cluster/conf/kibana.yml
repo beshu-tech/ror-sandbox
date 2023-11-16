@@ -10,4 +10,5 @@ logging.root.level: debug
 
 monitoring.ui.container.elasticsearch.enabled: true
 
+kibana.index: ".kibana-${KIBANA_NAME}"
 xpack.reporting.encryptionKey: "1234512345123451234512345123451234512345"

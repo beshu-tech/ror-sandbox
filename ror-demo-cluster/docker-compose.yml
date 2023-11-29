@@ -57,6 +57,16 @@ services:
         soft: -1
         hard: -1
 
+  python-client:
+    build:
+      context: .
+      dockerfile: images/python-client/Dockerfile
+    depends_on:
+      es-ror:
+        condition: service_healthy
+    networks:
+      - es-ror-network
+
 networks:
   es-ror-network:
     driver: bridge

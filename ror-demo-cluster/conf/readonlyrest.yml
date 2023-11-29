@@ -20,3 +20,9 @@ readonlyrest:
       indices: [".kibana*", "my*"]
       kibana_access: ro
       kibana_index: '.kibana'
+
+    - name: "User 2"
+      type: allow
+      auth_key: "user2:test"
+      indices: ["example"]
+      fields: ["~price"]

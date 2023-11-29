@@ -1,11 +1,21 @@
-server.name: kibana-ror
+server.name: "kibana-ror-${KBN_NAME}"
 server.host: 0.0.0.0
 
 elasticsearch.hosts: [ "${ES_API_URL}" ]
 elasticsearch.username: kibana
 elasticsearch.password: kibana
 
-monitoring.ui.container.elasticsearch.enabled: true
+# configure Telemetry
+telemetry.allowChangingOptInStatus: false
+telemetry.optIn: false
+telemetry.enabled: false
 
-readonlyrest_kbn.logLevel: info
+monitoring.ui.container.elasticsearch.enabled: true
+xpack.reporting.encryptionKey: "321421321211231241232132132132132"
+
+readonlyrest_kbn.logLevel: trace
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
+readonlyrest_kbn.cookieName: "rorCookie-${KBN_NAME}"
+readonlyrest_kbn.store_sessions_in_index: true
+readonlyrest_kbn.sessions_index_name: ".readonlyrest_kbn_sessions"
+readonlyrest_kbn.sessions_probe_interval_seconds: 120

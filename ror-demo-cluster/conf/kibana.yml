@@ -5,11 +5,6 @@ elasticsearch.hosts: [ "${ES_API_URL}" ]
 elasticsearch.username: kibana
 elasticsearch.password: kibana
 
-# # configure Telemetry
-# telemetry.allowChangingOptInStatus: false
-# telemetry.optIn: false
-# telemetry.enabled: false
-
 monitoring.ui.container.elasticsearch.enabled: true
 # xpack.reporting.encryptionKey: "321421321211231241232132132132132"
 

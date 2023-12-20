@@ -3,4 +3,4 @@
 cd "$(dirname "$0")"
 
 ./init-es.sh
-./init-kbn.sh
+# ./init-kbn.sh

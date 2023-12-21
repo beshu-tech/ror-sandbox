@@ -1,9 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 import_saved_obj () {
     local USR=$1
     local PASS=$2
-    DEST_ID=$(curl -s -u "$USR":"$PASS" -XPOST -H "kbn-xsrf: true" "http://kbn-ror:5601/api/saved_objects/_import?createNewCopies=true" --form file=@export-ror-$USR.ndjson | jq -r .successResults[1].destinationId)
+    DEST_ID=$(curl -s -u "$USR":"$PASS" -XPOST -H "kbn-xsrf: true" "http://kbn-ror:5601/api/saved_objects/_import?createNewCopies=false" --form file=@export-ror-$USR.ndjson | jq -r .successResults[0].id)
     echo "$DEST_ID"
 }
 
@@ -16,11 +16,13 @@ run_report () {
 
 
 DEST_ID=$(import_saved_obj "user1" "test")
+sleep 5
 for i in $(seq 0 3); do
     run_report "user1" "test" "$DEST_ID"
 done
 
 DEST_ID=$(import_saved_obj "user2" "test")
+sleep 5
 for i in $(seq 0 5); do
     run_report "user2" "test" "$DEST_ID"
 done

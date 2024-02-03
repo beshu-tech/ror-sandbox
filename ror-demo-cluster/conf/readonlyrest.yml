@@ -1,22 +1,27 @@
 readonlyrest:
 
   access_control_rules:
-
     - name: "KIBANA"
       type: allow
       auth_key: kibana:kibana
       verbosity: error
-
     - name: "ADMIN"
       type: allow
       verbosity: error
       auth_key: admin:admin
       kibana_access: admin
-
-    - name: "User 1"
-      type: allow
-      verbosity: error
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
+    - name: "test_filter Kibana"
+      groups: [ "test_filter" ]
+      kibana_access: "rw"
+      indices: [ "p11001_write_test*" ]
+      filter: '{"bool": { "must_not": { "match": { "user2": "eee" }}}}'
+      fields: [ "~user1" ]
+    - name: "test_filter Kibana 1"
+      groups: [ "test_filter" ]
+      kibana_access: "rw"
+      kibana_index: ".kibana_p11001_write"
+      indices: [ ".kibana_p11001_write", "p11001_write_test*" ]
+  users:
+    - username: "user1"
+      groups: ["test_filter"]
+      auth_key: user1:dev

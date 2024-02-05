@@ -26,7 +26,7 @@ readonlyrest_kbn:
       scope: 'users timelords'
       usernameParameter: 'sub'
       groupsParameter: 'groups'
-      kibanaExternalHost: '142.132.225.152'
+      kibanaExternalHost: '142.132.225.152:15601'
       logoutUrl: 'https://oidctest.wsweet.org/oauth2/logout'
       jwksURL: 'https://oidctest.wsweet.org/oauth2/jwks'
     #            proxyURL: 'https://localhost:6200'

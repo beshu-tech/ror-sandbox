@@ -13,7 +13,15 @@ for i in $(seq 0 10); do
 done
 
 for i in $(seq 0 10); do
+    curl -vk -u kibana:kibana -XPUT "http://localhost:19200/index-some-important-data/_doc/$i" -H "Content-type: application/json" -d '{"df_country": "UK", "price": 100, "df_date": "2023-12-21T11:47:22.992000"}'
+done
+
+for i in $(seq 0 10); do
     curl -vk -u kibana:kibana -XPUT "http://localhost:19200/index-ldap-group4/_doc/$i" -H "Content-type: application/json" -d '{"df_country": "UK", "price": 100, "df_date": "2023-12-21T11:47:22.992000"}'
+done
+
+for i in $(seq 0 10); do
+    curl -vk -u kibana:kibana -XPUT "http://localhost:19200/index-another-important-data/_doc/$i" -H "Content-type: application/json" -d '{"df_country": "UK", "price": 100, "df_date": "2023-12-21T11:47:22.992000"}'
 done
 
 for i in $(seq 0 10); do

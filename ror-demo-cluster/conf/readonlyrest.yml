@@ -13,6 +13,14 @@ readonlyrest:
       auth_key: admin:admin
       kibana_access: admin
 
+    # this blocks handles "the exceptions" when the ldap role relates to some index with non-standard name
+    - name: local_groups_users
+      groups_or: ["*"]
+      indices: ["index-@explode{acl:available_groups}"]
+      kibana:
+        access: rw
+
+    # this block handles the 1-1 mapping of ldap role and index
     - name: ldap_users
       ldap_auth:
         name: "ldap1"
@@ -21,6 +29,16 @@ readonlyrest:
       kibana:
         access: rw
 
+  users:
+    - username: "*"
+      # here we define the non-standard mapping
+      groups: 
+        - some-important-data: ["ldap-group3", "ldap-group4"]
+        - another-important-data: ["ldap-group5"]
+      ldap_auth:
+        name: "ldap1"
+        groups: ["ldap-group3", "ldap-group4", "ldap-group5"]
+    
   ldaps:
     - name: ldap1
 

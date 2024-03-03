@@ -1,22 +1,20 @@
 readonlyrest:
 
+  prompt_for_basic_auth: false   
+
   access_control_rules:
 
-    - name: "KIBANA"
-      type: allow
-      auth_key: kibana:kibana
-      verbosity: error
+  - name: "Require HTTP Basic Auth"
+    type: allow
+    auth_key: admin:admin
 
-    - name: "ADMIN"
-      type: allow
-      verbosity: error
-      auth_key: admin:admin
-      kibana_access: admin
-
-    - name: "User 1"
-      type: allow
-      verbosity: error
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
+  - name: "::KIBANA-SRV::"
+    auth_key: kibana:kibana
+    
+  - name: "::ADMIN::"
+    type: allow
+    auth_key: admin_usr:dev
+    indices: ["logstash-*"]
+    kibana:
+      access: admin
+  

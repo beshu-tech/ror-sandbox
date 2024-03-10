@@ -1,5 +1,5 @@
 network.host: 0.0.0.0
-node.roles: [ master, data ]
+node.roles: [ ]
 discovery.seed_hosts: '${SEED_HOSTS}'
 cluster.initial_master_nodes: ${INITIAL_MASTER_NODES}
 path.repo: /tmp/data

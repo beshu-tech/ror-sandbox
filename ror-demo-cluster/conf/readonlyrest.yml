@@ -13,10 +13,18 @@ readonlyrest:
       auth_key: admin:admin
       kibana_access: admin
 
-    - name: "User 1"
-      type: allow
-      verbosity: error
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
+    - name: team1
+      groups: [ "team1" ]
+      indices: [ ".kibana*" ]
+    - name: team2
+      groups: [ "team2" ]
+      indices: [ ".kibana*" ]
+      filter: '{"bool": { "must": { "match": { "user": "@{user}" }}}}'
+    - name: team3
+      groups: [ "team3" ]
+      indices: [ ".kibana*" ]
+      fields: ["~excluded_fields_prefix_*", "~excluded_field", "~another_excluded_field.nested_field"]
+  users:
+    - username: test
+      auth_key_unix: test:$6$rounds=65535$d07dnv4N$QeErsDT9Mz.ZoEPXW3dwQGL7tzwRz.eOrTBepIwfGEwdUAYSy/NirGoOaNyPx8lqiR6DYRSsDzVvVbhP4Y9wf0 #test:test
+      groups: [ "team1", "team2", "team2" ]

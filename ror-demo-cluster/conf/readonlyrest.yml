@@ -1,22 +1,83 @@
 readonlyrest:
-
+  prompt_for_basic_auth: false
   access_control_rules:
-
-    - name: "KIBANA"
-      type: allow
+    - name: KIBANA_SERVER
       auth_key: kibana:kibana
       verbosity: error
-
     - name: "ADMIN"
       type: allow
       verbosity: error
       auth_key: admin:admin
       kibana_access: admin
+    - name: "Full Admin Kibana"
+      groups: ["full-admin"]
+      indices: ["*"]
+      kibana_access: "admin"
+    - name: "Full Admin Users"
+      groups: ["full-admin"]
+      indices: ["*"]
+      actions: ["*"]
+    - name: "Client Admin Group Kibana"
+      groups: ["client_admin"]
+      indices: [".kibana_client_admin", "*"]
+      kibana_access: "rw"
+      kibana_index: ".kibana_client_admin"
+    - name: "Client Admin Group 0"
+      groups: ["client_admin"]
+      indices: ["*"]
+      actions: ["*"]
+    - name: "OBF Kibana"
+      groups: ["OBF"]
+      indices: ["smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      filter: "{\"bool\":{\"must\":{\"term\":{\"df_country.keyword\":\"Burkina Faso\"}},\"must_not\":{\"term\":{\"df_valid_data\":false}}}}"
+      kibana_access: "ro"
+      kibana_index: ".kibana_one_click"
+    - name: "OBF Kibana 1"
+      groups: ["OBF"]
+      indices: [".kibana_one_click" ,"smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      kibana_access: "ro"
+      kibana_index: ".kibana_one_click"
+    - name: "OBW Kibana"
+      groups: ["OBW"]
+      indices: ["bots-smartly", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      filter: "{\"bool\": {\"must\": {\"term\":{\"df_country.keyword\":\"Botswana\"}},\"must_not\": {\"term\": {\"df_valid_data\": false}}}}"
+      kibana_access: "ro"
+      kibana_index: ".kibana_one_click"
+    - name: "OBW Kibana 1"
+      groups: ["OBW"]
+      indices: [".kibana_one_click" ,"bots-smartly", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      kibana_access: "ro"
+      kibana_index: ".kibana_one_click"
+    - name: "OCD Kibana"
+      groups: ["OCD"]
+      indices: ["smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      filter: "{\"bool\":{\"must\":{\"term\":{\"df_country.keyword\":\"Democratic Republic of Congo\"}},\"must_not\":{\"term\":{\"df_valid_data\":false}}}}"
+      kibana_access: "ro"
+      kibana_index: ".kibana_one_click"
+    - name: "OCD Kibana 1"
+      groups: ["OCD"]
+      indices: [".kibana_one_click" ,"smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      kibana_access: "ro"
+      kibana_index: ".kibana_one_click"
+  proxy_auth_configs:
+    - name: "px1"
+      user_id_header: "x-forwarded-user"
+  users:
+    - username: "ddzb7523"
+      groups: ["client_admin"]
+      proxy_auth:
+        proxy_auth_config: "px1"
+        users: ["ddzb7523"]
+    - username: "fulladmin"
+      groups: ["full-admin"]
+      auth_key_sha256: "15bed4a527e38699c2cccc9e4002f3cff55b0e153c899866601495a84a533955"
+    - username: "kibana"
+      groups: ["full-admin"]
+      auth_key_sha256: "827db44ff02c8c9b2d4ce9f886bc5ee8efccae5c4fb00c24dbde28b77c6c8955"
+    - username: "sspo"
+      groups: ["full-admin"]
+      auth_key_sha256: "7b69617da4847860f906bf90e8865bbc2f9cae406691474b111274bf542c0fde"
+    - username: "hwzr5420"
+      groups: ["client_admin","OBF","OBW","OCD"]
+      auth_key: "hwzr5420:dev"
 
-    - name: "User 1"
-      type: allow
-      verbosity: error
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'

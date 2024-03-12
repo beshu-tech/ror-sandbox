@@ -3,7 +3,7 @@ readonlyrest:
   access_control_rules:
     - name: KIBANA_SERVER
       auth_key: kibana:kibana
-      verbosity: error
+      # verbosity: error
     - name: "ADMIN"
       type: allow
       verbosity: error

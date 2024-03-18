@@ -19,44 +19,51 @@ readonlyrest:
       actions: ["*"]
     - name: "Client Admin Group Kibana"
       groups: ["client_admin"]
-      indices: [".kibana_client_admin", "*"]
+      indices: ["*"] # .kibana_client_admin is allowed implicitly because kibana_index is used in the same block
+      # indices: [".kibana_client_admin", "*"] # 
       kibana_access: "rw"
       kibana_index: ".kibana_client_admin"
     - name: "Client Admin Group 0"
       groups: ["client_admin"]
       indices: ["*"]
       actions: ["*"]
-    - name: "OBF Kibana"
+    # - name: "OBF Kibana"
+    - name: "OBF" # the block is kibana agnostic
       groups: ["OBF"]
       indices: ["smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
       filter: "{\"bool\":{\"must\":{\"term\":{\"df_country.keyword\":\"Burkina Faso\"}},\"must_not\":{\"term\":{\"df_valid_data\":false}}}}"
-      kibana_access: "ro"
-      kibana_index: ".kibana_one_click"
+      # kibana_access: "ro"
+      # kibana_index: ".kibana_one_click"
     - name: "OBF Kibana 1"
       groups: ["OBF"]
-      indices: [".kibana_one_click" ,"smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      indices: ["smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"] # .kibana_one_click is allowed implicitly here because kibana_index rule is used in the same block 
+      # indices: [".kibana_one_click" ,"smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
       kibana_access: "ro"
       kibana_index: ".kibana_one_click"
-    - name: "OBW Kibana"
+    # - name: "OBW Kibana"
+    - name: "OBW"
       groups: ["OBW"]
       indices: ["bots-smartly", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
       filter: "{\"bool\": {\"must\": {\"term\":{\"df_country.keyword\":\"Botswana\"}},\"must_not\": {\"term\": {\"df_valid_data\": false}}}}"
-      kibana_access: "ro"
-      kibana_index: ".kibana_one_click"
+      # kibana_access: "ro"
+      # kibana_index: ".kibana_one_click"
     - name: "OBW Kibana 1"
       groups: ["OBW"]
-      indices: [".kibana_one_click" ,"bots-smartly", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      indices: ["bots-smartly", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      # indices: [".kibana_one_click" ,"bots-smartly", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
       kibana_access: "ro"
       kibana_index: ".kibana_one_click"
-    - name: "OCD Kibana"
+    # - name: "OCD Kibana"
+    - name: "OCD"
       groups: ["OCD"]
       indices: ["smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
       filter: "{\"bool\":{\"must\":{\"term\":{\"df_country.keyword\":\"Democratic Republic of Congo\"}},\"must_not\":{\"term\":{\"df_valid_data\":false}}}}"
-      kibana_access: "ro"
-      kibana_index: ".kibana_one_click"
+      # kibana_access: "ro"
+      # kibana_index: ".kibana_one_click"
     - name: "OCD Kibana 1"
       groups: ["OCD"]
-      indices: [".kibana_one_click" ,"smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      indices: ["smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
+      # indices: [".kibana_one_click" ,"smartly_heartbeat", "bots-analytics-alerting", "kafka-*", "botanalytics-msurvey*"]
       kibana_access: "ro"
       kibana_index: ".kibana_one_click"
   proxy_auth_configs:

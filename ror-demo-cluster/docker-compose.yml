@@ -50,12 +50,31 @@ services:
     environment:
       ELASTIC_USER_PASSWORD: elastic
       ES_API_URL: http://es-ror:9200
+      KBN_NAME: kbn
+    healthcheck:
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "-H", "kbn-xsrf: true", "http://localhost:5601/api/features" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
     networks:
       - es-ror-network
     ulimits:
       memlock:
         soft: -1
         hard: -1
+
+  init:
+    build:
+      context: .
+      dockerfile: images/init-data/Dockerfile
+    depends_on:
+      es-ror:
+        condition: service_healthy
+      kbn-ror:
+        condition: service_healthy
+    networks:
+      - es-ror-network
 
 networks:
   es-ror-network:

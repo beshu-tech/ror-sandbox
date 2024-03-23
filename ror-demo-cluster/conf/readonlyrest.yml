@@ -13,10 +13,45 @@ readonlyrest:
       auth_key: admin:admin
       kibana_access: admin
 
-    - name: "User 1"
-      type: allow
-      verbosity: error
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
+    # this blocks handles "the exceptions" when the ldap role relates to some index with non-standard name
+    - name: local_groups_users
+      groups_or: ["*"]
+      indices: ["index-@explode{acl:available_groups}"]
+      kibana:
+        access: rw
+
+    # this block handles the 1-1 mapping of ldap role and index
+    - name: ldap_users
+      ldap_auth:
+        name: "ldap1"
+        groups: ["*"]
+      indices: ["index-@explode{acl:available_groups}"]
+      kibana:
+        access: rw
+
+  users:
+    - username: "*"
+      # here we define the non-standard mapping
+      groups: 
+        - some-important-data: ["ldap-group3", "ldap-group4"]
+        - another-important-data: ["ldap-group5"]
+      ldap_auth:
+        name: "ldap1"
+        groups: ["ldap-group3", "ldap-group4", "ldap-group5"]
+    
+  ldaps:
+    - name: ldap1
+
+      host: "${LDAP_HOST}"
+      port: ${LDAP_PORT}
+      ssl_enabled: false
+      ssl_trust_all_certs: true
+
+      bind_dn: "uid=admin,ou=people,dc=example,dc=com"
+      bind_password: "password"
+      search_user_base_DN: "ou=People,dc=example,dc=com"
+      search_groups_base_DN: "ou=Groups,dc=example,dc=com"
+      user_id_attribute: "uid"                                  
+      unique_member_attribute: "uniqueMember"
+
+      cache_ttl: 10s

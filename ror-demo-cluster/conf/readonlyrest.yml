@@ -15,14 +15,18 @@ readonlyrest:
 
     - name: "team1"
       indices: ["index1"]
-      kibana_access: rw
+      kibana:
+        access: rw
+        index: .kibana_team1
       ldap_auth:
         name: "ldap1"
         groups: ["team1"]
 
     - name: "team2"
       indices: ["index2"]
-      kibana_access: rw
+      kibana:
+        access: rw
+        index: .kibana_team2
       ldap_auth:
         name: "ldap1"
         groups: ["team2"]
@@ -35,7 +39,9 @@ readonlyrest:
 
     - name: "all user"
       type: allow
-      kibana_access: rw
+      kibana:
+        access: rw
+        index: .kibana_all
       ldap_authentication:
         name: "ldap1"
       

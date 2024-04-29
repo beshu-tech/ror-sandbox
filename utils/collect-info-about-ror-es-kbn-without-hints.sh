@@ -132,6 +132,7 @@ read_kbn_ror_file_path () {
     read -p "Enter KBN ROR file path (it has to be placed in $(dirname "$0")): " path
     if [ -f "$path" ]; then
       export KBN_ROR_FILE=$path
+      break
     else
       echo "Cannot find file $path. Please try again ..."
       continue

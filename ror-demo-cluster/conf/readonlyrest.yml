@@ -13,10 +13,30 @@ readonlyrest:
       auth_key: admin:admin
       kibana_access: admin
 
-    - name: "User 1"
+    - name: "User 1 - API"
       type: allow
-      verbosity: error
       auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
+      indices: ["example"]
+      filter: '{"bool": { "must": { "match": { "user_field": "@{user}" }}}}'
+
+    - name: "User 1 - Kibana"
+      type: allow
+      auth_key: "user1:test"
+      kibana:
+        access: rw
+        hide_apps: ["/^(?!(Analytics\\|[Discover,Dashboard]).*$).*$/","ROR Manage Kibana"]
+        index: '.user1_kibana'
+
+    - name: "User 2 - API"
+      type: allow
+      auth_key: "user2:test"
+      indices: ["example"]
+      filter: '{"bool": { "must": { "match": { "user_field": "@{user}" }}}}'
+
+    - name: "User 2 - Kibana"
+      type: allow
+      auth_key: "user2:test"
+      kibana:
+        access: rw
+        hide_apps: ["/^(?!(Analytics\\|[Discover,Dashboard]).*$).*$/","ROR Manage Kibana"]
+        index: '.user2_kibana'

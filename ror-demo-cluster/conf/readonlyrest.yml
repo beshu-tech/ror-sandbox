@@ -12,11 +12,30 @@ readonlyrest:
       verbosity: error
       auth_key: admin:admin
       kibana_access: admin
-
-    - name: "User 1"
+    - name: "user2"
       type: allow
       verbosity: error
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
+      auth_key: user2:dev
+      kibana_access: rw
+    - name: "::USER2 INDEX SEGMENTATION::"
+      auth_key: user2:dev
+      indices: [ "ror_poc_001" ]
+      filter: '{"bool": { "must": { "match": { "username": "user2" }}}}'
+    - name: Valid JWT token with a writer group
+      kibana:
+        access: rw
+      users: ["user1"]
+      jwt_auth:
+        name: "jwt_provider_1"
+    - name: "::PER-USER INDEX SEGMENTATION::"
+      indices: ["ror_poc_001"]
+      users: ["user1"]
+      filter: '{"bool": { "must": { "match": { "username": "@{user}" }}}}'
+      jwt_auth:
+        name: "jwt_provider_1"
+
+  jwt:
+    - name: jwt_provider_1
+      signature_algo: HMAC # can be NONE, RSA, HMAC (default), and EC
+      signature_key: "608c76e4bf65bb25c33369119594bad57273cefa13d463d788d487af89f183f8"
+      user_claim: name

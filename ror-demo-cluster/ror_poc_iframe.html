@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ReadonlyREST POC</title>
+
+</head>
+<body>
+<script>
+    const kibanaUrl = 'http://localhost:15601'
+    const user1JwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlcjEifQ.MtQpclCKhggwKBsYE-SAmQ5KHpqsFxVVr_22s_Eq9uY'
+
+    function createDashboardIframe() {
+        const iframe = document.createElement('iframe');
+        iframe.src = `${kibanaUrl}/s/default/app/dashboards?jwt=${user1JwtToken}#/view/ror_poc?embed=true`
+        iframe.frameBorder = '0';
+        iframe.title = 'poc_dashboard';
+        iframe.style.height = '600px';
+        iframe.style.width = '800px';
+        document.body.prepend(iframe);
+    }
+
+    function createDiscoverIframe() {
+        const iframe = document.createElement('iframe');
+        iframe.src = `${kibanaUrl}/s/default/app/discover/ror_poc?jwt=${user1JwtToken}`
+        iframe.frameBorder = '0';
+        iframe.title = 'poc_discover';
+        iframe.style.height = '600px';
+        iframe.style.width = '800px';
+        document.body.prepend(iframe);
+    }
+
+    createDashboardIframe()
+    createDiscoverIframe()
+</script>
+</body>
+</html>

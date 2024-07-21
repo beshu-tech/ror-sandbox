@@ -11,26 +11,32 @@ readonlyrest:
       type: allow
       verbosity: error
       auth_key: admin:admin
-      kibana_access: admin
-    - name: "user2"
-      type: allow
-      verbosity: error
-      auth_key: user2:dev
-      kibana_access: rw
+      kibana:
+        access: admin
+
     - name: "::USER2 INDEX SEGMENTATION::"
       auth_key: user2:dev
       indices: [ "ror_poc_001" ]
       filter: '{"bool": { "must": { "match": { "username": "user2" }}}}'
-    - name: Valid JWT token with a writer group
+
+    - name: "user2"
+      type: allow
+      verbosity: error
+      auth_key: user2:dev
       kibana:
         access: rw
-      users: ["user1"]
-      jwt_auth:
-        name: "jwt_provider_1"
+
     - name: "::PER-USER INDEX SEGMENTATION::"
       indices: ["ror_poc_001"]
       users: ["user1"]
       filter: '{"bool": { "must": { "match": { "username": "@{user}" }}}}'
+      jwt_auth:
+        name: "jwt_provider_1"
+
+    - name: Valid JWT token with a writer group
+      kibana:
+        access: rw
+      users: ["user1"]
       jwt_auth:
         name: "jwt_provider_1"
 

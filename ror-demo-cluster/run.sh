@@ -1,10 +1,5 @@
 #!/bin/bash -e
 
-if ! command -v docker-compose > /dev/null; then
-  echo "The script require docker-compose to be installed on your machine."
-  exit 1
-fi
-
 echo -e "
 
   _____                _  ____        _       _____  ______  _____ _______
@@ -20,8 +15,8 @@ source ../utils/collect-info-about-ror-es-kbn.sh
 
 echo "Starting Elasticsearch and Kibana with installed ROR plugins ..."
 
-docker-compose up -d --build --remove-orphans --force-recreate
-docker-compose logs -f > ror-cluster.log 2>&1 &
+docker compose up -d --build --remove-orphans --force-recreate
+docker compose logs -f > ror-cluster.log 2>&1 &
 
 echo -e "
 ***********************************************************************
@@ -31,5 +26,4 @@ echo -e "
 ***********************************************************************
 "
 
-echo -e "You can access ROR KBN here: http://localhost:15601 (regular user: 'user2:dev' or admin user: 'admin:admin')"
 echo -e "You can access POC HTML with a simple Discover and Dashboard page for user1 here:  http://localhost:18000"

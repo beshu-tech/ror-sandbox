@@ -32,3 +32,4 @@ echo -e "
 "
 
 echo -e "You can access ROR KBN here: http://localhost:15601 (regular user: 'user2:dev' or admin user: 'admin:admin')"
+echo -e "You can access POC HTML with a simple Discover and Dashboard page for user1 here:  http://localhost:18000"

@@ -4,33 +4,63 @@
     <title>ReadonlyREST POC</title>
 
 </head>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #iframeWrapper {
+        margin: 16px;
+        width: 95vw;
+        height: 80vh;
+    }
+
+    iframe {
+        width: 100%;
+        height: 100%;
+    }
+</style>
 <body>
 <script>
     const kibanaUrl = 'http://localhost:15601'
     const user1JwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlcjEifQ.MtQpclCKhggwKBsYE-SAmQ5KHpqsFxVVr_22s_Eq9uY'
 
     function createDashboardIframe() {
+        const title = document.createElement('h3');
+        title.innerText = "Embedded Dashboard page with a documents for the user1"
+
         const iframe = document.createElement('iframe');
+        const iframeWrapper = document.createElement('div');
+        iframeWrapper.id ='iframeWrapper'
         iframe.src = `${kibanaUrl}/s/default/app/dashboards?jwt=${user1JwtToken}#/view/ror_poc?embed=true`
         iframe.frameBorder = '0';
         iframe.title = 'poc_dashboard';
-        iframe.style.height = '600px';
-        iframe.style.width = '800px';
-        document.body.prepend(iframe);
+        document.body.append(iframeWrapper);
+        iframeWrapper.append(title)
+        iframeWrapper.append(iframe)
     }
 
     function createDiscoverIframe() {
+        const title = document.createElement('h3');
+        title.innerText = "Embedded Discover page with a documents for the user1"
+
+        document.body.append(title);
+
         const iframe = document.createElement('iframe');
+        const iframeWrapper = document.createElement('div');
+        iframeWrapper.id ='iframeWrapper'
         iframe.src = `${kibanaUrl}/s/default/app/discover/ror_poc?jwt=${user1JwtToken}`
         iframe.frameBorder = '0';
         iframe.title = 'poc_discover';
-        iframe.style.height = '600px';
-        iframe.style.width = '800px';
-        document.body.prepend(iframe);
+        document.body.append(iframeWrapper);
+        iframeWrapper.append(title)
+        iframeWrapper.append(iframe)
     }
 
-    createDashboardIframe()
     createDiscoverIframe()
+    createDashboardIframe()
 </script>
 </body>
 </html>

@@ -56,7 +56,14 @@ services:
       memlock:
         soft: -1
         hard: -1
-
+  web-server:
+    image: nginx:alpine
+    ports:
+      - "18000:80"
+    volumes:
+      - ./ror_poc_iframe.html:/usr/share/nginx/html/index.html
+    networks:
+      - es-ror-network
 networks:
   es-ror-network:
     driver: bridge

@@ -49,6 +49,12 @@ services:
     environment:
       ELASTIC_USER_PASSWORD: elastic
       ES_API_URL: http://es-ror:9200
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:5601/api/status | grep -q '\"state\":\"green\"'"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
     networks:
       - es-ror-network
     ulimits:
@@ -58,10 +64,21 @@ services:
 
   web-server:
     image: nginx:alpine
+    depends_on:
+      es-ror:
+        condition: service_healthy
+      kbn-ror:
+        condition: service_healthy
     ports:
       - "18000:80"
     volumes:
       - ./ror_poc_iframe.html:/usr/share/nginx/html/index.html
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:80" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 30s
     networks:
       - es-ror-network
 

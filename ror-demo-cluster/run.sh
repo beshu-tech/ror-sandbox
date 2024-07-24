@@ -15,8 +15,8 @@ source ../utils/collect-info-about-ror-es-kbn.sh
 
 echo "Starting Elasticsearch and Kibana with installed ROR plugins ..."
 
-docker-compose up -d --build --remove-orphans --force-recreate --wait
-docker-compose logs -f > ror-cluster.log 2>&1 &
+docker compose up -d --build --remove-orphans --force-recreate --wait
+docker compose logs -f > ror-cluster.log 2>&1 &
 
 echo -e "
 ***********************************************************************

@@ -7,20 +7,19 @@ readonlyrest:
       auth_key: kibana:kibana
       verbosity: error
   
+    # Allow JWT users to read all system Kibana indices without DLS, otherwise Kibana breaks
+    - name: "::UNFILTERED SYSTEM INDICES FOR USR*::"
+      indices: [ ".kibana*" ] # All kibana-related indices will be added implicitly (because of the presence of the kibana rule in the same block)
+      kibana:
+        access: rw
+      jwt_auth:
+        name: "jwt_provider_1"
+      
     # Allow ANY jwt user to read his own data
     - name: "::USER SEGMENTATION::"
-      indices: [ "ror_poc*" ]
       users: [ "user*" ] # Optional, if you want to restrict users by name prefix, suffix, etc.
       # Can filter also by group name, any string within the JWT claims! Here I am using the username
       filter: '{"bool": { "must": { "match": { "username": "@{acl:user}" }}}}'
-      jwt_auth:
-        name: "jwt_provider_1"
-
-    # Allow JWT users to read all system Kibana indices without DLS, otherwise Kibana breaks
-    - name: "::UNFILTERED SYSTEM INDICES FOR USR*::"
-      users: [ "user*" ] # Optional, if you want to restrict users by name prefix, suffix, etc.
-      kibana:
-        access: rw
       jwt_auth:
         name: "jwt_provider_1"
       

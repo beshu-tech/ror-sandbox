@@ -3,12 +3,11 @@ ARG KBN_VERSION
 FROM docker.elastic.co/kibana/kibana:${KBN_VERSION}
 
 ARG KBN_VERSION
-ARG ROR_FILE
+ARG ROR_VERSION
 ARG ROR_ACTIVATION_KEY
 
-COPY conf/kibana.yml /usr/share/kibana/config/kibana.yml
-COPY images/kbn/install-ror-kbn-using-file.sh /tmp/install-ror.sh
-COPY $ROR_FILE /tmp/ror.zip
+COPY conf/ror-cluster/kibana.yml /usr/share/kibana/config/kibana.yml
+COPY images/ror-cluster/kbn/install-ror-kbn-using-api.sh /tmp/install-ror.sh
 
 ENV ROR_ACTIVATION_KEY=$ROR_ACTIVATION_KEY
 

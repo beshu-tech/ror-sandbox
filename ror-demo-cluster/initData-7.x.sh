@@ -1,15 +1,18 @@
-#!/bin/bash
+#!/bin/bash -e
 
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/1" -H "Content-type: application/json" -d '{"username": "user1"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/2" -H "Content-type: application/json" -d '{"username": "user1"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/3" -H "Content-type: application/json" -d '{"username": "user1"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/4" -H "Content-type: application/json" -d '{"username": "user2"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/5" -H "Content-type: application/json" -d '{"username": "user2"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/6" -H "Content-type: application/json" -d '{"username": "user2"}'
+# INIT DATA IN THE MAIN XPACK CLUSTER
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/1" -H "Content-type: application/json" -d '{"username": "user1"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/2" -H "Content-type: application/json" -d '{"username": "user1"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/3" -H "Content-type: application/json" -d '{"username": "user1"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/4" -H "Content-type: application/json" -d '{"username": "user2"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/5" -H "Content-type: application/json" -d '{"username": "user2"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/6" -H "Content-type: application/json" -d '{"username": "user2"}'
+
+# ADD INDEX PATTERNS AND VISUALIZATIONS IN ROR-SIDECAR CLUSTER
 
 # Define variables
 KIBANA_URL="http://localhost:15601"
-INDEX_PATTERN_TITLE="ror_poc_001"
+INDEX_PATTERN_TITLE="my-xpack-cluster:ror_poc_001"
 INDEX_PATTERN_TIME_FIELD="@timestamp"
 VISUALIZATION_TITLE="Username Keyword Visualization"
 DASHBOARD_TITLE="ROR POC 001 Dashboard"

@@ -3,11 +3,14 @@ services:
   es-ror:
     build:
       context: .
-      dockerfile: images/es/${ES_DOCKERFILE}
+      dockerfile: images/ror-cluster/es/${ES_DOCKERFILE}
       args:
         ES_VERSION: $ES_VERSION
         ROR_VERSION: $ROR_ES_VERSION
         ROR_FILE: $ES_ROR_FILE
+    depends_on:
+      es-xpack:
+        condition: service_healthy
     ports:
       - "19200:9200"
       - "19300:9300"
@@ -17,25 +20,28 @@ services:
       - node.name=es-ror-single
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
       - ES_VERSION=$ES_VERSION
     healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "kibana:kibana", "http://localhost:9200/_cluster/health" ]
+      test: [ "CMD", "curl", "-fk", "-u", "kibana:kibana", "https://localhost:9200/_cluster/health" ]
       interval: 10s
       timeout: 10s
       retries: 30
       start_period: 60s
     networks:
-      - es-ror-network
+      - ror-poc-network
     ulimits:
       memlock:
         soft: -1
         hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: '768M'
 
   kbn-ror:
     build:
       context: .
-      dockerfile: images/kbn/${KBN_DOCKERFILE}
+      dockerfile: images/ror-cluster/kbn/${KBN_DOCKERFILE}
       args:
         KBN_VERSION: $KBN_VERSION
         ROR_VERSION: $ROR_KBN_VERSION
@@ -48,7 +54,7 @@ services:
       - "15601:5601"
     environment:
       ELASTIC_USER_PASSWORD: elastic
-      ES_API_URL: http://es-ror:9200
+      ES_API_URL: https://es-ror:9200
     healthcheck:
       test: [ "CMD", "curl", "--fail", "http://localhost:5601/api/status" ]
       interval: 10s
@@ -56,11 +62,15 @@ services:
       retries: 30
       start_period: 60s
     networks:
-      - es-ror-network
+      - ror-poc-network
     ulimits:
       memlock:
         soft: -1
         hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: '768M'
 
   web-server:
     image: nginx:alpine
@@ -80,8 +90,69 @@ services:
       retries: 30
       start_period: 30s
     networks:
-      - es-ror-network
+      - ror-poc-network
+    deploy:
+      resources:
+        limits:
+          memory: '128M'
+
+  es-xpack:
+    build:
+      context: .
+      dockerfile: images/xpack-cluster/es/Dockerfile
+      args:
+        ES_VERSION: $ES_VERSION
+    ports:
+      - "29200:9200"
+      - "29300:9300"
+      - "5005:5000"
+    environment:
+      - cluster.name=xpack-es-cluster
+      - node.name=es-xpack-single
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - ES_VERSION=$ES_VERSION
+    healthcheck:
+      test: [ "CMD", "curl", "-fk", "-u", "elastic:elastic", "https://localhost:9200/_security/user/kibana_system/_password", "-XPOST", "-H", "Content-Type: application/json", "-d", "{\"password\": \"elastic\"}" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    networks:
+      - ror-poc-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: '768M'
+
+  kbn-xpack:
+    build:
+      context: .
+      dockerfile: images/xpack-cluster/kbn/Dockerfile
+      args:
+        KBN_VERSION: $KBN_VERSION
+    depends_on:
+      es-xpack:
+        condition: service_healthy
+    ports:
+      - "25601:5601"
+    environment:
+      ES_API_URL: https://es-xpack:9200
+    networks:
+      - ror-poc-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: '768M'
 
 networks:
-  es-ror-network:
+  ror-poc-network:
     driver: bridge

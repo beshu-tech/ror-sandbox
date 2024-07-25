@@ -1,21 +1,26 @@
-#!/bin/bash
+#!/bin/bash -e
+
+# INIT DATA IN THE MAIN XPACK CLUSTER
+
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/1" -H "Content-type: application/json" -d '{"username": "user1", "@timestamp": "'$TIMESTAMP'"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/2" -H "Content-type: application/json" -d '{"username": "user1", "@timestamp": "'$TIMESTAMP'"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/3" -H "Content-type: application/json" -d '{"username": "user1", "@timestamp": "'$TIMESTAMP'"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/4" -H "Content-type: application/json" -d '{"username": "user2", "@timestamp": "'$TIMESTAMP'"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/5" -H "Content-type: application/json" -d '{"username": "user2", "@timestamp": "'$TIMESTAMP'"}'
+curl -vk -u elastic:elastic -XPUT "https://localhost:29200/ror_poc_001/_doc/6" -H "Content-type: application/json" -d '{"username": "user2", "@timestamp": "'$TIMESTAMP'"}'
+
+
+# ADD INDEX PATTERNS AND VISUALIZATIONS IN ROR-SIDECAR CLUSTER
 
 # Define variables
 KIBANA_URL="http://localhost:15601"
-INDEX_PATTERN_TITLE="ror_poc_001"
+INDEX_PATTERN_TITLE="my-xpack-cluster:"
 INDEX_PATTERN_TIME_FIELD="@timestamp"
 VISUALIZATION_TITLE="Username Keyword Visualization"
 DASHBOARD_TITLE="ROR POC 001 Dashboard"
 KIBANA_USER="kibana"
 KIBANA_PASSWORD="kibana"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/1" -H "Content-type: application/json" -d '{"username": "user1", "@timestamp": "'$TIMESTAMP'"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/2" -H "Content-type: application/json" -d '{"username": "user1", "@timestamp": "'$TIMESTAMP'"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/3" -H "Content-type: application/json" -d '{"username": "user1", "@timestamp": "'$TIMESTAMP'"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/4" -H "Content-type: application/json" -d '{"username": "user2", "@timestamp": "'$TIMESTAMP'"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/5" -H "Content-type: application/json" -d '{"username": "user2", "@timestamp": "'$TIMESTAMP'"}'
-curl -vk -u kibana:kibana -XPUT "http://localhost:19200/ror_poc_001/_doc/6" -H "Content-type: application/json" -d '{"username": "user2", "@timestamp": "'$TIMESTAMP'"}'
 
 # Create Index Pattern
 INDEX_PATTERN_RESPONSE=$(curl -u "$KIBANA_USER:$KIBANA_PASSWORD" -X POST "$KIBANA_URL/api/saved_objects/index-pattern" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d "{

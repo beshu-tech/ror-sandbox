@@ -24,7 +24,8 @@
 </style>
 <body>
 <script>
-    const kibanaUrl = 'http://localhost:15601'
+    const { hostname, protocol } = window.location;
+    const kibanaUrl = `${protocol}//${hostname}:15601`
     const user1JwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidXNlcjEifQ.MtQpclCKhggwKBsYE-SAmQ5KHpqsFxVVr_22s_Eq9uY'
 
     function createDashboardIframe() {

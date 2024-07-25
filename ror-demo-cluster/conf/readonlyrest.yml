@@ -2,44 +2,34 @@ readonlyrest:
 
   access_control_rules:
 
-    - name: "KIBANA"
+    - name: "::KIBANA::"
+      verbosity: error
       type: allow
       auth_key: kibana:kibana
+      
+    - name: "::ADMIN::"
       verbosity: error
-
-    - name: "ADMIN"
       type: allow
-      verbosity: error
       auth_key: admin:admin
       kibana:
         access: admin
 
-    - name: "::USER2 INDEX SEGMENTATION::"
-      auth_key: user2:dev
-      indices: [ "ror_poc_001" ]
-      filter: '{"bool": { "must": { "match": { "username": "user2" }}}}'
-
-    - name: "user2"
-      type: allow
-      verbosity: error
-      auth_key: user2:dev
+    # Allow JWT users to read all system Kibana indices without DLS, otherwise Kibana breaks
+    - name: "::UNFILTERED SYSTEM INDICES FOR USR*::"
+      indices: [ ".kibana*" ] # All kibana-related indices will be added implicitly (because of the presence of the kibana rule in the same block)
       kibana:
         access: rw
-
-    - name: "::PER-USER INDEX SEGMENTATION::"
-      indices: ["ror_poc_001"]
-      users: ["user1"]
-      filter: '{"bool": { "must": { "match": { "username": "@{user}" }}}}'
       jwt_auth:
         name: "jwt_provider_1"
-
-    - name: Valid JWT token with a writer group
-      kibana:
-        access: rw
-      users: ["user1"]
+      
+    # Allow ANY jwt user to read his own data
+    - name: "::USER SEGMENTATION::"
+      users: [ "user*" ] # Optional, if you want to restrict users by name prefix, suffix, etc.
+      # Can filter also by group name, any string within the JWT claims! Here I am using the username
+      filter: '{"bool": { "must": { "match": { "username": "@{acl:user}" }}}}'
       jwt_auth:
         name: "jwt_provider_1"
-
+      
   jwt:
     - name: jwt_provider_1
       signature_algo: HMAC # can be NONE, RSA, HMAC (default), and EC

@@ -66,3 +66,10 @@ Here's description of how to connect remote debugger to running Elasticsearch se
 1. You should now see name of created configuration in upper right corner of IntelliJ IDEA. ![remote debug](images/run_debugging.png)
 1. Click on a bug icon next to it to start debugger.
 1. After successful connection, window like that should pop up from the bottom![successful debug connection](images/connected_debugger.png)
+
+## Running POC
+1. Get a ReadonlyREST trial PRO license from [customer portal](https://readonlyrest.com/customer)
+3. `cd ror-demo-cluster`
+4. Run `bash -c "export ROR_ACTIVATION_KEY=<YOUR_KEY_HERE> && ./run.sh"` and select Kibana/es 7.17.21 (or 8.14.3 if you want to verify Kibana 8.x)
+5. When everything is running add initial data by the `/bin/bash ./initData-7.x.sh` for Kibana 7.x or `/bin/bash ./initData-8.x.sh` for Kibana 8.x 
+6. You can access POC HTML with a simple Discover and Dashboard page for user1 here:  http://localhost:18000

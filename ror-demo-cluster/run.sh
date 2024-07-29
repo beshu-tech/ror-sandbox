@@ -1,8 +1,18 @@
 #!/bin/bash -e
 
-if ! command -v docker-compose > /dev/null; then
-  echo "The script require docker-compose to be installed on your machine."
+if ! docker version &>/dev/null; then
+  echo "No Docker found. Docker is required to run this Sandbox. See https://docs.docker.com/engine/install/"
   exit 1
+fi
+
+if ! docker compose version &>/dev/null; then
+  echo "No docker compose found. It seems you have to upgrade your Docker installation. See https://docs.docker.com/engine/install/"
+  exit 2
+fi
+
+if ! docker compose config > /dev/null; then
+  echo "Cannot validate docker compose configuration. It seems you have to upgrade your Docker installation. See https://docs.docker.com/engine/install/"
+  exit 3
 fi
 
 echo -e "
@@ -20,8 +30,8 @@ source ../utils/collect-info-about-ror-es-kbn.sh
 
 echo "Starting Elasticsearch and Kibana with installed ROR plugins ..."
 
-docker-compose up -d --build --remove-orphans --force-recreate
-docker-compose logs -f > ror-cluster.log 2>&1 &
+docker compose up -d --build --remove-orphans --force-recreate
+docker compose logs -f > ror-cluster.log 2>&1 &
 
 echo -e "
 ***********************************************************************

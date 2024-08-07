@@ -49,20 +49,23 @@ By default, services from sandbox expose these ports:
 `cd ror-demo-cluster` (OR `cd ror-cluster-elastic-cloud-demo`)
 `$ ./run` 
 
-Then follow instructions in the interactive script.
+Then follow the instructions in the interactive script.
 When you finish your test, clean up:
 
 `$ ./clean.sh`
 
 ## Connecting IntelliJ IDEA remote debugger to Elasticsearch set up in sandbox 
-Here's description of how to connect remote debugger to running Elasticsearch server which has been started using this sandbox.
+Here's a description of how to connect using remote debugger to the running Elasticsearch server which has been started using this sandbox.
 1. Open the `elasticsearch-readonlyrest-plugin` project in IntelliJ IDEA.
-1. Checkout commit with the same version of ROR code that is running in Elasticsearch you want to connect.
-1. Open `Edit configurations...` window. It can be done by pressing shift key twice and entering "Edit configurations" or from `Run->Edit configurations...` menu.
+1. Checkout the commit with the same version of ROR code that is running in Elasticsearch you want to connect.
+1. Open `Edit configurations...` window. It can be done by pressing the shift key twice and entering "Edit configurations" or from `Run->Edit configurations...` menu.
 1. If you don't have remote debugger configuration yet add it by clicking "+" icon and choosing `Remote JVM Debug`
-![add new configuration](images/new_configuration.png)
-1. New configuration will be automatically selected. You can assign it a custom name like "sandbox remote debugger" on presented screenshot. Host and port should be set exactly as they are on this screenshot. Last marked thing is module classpath. You should choose module corresponding to ES version you are trying to debug with name ending with `.main`. Module selected on screenshot is appropriate for debugging ES 7.2.x. ![remote debug](images/edit_configurations.png)
-1. Click OK to save configuration. 
-1. You should now see name of created configuration in upper right corner of IntelliJ IDEA. ![remote debug](images/run_debugging.png)
-1. Click on a bug icon next to it to start debugger.
-1. After successful connection, window like that should pop up from the bottom![successful debug connection](images/connected_debugger.png)
+   ![add new configuration](img/new_configuration.png)
+2. The new configuration will be automatically selected. You can assign it a custom name like "sandbox remote debugger" on the presented screenshot. The host and port should be set exactly as they are on this screenshot. The last marked thing is a module classpath. You should choose the module corresponding to the ES version you are trying to debug with a name ending with `.main`. The module selected in the screenshot is appropriate for debugging ES 7.2.x. 
+   ![remote debug](img/edit_configurations.png)
+3. Click OK to save the configuration. 
+4. You should now see the name of the created configuration in the upper right corner of IntelliJ IDEA. 
+   ![remote debug](img/run_debugging.png)
+5. Click on the bug icon next to it to start the debugger.
+6. After the successful connection, a window like that should pop up from the bottom 
+   ![successful debug connection](img/connected_debugger.png)

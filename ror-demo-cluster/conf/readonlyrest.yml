@@ -1,22 +1,41 @@
 readonlyrest:
+ 
+    # IMPORTANT FOR LOGIN/LOGOUT TO WORK WITH ROR PLUGIN FOR KIBANA
+    prompt_for_basic_auth: false
+    
+    ssl:
+      keystore_file:  "ror-keystore.jks"
+      keystore_pass: readonlyrest
+      key_pass: readonlyrest
 
-  access_control_rules:
-
-    - name: "KIBANA"
-      type: allow
+    users:
+    - username: "TEST-public"
+      groups: ["grp-TEST-lecture"]
+      auth_key: TEST-public:test
+    - username: "TEST-admin"
+      groups: ["grp-TEST-admin"]
+      auth_key: TEST-admin:test
+ 
+    access_control_rules:
+    #####################################################################################
+    # UNRESTRICTED : SUPER ROOT (KIBANA + LOGSTASH)
+    #####################################################################################
+    - name: "::KIBANA-SRV::"
+      verbosity: error
       auth_key: kibana:kibana
-      verbosity: error
-
-    - name: "ADMIN"
-      type: allow
-      verbosity: error
-      auth_key: admin:admin
-      kibana_access: admin
-
-    - name: "User 1"
-      type: allow
-      verbosity: error
-      auth_key: "user1:test"
-      indices: [".kibana*", "my*"]
-      kibana_access: ro
-      kibana_index: '.kibana'
+ 
+    #######################
+    # Actual human users...
+    #######################   
+    - name: "::RO PUBLIC::"
+      groups: ["grp-TEST-lecture"]
+      indices: ["TEST-iis*"]
+      kibana:
+        access: admin
+        index: ".kibana_ro_public"
+        hide_apps: ["Security", "Entreprise Search", "Observability", "Management", "ROR Manage Kibana", "ROR Security Settings"]
+    - name: "::ADMIN::"
+      groups: ["grp-TEST-admin"]
+      indices: ["*"]
+      kibana:
+        access: admin

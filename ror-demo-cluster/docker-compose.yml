@@ -49,7 +49,7 @@ services:
       - "15601:5601"
     environment:
       ELASTIC_USER_PASSWORD: elastic
-      ES_API_URL: http://nginx:9250
+      ES_API_URL: http://es-kbn-logging-proxy:8080
     networks:
       - es-ror-network
     ulimits:
@@ -69,6 +69,16 @@ services:
     networks:
       - es-ror-network
   
+  es-kbn-logging-proxy:
+    image: mitmproxy/mitmproxy
+    command:
+      mitmdump --set validate_inbound_headers=false --mode reverse:http://nginx:9250 --verbose
+    depends_on:
+      es-ror:
+        condition: service_healthy
+    networks:
+      - es-ror-network
+
 networks:
   es-ror-network:
     driver: bridge

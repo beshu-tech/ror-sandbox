@@ -27,13 +27,13 @@ fi
 
 echo "Installing KBN ROR $ROR_VERSION..."
 /usr/share/kibana/bin/kibana-plugin install "https://api.beshu.tech/download/kbn?esVersion=$KBN_VERSION&pluginVersion=$ROR_VERSION&edition=$ROR_KBN_EDITION&email=ror-sandbox%40readonlyrest.com"
-if verlte "7.9.0" "$KBN_VERSION"; then
-  echo "Patching KBN ROR $ROR_VERSION..."
 
-  if vergte "8.15.0" "$KBN_VERSION"; then
-    /usr/share/kibana/node/glibc-217/bin/node plugins/readonlyrestkbn/ror-tools.js patch;
-    else
-    /usr/share/kibana/node/bin/node plugins/readonlyrestkbn/ror-tools.js patch;
-    fi
+if vergte "8.15.0" "$KBN_VERSION"; then
+  echo "Patching KBN ROR $ROR_VERSION..."
+  /usr/share/kibana/node/glibc-217/bin/node plugins/readonlyrestkbn/ror-tools.js patch;
+elif verlte "7.9.0" "$KBN_VERSION"; then
+  echo "Patching KBN ROR $ROR_VERSION..."
+  /usr/share/kibana/node/bin/node plugins/readonlyrestkbn/ror-tools.js patch;
 fi
+
 echo "DONE!"

@@ -15,13 +15,13 @@ fi
 
 echo "Installing KBN ROR from file..."
 /usr/share/kibana/bin/kibana-plugin install file:///tmp/ror.zip
-if verlte "7.9.0" "$KBN_VERSION"; then
-  echo "Patching KBN ROR $ROR_VERSION..."
 
-  if vergte "8.15.0" "$KBN_VERSION"; then
+if vergte "8.15.0" "$KBN_VERSION"; then
+  echo "Patching KBN ROR $ROR_VERSION..."
   /usr/share/kibana/node/glibc-217/bin/node plugins/readonlyrestkbn/ror-tools.js patch;
-  else
+elif verlte "7.9.0" "$KBN_VERSION"; then
+  echo "Patching KBN ROR $ROR_VERSION..."
   /usr/share/kibana/node/bin/node plugins/readonlyrestkbn/ror-tools.js patch;
-  fi
 fi
+
 echo "DONE!"

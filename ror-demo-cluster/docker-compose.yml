@@ -1,4 +1,3 @@
-version: "3.8"
 services:
 
   es-ror:
@@ -48,8 +47,14 @@ services:
     ports:
       - "15601:5601"
     environment:
+      ES_API_URL: https://es-ror:9200
       ELASTIC_USER_PASSWORD: elastic
-      ES_API_URL: http://es-kbn-logging-proxy:8080
+    healthcheck:
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
     networks:
       - es-ror-network
     ulimits:

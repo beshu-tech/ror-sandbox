@@ -7,13 +7,15 @@ ARG ROR_VERSION
 ARG ROR_ACTIVATION_KEY
 
 COPY conf/kibana.yml /usr/share/kibana/config/kibana.yml
+COPY conf/kibana-newplatform-customizations.yml /usr/share/kibana/config/kibana-newplatform-customizations.yml
+COPY conf/kibana-oldplatform-customizations.yml /usr/share/kibana/config/kibana-oldplatform-customizations.yml
 COPY images/kbn/install-ror-kbn-using-api.sh /tmp/install-ror.sh
 
 ENV ROR_ACTIVATION_KEY=$ROR_ACTIVATION_KEY
 
 USER root
 
-RUN /tmp/install-ror.sh
-RUN chown -R kibana:kibana /usr/share/kibana/config
+RUN /tmp/install-ror.sh && \
+    chown -R kibana:kibana /usr/share/kibana/config
 
 USER kibana

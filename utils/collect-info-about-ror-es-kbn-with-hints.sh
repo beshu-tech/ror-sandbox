@@ -52,8 +52,7 @@ read_es_version () {
       break
     fi
 
-    if [[ $AVAILABLE_ES_VERSIONS == *"$esVersion"* ]];
-    then
+    if [[ $AVAILABLE_ES_VERSIONS == *"$esVersion"* ]]; then
       export ES_VERSION=$esVersion
       break
     else
@@ -75,8 +74,7 @@ read_ror_es_version () {
       break
     fi
 
-    if [[ $AVAILABLE_ES_ROR_VERSIONS == *"$rorVersion"* ]];
-    then
+    if [[ $AVAILABLE_ES_ROR_VERSIONS == *"$rorVersion"* ]]; then
       ES_VERSIONS_ARR=($(echo "$ROR_API_RESPONSE" | jq .[0] | jq '."'$rorVersion'".esVersions.es[]' -cr))
       for i in "${ES_VERSIONS_ARR[@]}"
       do
@@ -160,8 +158,7 @@ read_kbn_version () {
       break
     fi
 
-    if [[ $AVAILABLE_KBN_VERSIONS == *"$kbnVersion"* ]];
-    then
+    if [[ $AVAILABLE_KBN_VERSIONS == *"$kbnVersion"* ]]; then
       export KBN_VERSION=$kbnVersion
       break
     else
@@ -183,8 +180,7 @@ read_ror_kbn_version () {
       break
     fi
 
-    if [[ $AVAILABLE_KBN_ROR_VERSIONS == *"$rorVersion"* ]];
-    then
+    if [[ $AVAILABLE_KBN_ROR_VERSIONS == *"$rorVersion"* ]]; then
       KBN_VERSIONS_ARR=($(echo "$ROR_API_RESPONSE" | jq .[0] | jq '."'$rorVersion'".esVersions.kbn_universal[]' -cr))
       for i in "${KBN_VERSIONS_ARR[@]}"
       do
@@ -217,10 +213,10 @@ read_kbn_ror_file_path () {
 }
 
 
-ROR_API_RESPONSE='[{"1.46.0":{"pluginVersion":"1.46.0","esVersions":{"es":["8.6.0"], "kbn_universal":["8.6.0"], "pluginVersion":"1.46.0"}}},200]'
-STATUS_CODE=$(curl -s -o /tmp/ror-api-response.txt -w "%{http_code}" https://api.beshu.tech/list_es_versions/10)
+ROR_API_RESPONSE=''
+STATUS_CODE=$(curl -s -o /tmp/ror-api-response.txt -w "%{http_code}" https://api.beshu.tech/list_es_versions/20)
 
-if [[ "$STATUS_CODE" -eq 200 ]] ; then
+if [[ "$STATUS_CODE" -eq 200 ]]; then
   ROR_API_RESPONSE=$(cat /tmp/ror-api-response.txt)
   rm /tmp/ror-api-response.txt
 fi

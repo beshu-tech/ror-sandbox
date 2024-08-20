@@ -6,9 +6,8 @@ ARG KBN_VERSION
 ARG ROR_FILE
 ARG ROR_ACTIVATION_KEY
 
-COPY conf/kibana.yml /usr/share/kibana/config/kibana.yml
-COPY conf/kibana-newplatform-customizations.yml /usr/share/kibana/config/kibana-newplatform-customizations.yml
-COPY conf/kibana-oldplatform-customizations.yml /usr/share/kibana/config/kibana-oldplatform-customizations.yml
+COPY conf/kbn/ror-newplatform-kibana.yml /usr/share/kibana/config/ror-newplatform-kibana.yml
+COPY conf/kbn/ror-oldplatform-kibana.yml /usr/share/kibana/config/ror-oldplatform-kibana.yml
 COPY images/kbn/install-ror-kbn-using-file.sh /tmp/install-ror.sh
 COPY $ROR_FILE /tmp/ror.zip
 

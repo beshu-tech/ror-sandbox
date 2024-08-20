@@ -36,11 +36,11 @@ elif verlte "7.9.0" "$KBN_VERSION"; then
   /usr/share/kibana/node/bin/node plugins/readonlyrestkbn/ror-tools.js patch;
 fi
 
-echo "Enriching kibana.yml"
 if verlte "7.9.0" "$KBN_VERSION"; then
-  cat /usr/share/kibana/config/kibana-newplatform-customizations.yml >> /usr/share/kibana/config/kibana.yml
+  mv /usr/share/kibana/config/ror-newplatform-kibana.yml /usr/share/kibana/config/kibana.yml
 else
-  cat /usr/share/kibana/config/kibana-oldplatform-customizations.yml >> /usr/share/kibana/config/kibana.yml
+  mv /usr/share/kibana/config/ror-oldplatform-kibana.yml /usr/share/kibana/config/kibana.yml
+  rm -rf /usr/share/kibana/optimize # for some reason we have to remove it and let kibana optimize it on startup
 fi
 
 echo "DONE!"

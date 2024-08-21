@@ -47,7 +47,7 @@ services:
     ports:
       - "15601:5601"
     environment:
-      ES_API_URL: https://es-ror:9200
+      ES_API_URL: http://nginx:9250 
     healthcheck:
       test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
       interval: 10s
@@ -72,6 +72,16 @@ services:
       - 9250:9250
     networks:
       - es-ror-network
+
+  # es-kbn-logging-proxy:
+  #   image: mitmproxy/mitmproxy
+  #   command:
+  #     mitmdump --set validate_inbound_headers=false --mode reverse:http://nginx:9250 --verbose
+  #   depends_on:
+  #     es-ror:
+  #       condition: service_healthy
+  #   networks:
+  #     - es-ror-network
 
 networks:
   es-ror-network:

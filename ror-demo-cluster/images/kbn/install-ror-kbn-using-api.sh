@@ -26,6 +26,9 @@ else
 fi
 
 echo "Installing KBN ROR $ROR_VERSION..."
+if verlte "7.0.0" "$KBN_VERSION"; then
+  export NODE_OPTIONS="--max-old-space-size=8192" 
+fi
 /usr/share/kibana/bin/kibana-plugin install "https://api.beshu.tech/download/kbn?esVersion=$KBN_VERSION&pluginVersion=$ROR_VERSION&edition=$ROR_KBN_EDITION&email=ror-sandbox%40readonlyrest.com"
 
 if vergte "8.15.0" "$KBN_VERSION"; then

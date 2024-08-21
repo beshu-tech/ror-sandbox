@@ -40,7 +40,6 @@ services:
         KBN_VERSION: $KBN_VERSION
         ROR_VERSION: $ROR_KBN_VERSION
         ROR_FILE: $KBN_ROR_FILE
-        ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     depends_on:
       es-ror:
         condition: service_healthy
@@ -48,6 +47,7 @@ services:
       - "15601:5601"
     environment:
       ELASTICSEARCH_HOSTS: https://es-ror:9200
+      ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     healthcheck:
       test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
       interval: 10s

@@ -1,9 +1,9 @@
-ARG ES_VERSION
+ARG ES_VERSION=please_set_es_version_arg
 
 FROM docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
 
-ARG ES_VERSION
-ARG ROR_FILE
+ARG ES_VERSION=please_set_es_version_arg
+ARG ROR_FILE=please_set_ror_file_path
 
 COPY conf/es/readonlyrest.yml /usr/share/elasticsearch/config/readonlyrest.yml
 COPY conf/es/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml

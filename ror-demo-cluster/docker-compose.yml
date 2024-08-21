@@ -48,7 +48,6 @@ services:
       - "15601:5601"
     environment:
       ELASTICSEARCH_HOSTS: https://es-ror:9200
-      XPACK_SECURITY_ENABLED: false
     healthcheck:
       test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
       interval: 10s

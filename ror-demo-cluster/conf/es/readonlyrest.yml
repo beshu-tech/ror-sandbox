@@ -18,3 +18,20 @@ readonlyrest:
       verbosity: error
       auth_key: admin:admin
       kibana_access: admin
+
+    - indices:
+        - .kibana_preprod
+        - .kibana
+      kibana_access: admin
+      kibana_index: .kibana_preprod
+      name: users.inuse.preprod.kibana
+      proxy_auth:
+        proxy_auth_config: px1
+        users:
+        - optimdata.preprod
+      verbosity: info
+
+  proxy_auth_configs:
+
+  - name: "px1"
+    user_id_header: "X-Forwarded-User"

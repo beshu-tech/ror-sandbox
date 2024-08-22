@@ -5,4 +5,18 @@ elasticsearch.username: kibana
 elasticsearch.password: kibana
 elasticsearch.ssl.verificationMode: none
 
+
+xpack.monitoring.ui.container.elasticsearch.enabled: true
+readonlyrest_kbn.proxy_auth_passthrough: true
+elasticsearch.requestTimeout: 90000
 xpack.security.enabled: false
+xpack.monitoring.enabled: false
+xpack.xpack_main.telemetry.enabled: false
+xpack.spaces.enabled: false
+# server.defaultRoute: /app/kibana#/dashboards
+readonlyrest_kbn.cookiePass: abcd1234567890abcd1234567890abcd1234567890abcd1234567890
+readonlyrest_kbn.session_timeout_minutes: 180
+elasticsearch.requestHeadersWhitelist: [authorization, X-Forwarded-manufacturer, X-Forwarded-lang, X-Forwarded-query-lang]
+logging.quiet: true
+# readonlyrest_kbn.login_html_head_inject: "<style>body{background:url(/errorpages/kibana.png) center top no-repeat}.login{display: none}.ror-logolink{display: none}.ror-footer{display: none}</style>"
+readonlyrest_kbn.logLevel: debug

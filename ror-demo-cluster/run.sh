@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if ! command -v docker-compose > /dev/null; then
+if ! command -v docker compose > /dev/null; then
   echo "The script require docker-compose to be installed on your machine."
   exit 1
 fi
@@ -20,8 +20,8 @@ source ../utils/collect-info-about-ror-es-kbn.sh
 
 echo "Starting Elasticsearch and Kibana with installed ROR plugins ..."
 
-docker-compose up -d --build --remove-orphans --force-recreate
-docker-compose logs -f > ror-cluster.log 2>&1 &
+docker compose up -d --build --remove-orphans --force-recreate
+docker compose logs -f > ror-cluster.log 2>&1 &
 
 echo -e "
 ***********************************************************************

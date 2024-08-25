@@ -42,7 +42,7 @@ services:
     ports:
       - "25601:5601"
     environment:
-      ES_API_URL: http://es-xpack:9200
+      ES_API_URL: htt://es-xpack:9200
     networks:
       - es-xpack-network
     ulimits:
@@ -50,6 +50,76 @@ services:
         soft: -1
         hard: -1
 
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.14.3
+    command: >
+     apm-server -e
+       -E apm-server.rum.enabled=true
+       -E setup.kibana.host=kbn-xpack:5601
+       -E setup.template.settings.index.number_of_replicas=0
+       -E apm-server.kibana.enabled=true
+       -E apm-server.kibana.host=kbn-xpack:5601
+       -E output.elasticsearch.hosts=["es-xpack:9200"]
+       -E output.elasticsearch.username=elastic
+       -E output.elasticsearch.password=elastic
+    depends_on:
+     - es-xpack
+     - kbn-xpack
+    networks:
+      - es-xpack-network
+
+  # fleet:
+  #   image: docker.elastic.co/beats/elastic-agent:8.14.3
+  #   # volumes:
+  #   #   - certs:/certs:z
+  #   #   - fleetserverdata:/usr/share/elastic-agent
+  #   # ports:
+  #   #   - ${FLEET_PORT}:8220
+  #   restart: always
+  #   user: root
+  #   environment:
+  #     - FLEET_SERVER_ENABLE=true
+  #     - FLEET_SERVER_ELASTICSEARCH_HOST=http://es-xpack:9200
+  #     - FLEET_SERVER_SERVICE_TOKEN=AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuMTpjMXlFNDhWUlFPZUxyRi1GSWFaa3JB
+  #     - ELASTICSEARCH_USERNAME=elastic
+  #     - ELASTICSEARCH_PASSWORD=elastic
+  #     - ELASTICSEARCH_HOSTS=http://es-xpack:9200
+  #     # - FLEET_ENROLL=1
+  #     # - FLEET_SERVER_POLICY_ID=fleet-server-policy
+  #     # - FLEET_SERVER_ENABLE=1
+  #     # - KIBANA_FLEET_SETUP=1
+  #     # - KIBANA_HOST=http://kbn-xpack:5601
+  #     # - FLEET_URL=https://fleet:8220
+  #     # - FLEET_SERVER_ELASTICSEARCH_HOST=http://es-ppac:9200
+  #     # - FLEET_CA=/certs/ca/ca.crt
+  #     # - KIBANA_FLEET_USERNAME=elastic
+  #     # - KIBANA_FLEET_PASSWORD=elastic
+  #     # - FLEET_SERVER_CERT=/certs/fleet-server/fleet-server.crt
+  #     # - FLEET_SERVER_CERT_KEY=/certs/fleet-server/fleet-server.key
+  #     # - FLEET_SERVER_ELASTICSEARCH_CA=/certs/ca/ca.crt
+  #     # - KIBANA_FLEET_CA=/certs/ca/ca.crt
+  #   # build:
+  #   #   context: .
+  #   #   dockerfile: images/ubuntu/Dockerfile
+  #   # command: tail -f /dev/null
+  #   # expose:
+  #   #   - 8220
+  #   # depends_on:
+  #   #   - es-xpack
+  #   #   - kbn-xpack
+  #   networks:
+  #     - es-xpack-network
+
+# curl -s -u elastic:elastic "http://localhost:29200/_security/service/elastic/fleet-server/credential/token/token1" -XPOST | jq -r .token.value
+
+  server1:
+    build:
+      context: .
+      dockerfile: images/ubuntu/Dockerfile
+    command: tail -f /dev/null
+    networks:
+      - es-xpack-network
+  
 networks:
   es-xpack-network:
     driver: bridge

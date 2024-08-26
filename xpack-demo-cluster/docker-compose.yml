@@ -42,7 +42,7 @@ services:
     ports:
       - "25601:5601"
     environment:
-      ES_API_URL: htt://es-xpack:9200
+      ES_API_URL: http://es-xpack:9200
     networks:
       - es-xpack-network
     ulimits:
@@ -116,7 +116,9 @@ services:
     build:
       context: .
       dockerfile: images/ubuntu/Dockerfile
-    command: tail -f /dev/null
+    command: node /example-app/app.js
+    expose: 
+     - 3000
     networks:
       - es-xpack-network
   

@@ -57,6 +57,34 @@ services:
         soft: -1
         hard: -1
 
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.14.3
+    command: >
+     apm-server -e
+       -E apm-server.rum.enabled=true
+       -E setup.kibana.host=kbn-ror:5601
+       -E setup.template.settings.index.number_of_replicas=0
+       -E apm-server.kibana.enabled=true
+       -E apm-server.kibana.host=kbn-ror:5601
+       -E output.elasticsearch.hosts=["es-ror:9200"]
+       -E output.elasticsearch.username=kibana
+       -E output.elasticsearch.password=kibana
+    depends_on:
+     - es-ror
+     - kbn-ror
+    networks:
+      - es-ror-network
+
+  server1:
+    build:
+      context: .
+      dockerfile: images/ubuntu/Dockerfile
+    command: node /example-app/app.js
+    expose: 
+     - 3000
+    networks:
+      - es-ror-network
+
 networks:
   es-ror-network:
     driver: bridge

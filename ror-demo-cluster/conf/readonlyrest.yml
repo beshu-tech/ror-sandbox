@@ -5,7 +5,7 @@ readonlyrest:
     - name: "KIBANA"
       type: allow
       auth_key: kibana:kibana
-      verbosity: error
+      # verbosity: error
 
     - name: "ADMIN"
       type: allow

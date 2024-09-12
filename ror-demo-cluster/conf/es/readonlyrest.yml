@@ -18,3 +18,30 @@ readonlyrest:
       verbosity: error
       auth_key: admin:admin
       kibana_access: admin
+
+    - name: "TEST"
+      ldap_authentication:
+        name: "ldap2"
+      ldap_authorization:
+        name: "ldap2"
+        groups_and: ["*"]
+
+  ldaps:
+
+    - name: ldap2
+      host: ldap
+      port: 389
+      ssl_enabled: false                                        # default true
+      ssl_trust_all_certs: true                                 # default false
+      bind_dn: "cn=admin,dc=example,dc=com"                     # skip for anonymous bind
+      bind_password: "password"                                 # skip for anonymous bind
+      connection_pool_size: 10                                  # default 30
+      connection_timeout: 10s                                   # default 1
+      request_timeout: 10s                                      # default 1
+      cache_ttl: 60s                                            # default 0 - cache disabled
+      search_user_base_DN: "dc=example,dc=com"
+      search_groups_base_DN: "dc=example,dc=com"
+      user_id_attribute: "uid"                              
+      unique_member_attribute: "uniqueMember"                             
+      group_search_filter: "(cn=*)"                                 
+      group_name_attribute: "cn"  

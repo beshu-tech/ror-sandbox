@@ -45,3 +45,4 @@ readonlyrest:
       unique_member_attribute: "uniqueMember"                             
       group_search_filter: "(cn=*)"                                 
       group_name_attribute: "cn"  
+      nested_groups_depth: 3

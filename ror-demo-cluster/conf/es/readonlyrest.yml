@@ -1,5 +1,7 @@
 readonlyrest:
 
+  enable: false
+
   ssl:
     enable: true
     keystore_file: "ror-keystore.jks"
@@ -15,6 +17,4 @@ readonlyrest:
 
     - name: "ADMIN"
       type: allow
-      verbosity: error
       auth_key: admin:admin
-      kibana_access: admin

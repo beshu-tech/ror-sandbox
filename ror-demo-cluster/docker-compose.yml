@@ -32,35 +32,6 @@ services:
         soft: -1
         hard: -1
 
-  kbn-ror:
-    build:
-      context: .
-      dockerfile: images/kbn/${KBN_DOCKERFILE}
-      args:
-        KBN_VERSION: $KBN_VERSION
-        ROR_VERSION: $ROR_KBN_VERSION
-        ROR_FILE: $KBN_ROR_FILE
-    depends_on:
-      es-ror:
-        condition: service_healthy
-    ports:
-      - "15601:5601"
-    environment:
-      ELASTICSEARCH_HOSTS: https://es-ror:9200
-      ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
-    healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
-      interval: 10s
-      timeout: 10s
-      retries: 30
-      start_period: 60s
-    networks:
-      - es-ror-network
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-
 networks:
   es-ror-network:
     driver: bridge

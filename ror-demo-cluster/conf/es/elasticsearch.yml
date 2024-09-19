@@ -5,3 +5,4 @@ network.host: 0.0.0.0
 xpack.security.enabled: false
 
 http.type: ssl_netty4
+path.repo: /tmp

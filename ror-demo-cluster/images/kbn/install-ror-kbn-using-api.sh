@@ -24,12 +24,18 @@ if verlte "1.43.0" "$ROR_VERSION" && verlte "7.9.0" "$KBN_VERSION"; then
 else
   ROR_KBN_EDITION="kbn_free"
 fi
+ROR_DOWNLOAD_URL="https://api.beshu.tech/download/kbn?esVersion=$KBN_VERSION&pluginVersion=$ROR_VERSION&edition=$ROR_KBN_EDITION&email=ror-sandbox%40readonlyrest.com"
 
 echo "Installing KBN ROR $ROR_VERSION..."
 if verlte "7.0.0" "$KBN_VERSION"; then
   export NODE_OPTIONS="--max-old-space-size=8192" 
 fi
-/usr/share/kibana/bin/kibana-plugin install "https://api.beshu.tech/download/kbn?esVersion=$KBN_VERSION&pluginVersion=$ROR_VERSION&edition=$ROR_KBN_EDITION&email=ror-sandbox%40readonlyrest.com"
+
+if verlte "7.11.0" "$KBN_VERSION"; then
+  /usr/share/kibana/bin/kibana-plugin install "$ROR_DOWNLOAD_URL"
+else 
+  /usr/share/kibana/bin/kibana-plugin install --allow-root "$ROR_DOWNLOAD_URL"
+fi
 
 if vergte "8.15.0" "$KBN_VERSION"; then
   echo "Patching KBN ROR $ROR_VERSION..."
@@ -47,3 +53,4 @@ else
 fi
 
 echo "DONE!"
+

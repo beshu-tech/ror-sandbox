@@ -41,4 +41,4 @@ echo -e "
 ***********************************************************************
 "
 
-echo -e "You can access ROR KBN here: http://localhost:15601 (regular user: 'user1:test' or admin user: 'admin:admin')"
+echo -e "You can access ROR KBN here: https://localhost:15601 (regular user: 'user1:test' or admin user: 'admin:admin')"

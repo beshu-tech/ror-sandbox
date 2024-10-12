@@ -70,6 +70,10 @@ services:
         condition: service_healthy
       kbn-ror:
         condition: service_healthy
+    environment:
+      ELASTICSEARCH_ADDRESS: https://es-ror:9200
+      ELASTICSEARCH_USER: kibana
+      ELASTICSEARCH_PASSWORD: kibana
     healthcheck:
       test: "test -f /tmp/init_done || exit 1"
       interval: 10s
@@ -78,6 +82,8 @@ services:
       start_period: 60s
     volumes:
       - ./init-scripts:/scripts 
+    networks:
+      - es-ror-network
 
 networks:
   es-ror-network:

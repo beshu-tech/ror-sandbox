@@ -32,6 +32,7 @@ And the *Custom Start Command*:
 ```
 cd coolify-demo && docker compose up --no-build -d
 ```
+- please also check ☑️ "Preserve Repository During Deployment" option
 
 7. Save the changes and hit the ▶️ Deploy button
 

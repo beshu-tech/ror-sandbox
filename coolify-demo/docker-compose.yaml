@@ -81,7 +81,7 @@ services:
       start_period: 60s
     volumes:
       - type: bind
-        source: ./ror-demo-cluster/init-scripts
+        source: ../ror-demo-cluster/init-scripts
         target: /scripts
         # noinspection ComposeUnknownKeys
         is_directory: true  # Coolify-specific

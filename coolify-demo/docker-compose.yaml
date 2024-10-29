@@ -80,8 +80,4 @@ services:
       retries: 30
       start_period: 60s
     volumes:
-      - type: bind
-        source: ../ror-demo-cluster/init-scripts
-        target: /scripts
-        # noinspection ComposeUnknownKeys
-        is_directory: true  # Coolify-specific
+      - ../ror-demo-cluster/init-scripts:/scripts:ro

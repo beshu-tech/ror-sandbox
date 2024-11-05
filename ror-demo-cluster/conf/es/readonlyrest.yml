@@ -14,49 +14,27 @@ readonlyrest:
       type: allow
       auth_key: kibana:kibana
       verbosity: error
+    
+    - name: "ADMIN"
+      type: allow
+      auth_key: admin:admin
+      verbosity: error
 
-    - name: "Admins"
-      groups: [Administrators]
-      kibana:
-        access: admin
-
-    - name: "End users"
-      groups: ["EndUsers"]
-      indices: ["frontend_logs", "kibana_sample_data_*"]
-      kibana:
-        index: .kibana_end_@{user}
-        access: rw
-        hide_apps: ["Security", "Observability"]
-
-    - name: "Business users"
-      groups: ["BusinessUsers"]
-      indices: ["business_logs", "kibana_sample_data_*"]
-      kibana:
-        index: .kibana_business_@{user}
-        access: rw
-        hide_apps: ["Security", "Observability"]
+    - name: "Allow group snapshot restore"
+      groups: [snapshot_restore]
+      actions:
+        - cluster:admin/repository/*
+        - cluster:admin/snapshot/*
+        - cluster:admin/slm/*
+        - cluster:manage_slm/*
+        - cluster:monitor/*
+        - indices:monitor/*
+        - indices:admin/settings/*
+        - indices:admin/open
+        - indices:admin/close
+        - indices:admin/get
 
   users:
-    - username: admin
-      auth_key: admin:admin
-      groups:
-        - id: "Administrators"
-          name: "Administrators"
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
-
     - username: user1
       auth_key: user1:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
-
-    - username: user2
-      auth_key: user2:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
+      groups: [ "snapshot_restore" ]

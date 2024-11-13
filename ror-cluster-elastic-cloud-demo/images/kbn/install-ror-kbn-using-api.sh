@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-function verlte() {
-  [ "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+function greater_than_or_equal() {
+  [ "$1" = "$(echo -e "$1\n$2" | sort -V | tail -n 1)" ];
 }
 
 if [[ -z "$KBN_VERSION" ]]; then
@@ -15,7 +15,7 @@ if [[ -z "$ROR_VERSION" ]]; then
 fi
 
 ROR_KBN_EDITION=""
-if verlte "1.43.0" "$ROR_VERSION"; then
+if greater_than_or_equal "$ROR_VERSION" "1.43.0"; then
   ROR_KBN_EDITION="kbn_universal"
 else
   ROR_KBN_EDITION="kbn_free"

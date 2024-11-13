@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-function verlte() {
-  [ "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+function greater_than_or_equal() {
+  [ "$1" = "$(echo -e "$1\n$2" | sort -V | tail -n 1)" ];
 }
 
 if [[ -z "$ES_VERSION" ]]; then
@@ -11,8 +11,12 @@ fi
 
 echo "Installing ES ROR from file..."
 /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch file:///tmp/ror.zip
-if verlte "8.0.0" "$ES_VERSION"; then
-  echo "Patching ES ROR..."
+
+echo "Patching ES ROR $ROR_VERSION..."
+if greater_than_or_equal "$ES_VERSION" "7.0.0"; then
   /usr/share/elasticsearch/jdk/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch
+elif greater_than_or_equal "$ES_VERSION" "6.7.0"; then
+  "$JAVA_HOME"/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch
 fi
+
 echo "DONE!"

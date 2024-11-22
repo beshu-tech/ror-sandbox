@@ -226,5 +226,6 @@ fi
 echo "-----------------"
 determine_ror_es_dockerfile "$ROR_API_RESPONSE"
 echo "-----------------"
+source .env
 determine_ror_kbn_dockerfile "$ROR_API_RESPONSE" "$ES_VERSION"
 echo "-----------------"

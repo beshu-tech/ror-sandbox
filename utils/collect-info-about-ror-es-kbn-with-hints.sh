@@ -17,7 +17,7 @@ Your choice: " choice
 
     case "$choice" in
       1 )
-        "ES_DOCKERFILE=Dockerfile-use-ror-binaries-from-api" >> .env
+        echo "ES_DOCKERFILE=Dockerfile-use-ror-binaries-from-api" >> .env
 
         ES_ROR_VERSIONS_ARR=($(echo "$ROR_API_RESPONSE" | jq .[0] | jq 'to_entries | map(.value)' | jq .[].pluginVersion -cr))
         DEFAULT_ES_ROR_VERSION=$(echo ${ES_ROR_VERSIONS_ARR[0]})

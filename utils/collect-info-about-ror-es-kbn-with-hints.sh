@@ -212,8 +212,7 @@ read_kbn_ror_file_path () {
 
 
 ROR_API_RESPONSE=''
-# STATUS_CODE=$(curl -s --max-time 1 -o /tmp/ror-api-response.txt -w "%{http_code}" https://api.beshu.tech/list_es_versions/20)
-STATUS_CODE=$(exit 28)
+STATUS_CODE=$(curl -s --max-time 1 -o /tmp/ror-api-response.txt -w "%{http_code}" https://api.beshu.tech/list_es_versions/20)
 
 if [[ "$STATUS_CODE" -eq 200 ]]; then
   ROR_API_RESPONSE=$(cat /tmp/ror-api-response.txt)

@@ -10,6 +10,7 @@ readonlyrest:
     outputs: [index]
 
   access_control_rules:
+
     - name: "KIBANA"
       type: allow
       auth_key: kibana:kibana

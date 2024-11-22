@@ -123,7 +123,7 @@ Your choice: " choice
 
     case "$choice" in
       1 )
-        "KBN_DOCKERFILE=Dockerfile-use-ror-binaries-from-api" >> .env
+        echo "KBN_DOCKERFILE=Dockerfile-use-ror-binaries-from-api" >> .env
 
         KBN_ROR_VERSIONS_ARR=($(echo "$ROR_API_RESPONSE" | jq .[0] | jq 'to_entries | map(.value)' | jq .[].pluginVersion -cr))
         DEFAULT_KBN_ROR_VERSION=$(echo ${KBN_ROR_VERSIONS_ARR[0]})

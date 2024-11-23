@@ -26,7 +26,7 @@ echo -e "
                                          __/ |
 "
 
-source ../utils/collect-info-about-ror-es-kbn.sh
+./../utils/collect-info-about-ror-es-kbn.sh
 
 echo "Starting Elasticsearch and Kibana with installed ROR plugins ..."
 

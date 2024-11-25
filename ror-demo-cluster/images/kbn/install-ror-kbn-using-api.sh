@@ -29,8 +29,10 @@ fi
 
 if greater_than_or_equal "$KBN_VERSION" "7.11.0" ; then
   /usr/share/kibana/bin/kibana-plugin install "$ROR_DOWNLOAD_URL"
-else
+elif greater_than_or_equal "$KBN_VERSION" "7.2.0" ; then
   /usr/share/kibana/bin/kibana-plugin install --allow-root "$ROR_DOWNLOAD_URL" 
+else
+  /usr/share/kibana/bin/kibana-plugin install "$ROR_DOWNLOAD_URL"
 fi
 
 if greater_than_or_equal "$KBN_VERSION" "8.15.0" ; then

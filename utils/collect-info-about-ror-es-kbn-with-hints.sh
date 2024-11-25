@@ -11,13 +11,18 @@ determine_ror_es_dockerfile () {
   source .env
 
   PICKED_ES_VERSION=$ES_VERSION
+  DEFAULT_CHOICE=1
 
   while true; do
-    read -p "Use ES ROR:
+    read -p "Use ES ROR (default $DEFAULT_CHOICE):
 1. From API
 2. From FILE
 
 Your choice: " choice
+
+    if [ -z "$choice" ]; then
+      choice=$DEFAULT_CHOICE
+    fi
 
     case "$choice" in
       1 )
@@ -121,13 +126,18 @@ determine_ror_kbn_dockerfile () {
   read_kbn_version "$DEFAULT_KBN_VERSION" "$KBN_VERSIONS_STR"
   source .env
   PICKED_KBN_VERSION=$KBN_VERSION
+  DEFAULT_CHOICE=1
 
   while true; do
-    read -p "Use KBN ROR:
+    read -p "Use KBN ROR (default $DEFAULT_CHOICE):
  1. From API
  2. From FILE
 
 Your choice: " choice
+
+    if [ -z "$choice" ]; then
+      choice=$DEFAULT_CHOICE
+    fi
 
     case "$choice" in
       1 )

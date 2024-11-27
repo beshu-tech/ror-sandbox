@@ -10,7 +10,7 @@ read_es_version () {
       continue
     fi
 
-    export ES_VERSION=$esVersion
+    echo "ES_VERSION=$esVersion" >> .env
     break
   done
 }
@@ -23,11 +23,12 @@ read_kbn_version () {
       continue
     fi
 
-    export KBN_VERSION=$kbnVersion
+    echo "KBN_VERSION=$kbnVersion" >> .env
     break
   done
 }
 
+> .env
 echo "-----------------"
 read_es_version
 echo "-----------------"

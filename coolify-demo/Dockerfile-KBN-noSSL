@@ -1,0 +1,30 @@
+ARG KBN_VERSION=8.14.3
+FROM docker.elastic.co/kibana/kibana:${KBN_VERSION}
+
+ARG KBN_VERSION
+ARG ROR_VERSION=1.60.0
+
+WORKDIR .
+
+USER root
+RUN apt-get update && apt-get install -y bash sed && rm -rf /var/lib/apt/lists/*
+
+COPY ./ror-demo-cluster /ror-demo-cluster
+WORKDIR /ror-demo-cluster
+
+# disabling SSL in Kibana config
+RUN sed -i 's/server.ssl.enabled: true/server.ssl.enabled: false/' conf/kbn/ror-newplatform-kibana.yml
+RUN sed -i 's/server.ssl.enabled: true/server.ssl.enabled: false/' conf/kbn/ror-oldplatform-kibana.yml
+
+RUN cp ./conf/kbn/ror-newplatform-kibana.yml /usr/share/kibana/config/ && \
+    cp ./conf/kbn/ror-oldplatform-kibana.yml /usr/share/kibana/config/ && \
+    # at least .key is required even without SSL enabled ssl_config will be run @ startup
+    cp ./conf/kbn/kibana.crt /usr/share/kibana/config/ && \
+    cp ./conf/kbn/kibana.key /usr/share/kibana/config/ && \
+    cp ./images/kbn/install-ror-kbn-using-api.sh /tmp/install-ror.sh
+
+WORKDIR /usr/share/kibana
+RUN /tmp/install-ror.sh && \
+    chown -R kibana:kibana /usr/share/kibana/config
+
+USER kibana

@@ -20,7 +20,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
     healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:9200/_cluster/health" ]
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:9200/_cluster/health" ]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -46,7 +46,7 @@ services:
     ports:
       - "15601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: https://es-ror:9200
+      ELASTICSEARCH_HOSTS: http://es-ror:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     healthcheck:
       test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
@@ -71,7 +71,7 @@ services:
       kbn-ror:
         condition: service_healthy
     environment:
-      ELASTICSEARCH_ADDRESS: https://es-ror:9200
+      ELASTICSEARCH_ADDRESS: http://es-ror:9200
       ELASTICSEARCH_USER: kibana
       ELASTICSEARCH_PASSWORD: kibana
     healthcheck:
@@ -97,6 +97,8 @@ services:
        -E output.elasticsearch.hosts=["es-ror:9200"]
        -E output.elasticsearch.username=kibana
        -E output.elasticsearch.password=kibana
+       -E output.elasticsearch.ssl.verification_mode=none
+       -E logging.level=debug
     depends_on:
      - es-ror
      - kbn-ror

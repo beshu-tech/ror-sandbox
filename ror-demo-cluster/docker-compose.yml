@@ -95,8 +95,8 @@ services:
        -E apm-server.kibana.enabled=true
        -E apm-server.kibana.host=kbn-ror:5601
        -E output.elasticsearch.hosts=["es-ror:9200"]
-       -E output.elasticsearch.username=kibana
-       -E output.elasticsearch.password=kibana
+       -E output.elasticsearch.username=apm
+       -E output.elasticsearch.password=test
        -E output.elasticsearch.ssl.verification_mode=none
        -E logging.level=debug
     depends_on:
@@ -112,6 +112,8 @@ services:
     command: node /example-app/app.js
     expose:
      - 3000
+    ports:
+     - "3000:3000"
     networks:
       - es-ror-network
 

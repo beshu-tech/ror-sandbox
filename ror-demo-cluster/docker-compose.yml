@@ -117,6 +117,18 @@ services:
     networks:
       - es-ror-network
 
+  fleet-server:
+    build:
+      context: .
+      dockerfile: images/fleetserver/Dockerfile
+    command: sleep infinity
+    expose:
+     - 8220
+    ports:
+     - "8220:8220"
+    networks:
+      - es-ror-network
+
 networks:
   es-ror-network:
     driver: bridge

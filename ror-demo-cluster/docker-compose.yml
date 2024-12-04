@@ -19,14 +19,16 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+    volumes:
+      - ./certs:/usr/share/elasticsearch/config/certs:z
     healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:9200/_cluster/health" ]
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:9200/_cluster/health" ]
       interval: 10s
       timeout: 10s
       retries: 30
       start_period: 60s
     networks:
-      - es-ror-network
+      - ror-network
     ulimits:
       memlock:
         soft: -1
@@ -46,46 +48,24 @@ services:
     ports:
       - "15601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: http://es-ror:9200
+      ELASTICSEARCH_HOSTS: https://es-ror:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+    volumes:
+      - ./certs:/usr/share/kibana/config/certs:z
     healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:5601/api/features" ]
       interval: 10s
       timeout: 10s
       retries: 30
       start_period: 60s
     networks:
-      - es-ror-network
+      - ror-network
     ulimits:
       memlock:
         soft: -1
         hard: -1
 
-  initializer:
-    build:
-      context: .
-      dockerfile: images/cluster-initializer/Dockerfile
-    depends_on:
-      es-ror:
-        condition: service_healthy
-      kbn-ror:
-        condition: service_healthy
-    environment:
-      ELASTICSEARCH_ADDRESS: http://es-ror:9200
-      ELASTICSEARCH_USER: kibana
-      ELASTICSEARCH_PASSWORD: kibana
-    healthcheck:
-      test: "test -f /tmp/init_done || exit 1"
-      interval: 10s
-      timeout: 10s
-      retries: 30
-      start_period: 60s
-    volumes:
-      - ./init-scripts:/scripts
-    networks:
-      - es-ror-network
-
-  apm-server:
+  apm-agent:
     image: docker.elastic.co/apm/apm-server:8.14.3
     command: >
      apm-server -e
@@ -103,9 +83,9 @@ services:
      - es-ror
      - kbn-ror
     networks:
-      - es-ror-network
+      - ror-network
 
-  server1:
+  app1:
     build:
       context: .
       dockerfile: images/ubuntu/Dockerfile
@@ -115,7 +95,7 @@ services:
     ports:
      - "3000:3000"
     networks:
-      - es-ror-network
+      - ror-network
 
 networks:
   es-ror-network:

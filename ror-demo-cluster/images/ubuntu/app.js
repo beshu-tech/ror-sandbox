@@ -1,11 +1,9 @@
 // Import and start the Elastic APM agent at the very top of your application
 var apm = require('elastic-apm-node').start({
-    // Set custom APM Server URL (default: http://localhost:8200)
-    serverUrl: 'http://apm-server:8200',
-    
-    // Set service name, environment, and other configurations
-    serviceName: 'elastic-apm-example',
-    environment: 'development'
+    serverUrl: 'https://apm-server:8200',
+    serviceName: 'app1',
+    environment: 'development',
+    serverCaCertFile: '/example-app/certs/ca.crt'
   });
   
   const express = require('express');

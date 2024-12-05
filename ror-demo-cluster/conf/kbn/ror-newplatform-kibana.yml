@@ -3,13 +3,13 @@ server.host: 0.0.0.0
 
 elasticsearch.username: kibana
 elasticsearch.password: kibana
-elasticsearch.ssl.certificateAuthorities: config/certs/ca.crt
+elasticsearch.ssl.certificateAuthorities: /usr/share/kibana/config/certs/ca.crt
 # elasticsearch.ssl.verificationMode: none
 
 server.ssl.enabled: true
-server.ssl.certificate: config/certs/kibana.crt
-server.ssl.key: config/certs/kibana.key
-serverl.ssl.certificateAuthorities: config/certs/ca.crt
+server.ssl.certificate: /usr/share/kibana/config/certs/ror-kbn.crt
+server.ssl.key: /usr/share/kibana/config/certs/ror-kbn.key
+server.ssl.certificateAuthorities: /usr/share/kibana/config/certs/ca.crt
 #server.ssl.redirectHttpFromPort: 80
 
 readonlyrest_kbn.logLevel: trace

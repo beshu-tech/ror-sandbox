@@ -1,6 +1,6 @@
 services:
 
-  es-ror:
+  ror-es:
     build:
       context: .
       dockerfile: images/es/${ES_DOCKERFILE:-ES_DOCKERFILE_NOT_CONFIGURED}
@@ -14,25 +14,27 @@ services:
       - "5000:5000"
     environment:
       - cluster.name=ror-es-cluster
-      - node.name=es-ror-single
+      - node.name=ror-es-single
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+    volumes:
+      - ./certs:/usr/share/elasticsearch/config/certs:z
     healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:9200/_cluster/health" ]
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:9200/_cluster/health" ]
       interval: 10s
       timeout: 10s
       retries: 30
       start_period: 60s
     networks:
-      - es-ror-network
+      - ror-network
     ulimits:
       memlock:
         soft: -1
         hard: -1
 
-  kbn-ror:
+  ror-kbn:
     build:
       context: .
       dockerfile: images/kbn/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
@@ -41,82 +43,72 @@ services:
         ROR_VERSION: ${ROR_KBN_VERSION:-ROR_KBN_VERSION_NOT_CONFIGURED}
         ROR_FILE: ${KBN_ROR_FILE:-KBN_ROR_FILE_NOT_CONFIGURED}
     depends_on:
-      es-ror:
+      ror-es:
         condition: service_healthy
     ports:
       - "15601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: http://es-ror:9200
+      ELASTICSEARCH_HOSTS: https://ror-es:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+    volumes:
+      - ./certs:/usr/share/kibana/config/certs:z
     healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:5601/api/features" ]
       interval: 10s
       timeout: 10s
       retries: 30
       start_period: 60s
     networks:
-      - es-ror-network
+      - ror-network
     ulimits:
       memlock:
         soft: -1
         hard: -1
-
-  initializer:
-    build:
-      context: .
-      dockerfile: images/cluster-initializer/Dockerfile
-    depends_on:
-      es-ror:
-        condition: service_healthy
-      kbn-ror:
-        condition: service_healthy
-    environment:
-      ELASTICSEARCH_ADDRESS: http://es-ror:9200
-      ELASTICSEARCH_USER: kibana
-      ELASTICSEARCH_PASSWORD: kibana
-    healthcheck:
-      test: "test -f /tmp/init_done || exit 1"
-      interval: 10s
-      timeout: 10s
-      retries: 30
-      start_period: 60s
-    volumes:
-      - ./init-scripts:/scripts
-    networks:
-      - es-ror-network
 
   apm-server:
     image: docker.elastic.co/apm/apm-server:8.14.3
     command: >
      apm-server -e
        -E apm-server.rum.enabled=true
-       -E setup.kibana.host=kbn-ror:5601
-       -E setup.template.settings.index.number_of_replicas=0
-       -E apm-server.kibana.enabled=true
-       -E apm-server.kibana.host=kbn-ror:5601
-       -E output.elasticsearch.hosts=["es-ror:9200"]
+       -E apm-server.kibana.enabled=false
+       -E apm-server.ssl.enabled=true
+       -E apm-server.ssl.certificate=/usr/share/apm-server/config/certs/apm-server.crt
+       -E apm-server.ssl.key=/usr/share/apm-server/config/certs/apm-server.key
+       -E apm-server.ssl.certificate_authorities=/usr/share/apm-server/config/certs/ca.crt
+       -E apm-server.ssl.client_authentication=none
+       -E output.elasticsearch.hosts=["https://ror-es:9200"]
        -E output.elasticsearch.username=apm
        -E output.elasticsearch.password=test
-       -E output.elasticsearch.ssl.verification_mode=none
+       -E output.elasticsearch.ssl.enabled=true
+       -E output.elasticsearch.ssl.verification_mode=full
+       -E output.elasticsearch.ssl.certificate_authorities=/usr/share/apm-server/config/certs/ca.crt
        -E logging.level=debug
+    ports:
+     - "8200:8200"
+    volumes:
+      - ./certs:/usr/share/apm-server/config/certs:z
     depends_on:
-     - es-ror
-     - kbn-ror
+     - ror-es
+     - ror-kbn
     networks:
-      - es-ror-network
+      - ror-network
 
-  server1:
+  app1:
     build:
       context: .
       dockerfile: images/ubuntu/Dockerfile
     command: node /example-app/app.js
+    depends_on:
+     - apm-server
     expose:
      - 3000
     ports:
      - "3000:3000"
+    volumes:
+      - ./certs:/example-app/certs:z
     networks:
-      - es-ror-network
+      - ror-network
 
 networks:
-  es-ror-network:
+  ror-network:
     driver: bridge

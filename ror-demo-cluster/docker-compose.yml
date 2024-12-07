@@ -65,49 +65,49 @@ services:
         soft: -1
         hard: -1
 
-  apm-server:
-    image: docker.elastic.co/apm/apm-server:8.14.3
-    command: >
-     apm-server -e
-       -E apm-server.rum.enabled=true
-       -E apm-server.kibana.enabled=false
-       -E apm-server.ssl.enabled=true
-       -E apm-server.ssl.certificate=/usr/share/apm-server/config/certs/apm-server.crt
-       -E apm-server.ssl.key=/usr/share/apm-server/config/certs/apm-server.key
-       -E apm-server.ssl.certificate_authorities=/usr/share/apm-server/config/certs/ca.crt
-       -E apm-server.ssl.client_authentication=none
-       -E output.elasticsearch.hosts=["https://ror-es:9200"]
-       -E output.elasticsearch.username=apm
-       -E output.elasticsearch.password=test
-       -E output.elasticsearch.ssl.enabled=true
-       -E output.elasticsearch.ssl.verification_mode=full
-       -E output.elasticsearch.ssl.certificate_authorities=/usr/share/apm-server/config/certs/ca.crt
-       -E logging.level=debug
-    ports:
-     - "8200:8200"
-    volumes:
-      - ./certs:/usr/share/apm-server/config/certs:z
-    depends_on:
-     - ror-es
-     - ror-kbn
-    networks:
-      - ror-network
+#  apm-server:
+#    image: docker.elastic.co/apm/apm-server:7.17.25
+#    command: >
+#     apm-server -e
+#       -E apm-server.rum.enabled=true
+#       -E apm-server.kibana.enabled=false
+#       -E apm-server.ssl.enabled=true
+#       -E apm-server.ssl.certificate=/usr/share/apm-server/config/certs/apm-server.crt
+#       -E apm-server.ssl.key=/usr/share/apm-server/config/certs/apm-server.key
+#       -E apm-server.ssl.certificate_authorities=/usr/share/apm-server/config/certs/ca.crt
+#       -E apm-server.ssl.client_authentication=none
+#       -E output.elasticsearch.hosts=["https://ror-es:9200"]
+#       -E output.elasticsearch.username=apm
+#       -E output.elasticsearch.password=test
+#       -E output.elasticsearch.ssl.enabled=true
+#       -E output.elasticsearch.ssl.verification_mode=full
+#       -E output.elasticsearch.ssl.certificate_authorities=/usr/share/apm-server/config/certs/ca.crt
+#       -E logging.level=debug
+#    ports:
+#     - "8200:8200"
+#    volumes:
+#      - ./certs:/usr/share/apm-server/config/certs:z
+#    depends_on:
+#     - ror-es
+#     - ror-kbn
+#    networks:
+#      - ror-network
 
-  app1:
-    build:
-      context: .
-      dockerfile: images/ubuntu/Dockerfile
-    command: node /example-app/app.js
-    depends_on:
-     - apm-server
-    expose:
-     - 3000
-    ports:
-     - "3000:3000"
-    volumes:
-      - ./certs:/example-app/certs:z
-    networks:
-      - ror-network
+#  app1:
+#    build:
+#      context: .
+#      dockerfile: images/ubuntu/Dockerfile
+#    command: node /example-app/app.js
+#    depends_on:
+#     - apm-server
+#    expose:
+#     - 3000
+#    ports:
+#     - "3000:3000"
+#    volumes:
+#      - ./certs:/example-app/certs:z
+#    networks:
+#      - ror-network
 
 networks:
   ror-network:

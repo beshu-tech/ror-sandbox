@@ -5,7 +5,7 @@ RUN apt-get update && \
     ln -s /usr/x86_64-linux-gnu/lib64/ /lib64 && \
     mkdir -p /example-app
 
-COPY ubuntu/app.js /example-app
+COPY app.js /example-app
 
 RUN cd /example-app && \
     npm install elastic-apm-node && \

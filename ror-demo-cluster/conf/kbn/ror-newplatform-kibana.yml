@@ -11,6 +11,7 @@ server.ssl.certificate: /usr/share/kibana/config/certs/ror-kbn.crt
 server.ssl.key: /usr/share/kibana/config/certs/ror-kbn.key
 server.ssl.certificateAuthorities: /usr/share/kibana/config/certs/ca.crt
 #server.ssl.redirectHttpFromPort: 80
+xpack.encryptedSavedObjects.encryptionKey: "19+230i1902i310293213i109312i31209302193219039120i3j23h31h3h213h123!"
 
 readonlyrest_kbn.logLevel: trace
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'

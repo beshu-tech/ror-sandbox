@@ -1,12 +1,11 @@
 // Import and start the Elastic APM agent at the very top of your application
 var apm = require('elastic-apm-node').start({
     serverUrl: 'https://agent1:8200',
-    serviceName: 'my-service-name',
-    environment: 'my-environment',
-    serverCaCertFile: '/example-app/certs/ca.crt'
+    serviceName: 'service1',
+    environment: 'ror-test-env',
+    serverCaCertFile: '/example-app/certs/ca.crt',
     // secretToken: 'myverysecrettoken',
-    // logLevel: 'debug',
-    // verifyServerCert: false 
+    logLevel: 'debug'
   });
   
   const express = require('express');

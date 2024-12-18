@@ -147,3 +147,12 @@ services:
       - ./certs:/certs:z
     environment:
       - ELASTIC_APM_SERVER_CA_CERT_FILE=/certs/ca.crt
+
+  traffic-simulator:
+    build:
+      context: traffic-simulator
+      dockerfile: Dockerfile
+    hostname: traffic-simulator
+    depends_on:
+      service1:
+        condition: service_started

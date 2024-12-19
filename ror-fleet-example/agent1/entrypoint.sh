@@ -2,7 +2,7 @@
 
 POLICY_ID="elastic-policy"
 FLEET_ENROLLMENT_TOKEN=$(curl -k -s \
-  -u elastic:elastic \
+  -u kibana:kibana \
   https://kibana:5601/api/fleet/enrollment_api_keys | \
   jq -r '.items[] | select(any(.; .policy_id == "'$POLICY_ID'")) | .api_key')
 

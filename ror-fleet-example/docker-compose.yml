@@ -37,7 +37,7 @@ services:
       - xpack.security.transport.ssl.client_authentication=optional
     mem_limit: 2147483648 # ~ 2gb
     healthcheck:
-      test: [ "CMD", "curl", "-f", "--cacert", "/usr/share/elasticsearch/config/certs/ca.crt", "-u", "kibana:kibana", "https://localhost:9200/_cluster/health" ]
+      test: [ "CMD", "curl", "-f", "--cacert", "/usr/share/elasticsearch/config/certs/ca.crt", "-u", "kibana:kibana", "https://localhost:9200/_cluster/health?wait_for_status=green&timeout=1s" ]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -78,7 +78,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -I -s --cacert config/certs/ca.crt https://kibana:5601 | grep -q 'HTTP/1.1 302 Found'",
+          "curl -f -i --cacert config/certs/ca.crt -u kibana:kibana https://localhost:5601/api/features | grep -q 'content-type: application/json'"
         ]
       interval: 10s
       timeout: 10s
@@ -124,11 +124,15 @@ services:
       context: fleet-initializer
       dockerfile: Dockerfile
     hostname: fleet-initializer
+    volumes:
+      - ./certs:/certs:z
     depends_on:
       elasticsearch:
         condition: service_healthy
       kibana:
         condition: service_healthy
+      fleet-server:
+        condition: service_started
 
   agent1:
     build:

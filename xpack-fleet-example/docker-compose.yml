@@ -7,13 +7,15 @@ services:
     volumes:
       - ./certs:/usr/share/elasticsearch/config/certs:z
     ports:
-      - 9200:9200
+      - 19200:9200
+      - 15000:5000
     environment:
       - node.name=elasticsearch
       - cluster.name=fleet-elasticsearch
       - ELASTIC_PASSWORD=elastic
       - bootstrap.memory_lock=false
       - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.key=certs/elasticsearch.key
@@ -34,6 +36,17 @@ services:
       timeout: 10s
       retries: 120
 
+  es-proxy:
+    image: mitmproxy/mitmproxy
+    volumes:
+      - ./certs:/certs:z
+    ports:
+      - 18081:8080
+    command:
+      mitmdump --mode reverse:https://elasticsearch:9200 --ssl-insecure --script /certs/showbody.py
+    depends_on:
+      - elasticsearch
+
   kibana:
     depends_on:
       elasticsearch:
@@ -44,13 +57,15 @@ services:
       - ./certs:/usr/share/kibana/config/certs:z
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:Z
     ports:
-      - 5601:5601
+      - 15601:5601
     environment:
       - SERVER_NAME=kibana
-      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=https://es-proxy:8080
+      # - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=elastic
-      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca.crt
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+      # - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca.crt
       - SERVER_SSL_ENABLED=true
       - SERVER_SSL_CERTIFICATE=config/certs/kibana.crt
       - SERVER_SSL_KEY=config/certs/kibana.key
@@ -66,6 +81,28 @@ services:
       timeout: 10s
       retries: 120
 
+  fleet-es-proxy:
+    image: mitmproxy/mitmproxy
+    volumes:
+      - ./certs:/certs:z
+    ports:
+      - 28081:8080
+    command:
+      mitmdump --mode reverse:https://elasticsearch:9200 --certs /certs/fleet-es-proxy.pem --ssl-insecure --script /certs/showbody.py
+    depends_on:
+      - elasticsearch
+ 
+  fleet-kbn-proxy:
+    image: mitmproxy/mitmproxy
+    volumes:
+      - ./certs:/certs:z
+    ports:
+      - 38081:8080
+    command:
+      mitmdump --mode reverse:https://kibana:5601 --certs /certs/fleet-kbn-proxy.pem --ssl-insecure --script /certs/showbody.py
+    depends_on:
+      - kibana
+
   fleet-server:
     depends_on:
       kibana:
@@ -77,7 +114,7 @@ services:
     volumes:
       - ./certs:/certs:z
     ports:
-      - 8220:8220
+      - 18220:8220
     restart: always
     user: "1000"
     environment:
@@ -85,16 +122,18 @@ services:
       - FLEET_SERVER_POLICY_ID=fleet-server-policy
       - FLEET_SERVER_ENABLE=1
       - KIBANA_FLEET_SETUP=1
-      - KIBANA_HOST=https://kibana:5601
+      - KIBANA_HOST=https://fleet-kbn-proxy:8080
       - KIBANA_FLEET_CA=/certs/ca.crt
       - FLEET_URL=https://fleet-server:8220
-      - FLEET_SERVER_ELASTICSEARCH_HOST=https://elasticsearch:9200
+      - FLEET_SERVER_ELASTICSEARCH_HOST=https://fleet-es-proxy:8080
       - FLEET_CA=/certs/ca.crt
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=elastic
       - FLEET_SERVER_CERT=/certs/fleet-server.crt
       - FLEET_SERVER_CERT_KEY=/certs/fleet-server.key
       - FLEET_SERVER_ELASTICSEARCH_CA=/certs/ca.crt
+      - ELASTIC_AGENT_LOG_LEVEL=debug
+      - ELASTIC_AGENT_LOG_SELECTORS=*
 
   # fleet-initializer:
   #   build:

@@ -20,6 +20,12 @@ readonlyrest:
       kibana:
         access: admin
 
+    - name: "Fleet"
+      type: allow
+      token_authentication:
+        token: "Bearer AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE3MzQ2OTE3Nzg2Nzk6dDZjOTVQcHdTcHVpUFZDNXltS3BPQQ"
+        username: "fleet"
+
     - name: "End users"
       groups: ["EndUsers"]
       indices: ["frontend_logs", "kibana_sample_data_*"]

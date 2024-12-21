@@ -135,63 +135,63 @@ services:
       - ELASTIC_AGENT_LOG_LEVEL=debug
       - ELASTIC_AGENT_LOG_SELECTORS=*
 
-  # fleet-initializer:
-  #   build:
-  #     context: fleet-initializer
-  #     dockerfile: Dockerfile
-  #   hostname: fleet-initializer
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #     kibana:
-  #       condition: service_healthy
+  fleet-initializer:
+    build:
+      context: fleet-initializer
+      dockerfile: Dockerfile
+    hostname: fleet-initializer
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
 
-  # agent1:
-  #   build:
-  #     context: agent1
-  #     dockerfile: Dockerfile
-  #   hostname: agent1
-  #   restart: always
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #     kibana:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./certs:/certs:z
-  #   ports:
-  #     - 8200:8200
-  #   user: root
-  #   environment:
-  #     - FLEET_ENROLL=1
-  #     - FLEET_URL=https://fleet-server:8220
-  #     - FLEET_CA=/certs/ca.crt
+  agent1:
+    build:
+      context: agent1
+      dockerfile: Dockerfile
+    hostname: agent1
+    restart: always
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    volumes:
+      - ./certs:/certs:z
+    ports:
+      - 8200:8200
+    user: root
+    environment:
+      - FLEET_ENROLL=1
+      - FLEET_URL=https://fleet-server:8220
+      - FLEET_CA=/certs/ca.crt
 
-  # service1:
-  #   build:
-  #     context: service1
-  #     dockerfile: Dockerfile
-  #   hostname: service1
-  #   command: node /example-app/app.js
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #     kibana:
-  #       condition: service_healthy
-  #   expose:
-  #     - 3000
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./certs:/certs:z
-  #   environment:
-  #     - ELASTIC_APM_SERVER_CA_CERT_FILE=/certs/ca.crt
+  service1:
+    build:
+      context: service1
+      dockerfile: Dockerfile
+    hostname: service1
+    command: node /example-app/app.js
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./certs:/certs:z
+    environment:
+      - ELASTIC_APM_SERVER_CA_CERT_FILE=/certs/ca.crt
 
-  # traffic-simulator:
-  #   build:
-  #     context: traffic-simulator
-  #     dockerfile: Dockerfile
-  #   hostname: traffic-simulator
-  #   depends_on:
-  #     service1:
-  #       condition: service_started
+  traffic-simulator:
+    build:
+      context: traffic-simulator
+      dockerfile: Dockerfile
+    hostname: traffic-simulator
+    depends_on:
+      service1:
+        condition: service_started

@@ -20,7 +20,7 @@ services:
       - node.name=es-ror-single
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
+      - "ES_JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
@@ -156,155 +156,67 @@ services:
       - ELASTIC_AGENT_LOG_LEVEL=debug
       - ELASTIC_AGENT_LOG_SELECTORS=*
 
-  # fleet-server:
-  #   depends_on:
-  #     kibana:
-  #       condition: service_healthy
-  #     # elasticsearch:
-  #     #   condition: service_healthy
-  #   image: docker.elastic.co/beats/elastic-agent:8.12.2
-  #   hostname: fleet-server
-  #   volumes:
-  #     - ./certs:/certs:z
-  #   ports:
-  #     - 8220:8220
-  #   restart: always
-  #   user: "1000"
-  #   environment:
-  #     - FLEET_SERVER_ENABLE=true
-  #     - FLEET_SERVER_SERVICE_TOKEN=AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE3MzQ2MzE5MjkwMjU6RkJKTy14YUhUd0NpMlZTdlc4NFpTUQ
-  #     - FLEET_SERVER_POLICY_ID=fleet-server-policy
-  #     - FLEET_URL=https://fleet-server:8220
-  #     - FLEET_SERVER_PORT=8220
-  #     - FLEET_SERVER_CERT=/certs/fleet-server.crt
-  #     - FLEET_SERVER_CERT_KEY=/certs/fleet-server.key
-  #     - FLEET_CA=/certs/ca.crt
-  #     - FLEET_SERVER_ELASTICSEARCH_HOST=https://elasticsearch:9200
-  #     - FLEET_SERVER_ELASTICSEARCH_CA=/certs/ca.crt
+  fleet-initializer:
+    build:
+      context: fleet-initializer
+      dockerfile: Dockerfile
+    hostname: fleet-initializer
+    volumes:
+      - ./certs:/certs:z
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+      fleet-server:
+        condition: service_started
 
-  # fleet-server:
-  #   depends_on:
-  #     kibana:
-  #       condition: service_healthy
-  #     elasticsearch:
-  #       condition: service_healthy
-  #   image: docker.elastic.co/beats/elastic-agent:8.12.2
-  #   hostname: fleet-server
-  #   volumes:
-  #     - ./certs:/certs:z
-  #   ports:
-  #     - 8220:8220
-  #   restart: always
-  #   user: "1000"
-  #   environment:
-  #     - FLEET_ENROLL=1
-  #     - FLEET_SERVER_POLICY_ID=fleet-server-policy
-  #     - FLEET_SERVER_ENABLE=1
-  #     - KIBANA_FLEET_SETUP=1
-  #     - KIBANA_HOST=https://kibana:5601
-  #     - KIBANA_FLEET_CA=/certs/ca.crt
-  #     - FLEET_URL=https://fleet-server:8220
-  #     - FLEET_SERVER_ELASTICSEARCH_HOST=https://elasticsearch:9200
-  #     - FLEET_CA=/certs/ca.crt
-  #     - ELASTICSEARCH_USERNAME=kibana
-  #     - ELASTICSEARCH_PASSWORD=kibana
-  #     - FLEET_SERVER_CERT=/certs/fleet-server.crt
-  #     - FLEET_SERVER_CERT_KEY=/certs/fleet-server.key
-  #     - FLEET_SERVER_ELASTICSEARCH_CA=/certs/ca.crt
+  agent1:
+    build:
+      context: agent1
+      dockerfile: Dockerfile
+    hostname: agent1
+    restart: always
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    volumes:
+      - ./certs:/certs:z
+    ports:
+      - 8201:8200
+    user: root
+    environment:
+      - FLEET_ENROLL=1
+      - FLEET_URL=https://fleet-server:8220
+      - FLEET_CA=/certs/ca.crt
 
-  # fleet-server:
-  #   depends_on:
-  #     kibana:
-  #       condition: service_healthy
-  #     elasticsearch:
-  #       condition: service_healthy
-  #   image: docker.elastic.co/beats/elastic-agent:8.12.2
-  #   hostname: fleet-server
-  #   volumes:
-  #     - ./certs:/certs:z
-  #   ports:
-  #     - 8220:8220
-  #   restart: always
-  #   user: "1000"
-  #   environment:
-  #     - FLEET_ENROLL=1
-  #     - FLEET_SERVER_POLICY_ID=fleet-server-policy
-  #     - FLEET_SERVER_ENABLE=1
-  #     - KIBANA_FLEET_SETUP=1
-  #     - KIBANA_HOST=https://kibana:5601
-  #     - FLEET_URL=https://fleet-server:8220
-  #     - FLEET_SERVER_ELASTICSEARCH_HOST=https://elasticsearch:9200
-  #     - FLEET_CA=/certs/ca.crt
-  #     - KIBANA_USERNAME=apm
-  #     - KIBANA_PASSWORD=test
-  #     # - ELASTICSEARCH_USERNAME=apm
-  #     # - ELASTICSEARCH_PASSWORD=test
-  #     - FLEET_SERVER_CERT=/certs/fleet-server.crt
-  #     - FLEET_SERVER_CERT_KEY=/certs/fleet-server.key
-  #     - FLEET_SERVER_ELASTICSEARCH_CA=/certs/ca.crt
-  #     - KIBANA_FLEET_CA=/certs/ca.crt
+  service1:
+    build:
+      context: service1
+      dockerfile: Dockerfile
+    hostname: service1
+    command: node /example-app/app.js
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    expose:
+      - 3000
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./certs:/certs:z
+    environment:
+      - ELASTIC_APM_SERVER_CA_CERT_FILE=/certs/ca.crt
 
-  # fleet-initializer:
-  #   build:
-  #     context: fleet-initializer
-  #     dockerfile: Dockerfile
-  #   hostname: fleet-initializer
-  #   volumes:
-  #     - ./certs:/certs:z
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #     kibana:
-  #       condition: service_healthy
-  #     fleet-server:
-  #       condition: service_started
-
-  # agent1:
-  #   build:
-  #     context: agent1
-  #     dockerfile: Dockerfile
-  #   hostname: agent1
-  #   restart: always
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #     kibana:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./certs:/certs:z
-  #   ports:
-  #     - 8200:8200
-  #   user: root
-  #   environment:
-  #     - FLEET_ENROLL=1
-  #     - FLEET_URL=https://fleet-server:8220
-  #     - FLEET_CA=/certs/ca.crt
-
-  # service1:
-  #   build:
-  #     context: service1
-  #     dockerfile: Dockerfile
-  #   hostname: service1
-  #   command: node /example-app/app.js
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #     kibana:
-  #       condition: service_healthy
-  #   expose:
-  #     - 3000
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./certs:/certs:z
-  #   environment:
-  #     - ELASTIC_APM_SERVER_CA_CERT_FILE=/certs/ca.crt
-
-  # traffic-simulator:
-  #   build:
-  #     context: traffic-simulator
-  #     dockerfile: Dockerfile
-  #   hostname: traffic-simulator
-  #   depends_on:
-  #     service1:
-  #       condition: service_started
+  traffic-simulator:
+    build:
+      context: traffic-simulator
+      dockerfile: Dockerfile
+    hostname: traffic-simulator
+    depends_on:
+      service1:
+        condition: service_started

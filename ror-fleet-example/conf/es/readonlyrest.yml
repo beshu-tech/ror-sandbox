@@ -20,6 +20,18 @@ readonlyrest:
       kibana:
         access: admin
 
+    - name: "Fleet (Temp1)"
+      type: allow
+      headers_or: [ "Authorization:Bearer*" ]
+
+    - name: "Fleet (Temp2)"
+      type: allow
+      headers_or: [ "Authorization:ApiKey*" ]
+
+    - name: "Fleet (Temp3)"
+      type: allow
+      headers_or: [ "Authorization:APIKey*" ]
+
     - name: "Fleet"
       type: allow
       token_authentication:

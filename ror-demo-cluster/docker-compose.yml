@@ -34,6 +34,19 @@ services:
         soft: -1
         hard: -1
 
+  es-proxy:
+    image: mitmproxy/mitmproxy
+    volumes:
+      - ./certs:/certs:z
+    ports:
+      - 18080:8080
+    command:
+      mitmdump --mode reverse:https://ror-es:9200 --ssl-insecure --script /certs/showbody.py
+    depends_on:
+      - ror-es
+    networks:
+      - ror-network
+
   ror-kbn:
     build:
       context: .
@@ -48,8 +61,9 @@ services:
     ports:
       - "15601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: https://ror-es:9200
+      ELASTICSEARCH_HOSTS: https://es-proxy:8080
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+      ELASTICSEARCH_SSL_VERIFICATIONMODE: none
     volumes:
       - ./certs:/usr/share/kibana/config/certs:z
     healthcheck:

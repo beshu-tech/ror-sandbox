@@ -15,3 +15,9 @@ xpack.encryptedSavedObjects.encryptionKey: "19+230i1902i310293213i109312i3120930
 
 readonlyrest_kbn.logLevel: trace
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
+
+logging.loggers:
+  - name: elasticsearch.query
+    level: debug
+  - name: http.server.response
+    level: debug

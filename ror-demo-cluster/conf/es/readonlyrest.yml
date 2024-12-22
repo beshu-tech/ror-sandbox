@@ -15,6 +15,18 @@ readonlyrest:
       type: allow
       auth_key: apm:test
 
+    - name: "Fleet (Temp1)"
+      type: allow
+      headers_or: [ "Authorization:Bearer*" ]
+
+    - name: "Fleet (Temp2)"
+      type: allow
+      headers_or: [ "Authorization:ApiKey*" ]
+
+    - name: "Fleet (Temp3)"
+      type: allow
+      headers_or: [ "Authorization:APIKey*" ]
+      
     - name: "Admins"
       groups: [Administrators]
       kibana:

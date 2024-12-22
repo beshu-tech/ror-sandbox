@@ -9,6 +9,7 @@ COPY conf/es/readonlyrest.yml /usr/share/elasticsearch/config/readonlyrest.yml
 COPY conf/es/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 COPY conf/es/log4j2.properties /usr/share/elasticsearch/config/log4j2.properties
 COPY images/es/install-ror-es-using-api.sh /tmp/install-ror.sh
+COPY images/es/x-pack-security-8.14.3.jar /usr/share/elasticsearch/modules/x-pack-security/x-pack-security-8.14.3.jar
 
 USER root
 

@@ -2,7 +2,7 @@ cluster.name: ror-cluster
 node.name: ror-es01
 network.host: 0.0.0.0
 
-xpack.security.enabled: false
+xpack.security.enabled: true
 
-http.type: ssl_netty4
+# http.type: ssl_netty4
 path.repo: /tmp/repositories

@@ -1,63 +1,199 @@
 readonlyrest:
+
   ssl:
     enable: true
     keystore_file: "ror-keystore.jks"
     keystore_pass: readonlyrest
     key_pass: readonlyrest
 
+#####################################################################################################################################
+## AD groups    //Env ( 2 separate clusters ) //Tenant access             //Indices access
+
+# PROJECT_1_DEV //Test                        //DEFAULT RW + PROJECT_1 RW //index-project1-* RO
+# PROJECT_1_OPS //Test/Prod                   //DEFAULT RW + PROJECT_1 RW //index-project1-* RO
+# PROJECT_1_USR //Test/Prod                   //PROJECT_1 RO              //index-project1-* RO
+
+# PROJECT_2_DEV //Test                        //DEFAULT RW + PROJECT_2 RW //index-project2-* RO
+# PROJECT_2_OPS //Test/Prod                   //DEFAULT RW + PROJECT_2 RW //index-project2-* RO
+# PROJECT_2_USR //Test/Prod                   //PROJECT_2 RO              //index-project2-* RO
+      
+## EXAMPLE USER:  //AD groups                       //ACL description 
+# CEN1            //PROJECT_1_DEV                   //readwrite for DEFAULT tenant + readwrite for PROJECT1 tenant + readonly index-project-1-* 
+# CEN2            //PROJECT_1_USR && PROJECT_2_OPS  //readwrite for DEFAULT tenant + readwrite for PROJECT2 tenant and readonly for PROJECT1 tenant + readonly index-project-1-*  
+#####################################################################################################################################
+
+  username_case_sensitivity: case_sensitive
   audit:
     enabled: true
-    outputs: [index]
+    outputs:    
+    - type: index
+      serializer: tech.beshu.ror.requestcontext.QueryAuditLogSerializer # tested, works OK
+
 
   access_control_rules:
 
+    ##############################
+    # local system & admin accounts
+    ##############################
     - name: "KIBANA"
       type: allow
-      auth_key: kibana:kibana
       verbosity: error
+      auth_key: kibana:${env:KIBANA_USER_PASS}
 
-    - name: "Admins"
-      groups: [Administrators]
-      kibana:
-        access: admin
+    - name: "ADMIN"
+      type: allow
+      auth_key: admin:${env:ADMIN_USER_PASS}
 
-    - name: "End users"
-      groups: ["EndUsers"]
-      indices: ["frontend_logs", "kibana_sample_data_*"]
+    ##############################
+    # local groups els 
+    ##############################
+
+    - name: ACL allow els requests platform admins
+      groups: ["admins" ]
+
+    - name: "ACL allow els requests project1 ro"
+      indices: ["index-project1-*"]
+      actions: ["indices:data/read/*"]
+      groups_or: ["els-project1-ro"]
+
+    - name: "ACL allow els requests project2 ro"
+      indices: ["index-project2-*"]
+      actions: ["indices:data/read/*"]
+      groups_or: ["els-project2-ro"]
+
+    ##############################
+    # local groups kib 
+    ##############################
+# base tenant ( accessible RW for everyone )
+    - name: "ACL allow kib tenant default admins"
+      groups_or: ["admins"]
       kibana:
-        index: .kibana_end_@{user}
+        access: unrestricted
+        index: ".kibana_default"
+
+    - name: "ACL allow kib tenant default kib-default-rw"
+      groups_or: ["kib-default-rw"]
+      kibana:
         access: rw
-        hide_apps: ["Security", "Observability"]
+        index: ".kibana_default"
+        hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Management", "Observability"]
 
-    - name: "Business users"
-      groups: ["BusinessUsers"]
-      indices: ["business_logs", "kibana_sample_data_*"]
+# project1 tenants
+    - name: "ACL allow kib tenant project1 admins"
+      groups_or: ["admins"]
       kibana:
-        index: .kibana_business_@{user}
+        access: unrestricted
+        index: ".kibana_project1"  # Q4: is there better way to solve this for 51 projects or do I have to duplicate this 51 times for all tenants?
+
+    - name: "ACL allow kib tenant default kib-project1-rw"
+      groups_or: ["kib-project1-rw"]
+      kibana:
         access: rw
-        hide_apps: ["Security", "Observability"]
+        index: ".kibana_project1"
+        hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+    - name: "ACL allow kib tenant default kib-project1-ro"
+      groups_or: ["kib-project1-ro"]
+      kibana:
+        access: ro
+        index: ".kibana_project1"
+        hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+# project2 tenants
+    - name: "ACL allow kib tenant project2 admins"
+      groups_or: ["admins"]
+      kibana:
+        access: unrestricted
+        index: ".kibana_project2" 
+
+    - name: "ACL allow kib tenant default kib-project2-rw"
+      groups_or: ["kib-project2-rw"]
+      kibana:
+        access: rw
+        index: ".kibana_project2"
+        hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+    - name: "ACL allow kib tenant default kib-project2-ro"
+      groups_or: ["kib-project2-ro"]
+      kibana:
+        access: ro
+        index: ".kibana_project2"
+        hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+    - name: "ACL allow kib tenant default kib-another-ro"
+      groups_or: ["kib-another-ro"]
+      kibana:
+        access: ro
+        index: ".kibana_project2"
+        hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]  # Q7: elasticsearch is not completely gone, how to hide it?
+        
+# Q1: how to give admins group access to all tenants?
+# Q2: when user has more tenants how to give him default one to login to? does active cookie remember the last tenant after logout/login back in?
+# Q5: we backup kibana indices with .kibana* pattern, how to restore them in case of rollback needed, is rollback possible?
 
   users:
-    - username: admin
+    ##############################
+    # local auth users ( just for testing purposes )
+    ##############################
+  - username: "cen1"
+    groups: 
+    - id: "els-project1-ro"
+      name: "els project1 ro"  # Q8: can this name be different for each user ?
+    - id: "kib-project1-rw"
+      name: "project1 tenant rw"
+    - id: "kib-default-rw"
+      name: "default tenant rw"
+    auth_key: cen1:cen1
+
+  - username: "cen2"
+    groups: 
+    - id: "els-project2-ro"
+      name: "els project1 ro" 
+    - id: "kib-project1-ro"
+      name: "project1 tenant ro"
+    - id: "kib-project2-rw"
+      name: "project2 tenant rw"
+    - id: "kib-default-rw"
+      name: "default tenant rw"
+    auth_key: cen2:cen2
+
+
+    ##############################
+    # external auth users
+    ##############################
+  - username: "*"
+    groups: 
+    - local_group:
+        id: "admins"
+        name: "Platform Admins"
+      external_group_ids: [ "ELASTICSEARCH_Admins"]
+    ldap_auth: # tested, works OK
+      name: "ldap1"
+      groups: [ "ELASTICSEARCH_Admins" ]
+
+  impersonation: # tested, works OK
+    - impersonator: cen8
+      users: ["*"]
+      ldap_authentication: "ldap1"
+    - impersonator: admin
+      users: ["*"]
       auth_key: admin:admin
-      groups:
-        - id: "Administrators"
-          name: "Administrators"
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
 
-    - username: user1
-      auth_key: user1:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
+  ldaps:
 
-    - username: user2
-      auth_key: user2:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
+    - name: ldap1
+      
+      host: "${env:LDAP_HOST}"
+      port: ${env:LDAP_PORT}
+      ssl_enabled: false
+      ssl_trust_all_certs: true
+
+      bind_dn: "uid=admin,ou=people,dc=example,dc=com"
+      bind_password: "${env:LDAP_ADMIN_PASSWORD}"
+
+      search_user_base_DN: "ou=People,dc=example,dc=com"
+      search_groups_base_DN: "ou=Groups,dc=example,dc=com"
+      user_id_attribute: "uid"                                  
+      unique_member_attribute: "uniqueMember"
+
+      cache_ttl: 10s

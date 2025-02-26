@@ -2,7 +2,7 @@ server.name: kibana-ror
 server.host: 0.0.0.0
 
 elasticsearch.username: kibana
-elasticsearch.password: kibana
+elasticsearch.password: ${KIBANA_USER_PASS}
 elasticsearch.ssl.verificationMode: none
 
 # generated with:

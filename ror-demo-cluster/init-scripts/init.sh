@@ -35,6 +35,7 @@ function index_documents() {
   done
 }
 
-generate_log_documents 100 | index_documents "frontend_logs"
-generate_log_documents 50 | index_documents "business_logs"
-generate_log_documents 60 | index_documents "system_logs"
+generate_log_documents 100 | index_documents "ix_a001"
+generate_log_documents 100 | index_documents "ix_a002"
+generate_log_documents 50 | index_documents "ix_b001"
+generate_log_documents 60 | index_documents "ix_b002"

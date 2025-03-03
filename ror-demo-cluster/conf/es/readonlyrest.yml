@@ -19,9 +19,16 @@ readonlyrest:
     - name: "Admins"
       groups: [Administrators]
 
-    - name: "My users"
-      groups: ["*"]
-      indices: [ 'ix_@explode{acl:current_group}#{replace_all("group_", "")}*' ]
+    - name: "My users (tenancy picked)"
+      groups_or: [ "@{acl:current_group}" ]
+      indices: [ 'ix_@explode{acl:available_groups}#{replace_all("group_", "")}*' ]
+      kibana:
+        access: ro
+
+    - name: "My users (no tenancy picked)"
+      groups_or: [ "*" ]
+      headers_or: [ "~x-ror-current-group:*" ]
+      indices: [ 'ix_@explode{acl:available_groups}#{replace_all("group_", "")}*' ]
       kibana:
         access: ro
 

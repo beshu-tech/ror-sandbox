@@ -20,6 +20,7 @@ readonlyrest:
       groups: [Administrators]
       kibana:
         access: admin
+        index: .kibana_@{acl:current_group}
 
     - name: "End users"
       groups: ["EndUsers"]

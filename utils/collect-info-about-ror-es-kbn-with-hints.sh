@@ -106,6 +106,7 @@ read_es_ror_file_path () {
     read -p "Enter ROR Elasticsearch file path (it has to be placed in $(dirname "$0")): " path
     if [ -f "$path" ]; then
       echo "ES_ROR_FILE=$path" >> .env
+      echo "ROR_ES_VERSION=$(unzip -p "$path" plugin-descriptor.properties | grep -oP '^version=\K.*')" >> .env
       break
     else
       echo "Cannot find file $path. Please try again ..."

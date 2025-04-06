@@ -38,3 +38,16 @@ function index_documents() {
 generate_log_documents 100 | index_documents "frontend_logs"
 generate_log_documents 50 | index_documents "business_logs"
 generate_log_documents 60 | index_documents "system_logs"
+
+RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$ELASTICSEARCH_USER:$ELASTICSEARCH_PASSWORD" \
+  -X POST "$KIBANA_ADDRESS/api/kibana/dashboards/import" \
+  -H "kbn-xsrf: true" -H "Content-Type: application/json" -d @example_dashboard.json
+)
+
+HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
+
+if [[ "$HTTP_STATUS" != 2* ]] ; then
+  echo "ERROR: Cannot import dashboard.\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY"
+  exit 1
+fi

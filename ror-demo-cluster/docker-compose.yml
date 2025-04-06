@@ -72,6 +72,7 @@ services:
         condition: service_healthy
     environment:
       ELASTICSEARCH_ADDRESS: https://es-ror:9200
+      KIBANA_ADDRESS: https://kbn-ror:5601
       ELASTICSEARCH_USER: kibana
       ELASTICSEARCH_PASSWORD: kibana
     healthcheck:

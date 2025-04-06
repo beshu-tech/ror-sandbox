@@ -1,0 +1,68 @@
+{
+  "version": "8.17.3",
+  "objects": [
+    {
+      "id": "20e05318-edd8-4325-a66f-154a270462ad",
+      "type": "dashboard",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2025-04-06T19:31:22.417Z",
+      "created_at": "2025-04-06T19:31:22.417Z",
+      "version": "WzE1LDFd",
+      "attributes": {
+        "version": 3,
+        "description": "",
+        "timeRestore": false,
+        "title": "my example visualisation",
+        "controlGroupInput": {
+          "chainingSystem": "HIERARCHICAL",
+          "controlStyle": "oneLine",
+          "ignoreParentSettingsJSON": "{\"ignoreFilters\":false,\"ignoreQuery\":false,\"ignoreTimerange\":false,\"ignoreValidations\":false}",
+          "panelsJSON": "{}",
+          "showApplySelections": false
+        },
+        "optionsJSON": "{\"useMargins\":true,\"syncColors\":false,\"syncCursor\":true,\"syncTooltips\":false,\"hidePanelTitles\":false}",
+        "panelsJSON": "[{\"type\":\"lens\",\"embeddableConfig\":{\"attributes\":{\"title\":\"\",\"visualizationType\":\"lnsPie\",\"type\":\"lens\",\"references\":[{\"type\":\"index-pattern\",\"id\":\"a5ad49e4-9c0b-4e1b-87ef-0e5585ccdcde\",\"name\":\"indexpattern-datasource-layer-96b8d461-28da-4a0a-8f5f-f631a2a96ade\"}],\"state\":{\"visualization\":{\"shape\":\"donut\",\"layers\":[{\"layerId\":\"96b8d461-28da-4a0a-8f5f-f631a2a96ade\",\"primaryGroups\":[\"441a10a1-1296-4dec-bf72-3b1ae9b764c4\"],\"metrics\":[\"a986eeb1-bf68-47e4-8bc8-22fff9129a9b\"],\"numberDisplay\":\"percent\",\"categoryDisplay\":\"default\",\"legendDisplay\":\"default\",\"nestedLegend\":false,\"layerType\":\"data\",\"colorMapping\":{\"assignments\":[],\"specialAssignments\":[{\"rule\":{\"type\":\"other\"},\"color\":{\"type\":\"loop\"},\"touched\":false}],\"paletteId\":\"eui_amsterdam_color_blind\",\"colorMode\":{\"type\":\"categorical\"}}}]},\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filters\":[],\"datasourceStates\":{\"formBased\":{\"layers\":{\"96b8d461-28da-4a0a-8f5f-f631a2a96ade\":{\"columns\":{\"441a10a1-1296-4dec-bf72-3b1ae9b764c4\":{\"label\":\"Top 5 values of user_id.keyword\",\"dataType\":\"string\",\"operationType\":\"terms\",\"scale\":\"ordinal\",\"sourceField\":\"user_id.keyword\",\"isBucketed\":true,\"params\":{\"size\":5,\"orderBy\":{\"type\":\"column\",\"columnId\":\"a986eeb1-bf68-47e4-8bc8-22fff9129a9b\"},\"orderDirection\":\"desc\",\"otherBucket\":true,\"missingBucket\":false,\"parentFormat\":{\"id\":\"terms\"},\"include\":[],\"exclude\":[],\"includeIsRegex\":false,\"excludeIsRegex\":false}},\"a986eeb1-bf68-47e4-8bc8-22fff9129a9b\":{\"label\":\"Count of records\",\"dataType\":\"number\",\"operationType\":\"count\",\"isBucketed\":false,\"scale\":\"ratio\",\"sourceField\":\"___records___\",\"params\":{\"emptyAsNull\":true}}},\"columnOrder\":[\"441a10a1-1296-4dec-bf72-3b1ae9b764c4\",\"a986eeb1-bf68-47e4-8bc8-22fff9129a9b\"],\"incompleteColumns\":{},\"sampling\":1}}},\"indexpattern\":{\"layers\":{}},\"textBased\":{\"layers\":{}}},\"internalReferences\":[],\"adHocDataViews\":{}}},\"enhancements\":{}},\"panelIndex\":\"7d18f606-083a-4b4c-89f1-1f272fb6e90f\",\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":15,\"i\":\"7d18f606-083a-4b4c-89f1-1f272fb6e90f\"}}]",
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        }
+      },
+      "references": [
+        {
+          "type": "index-pattern",
+          "id": "a5ad49e4-9c0b-4e1b-87ef-0e5585ccdcde",
+          "name": "7d18f606-083a-4b4c-89f1-1f272fb6e90f:indexpattern-datasource-layer-96b8d461-28da-4a0a-8f5f-f631a2a96ade"
+        }
+      ],
+      "managed": false,
+      "coreMigrationVersion": "8.8.0",
+      "typeMigrationVersion": "10.2.0"
+    },
+    {
+      "id": "a5ad49e4-9c0b-4e1b-87ef-0e5585ccdcde",
+      "type": "index-pattern",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2025-04-06T19:29:43.409Z",
+      "created_at": "2025-04-06T19:28:29.756Z",
+      "version": "WzExLDFd",
+      "attributes": {
+        "fieldAttrs": "{}",
+        "title": "*logs*",
+        "timeFieldName": "timestamp",
+        "sourceFilters": "[]",
+        "fields": "[]",
+        "fieldFormatMap": "{}",
+        "runtimeFieldMap": "{}",
+        "name": "logs",
+        "allowHidden": false
+      },
+      "references": [],
+      "managed": false,
+      "coreMigrationVersion": "8.8.0",
+      "typeMigrationVersion": "8.0.0"
+    }
+  ]
+}

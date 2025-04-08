@@ -12,13 +12,9 @@ if [[ -z "$ES_VERSION" ]]; then
   exit 1
 fi
 
-if [[ -z "$ROR_VERSION" ]]; then
-  echo "No $ROR_VERSION variable is set"
-  exit 2
-fi
-
 echo "Installing ES ROR from file..."
 /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch file:///tmp/ror.zip
+ROR_VERSION=$(unzip -p /tmp/ror.zip plugin-descriptor.properties | grep -oP '^version=\K.*')
 
 echo "Patching ES ROR $ROR_VERSION..."
 if greater_than_or_equal "$ES_VERSION" "7.0.0"; then

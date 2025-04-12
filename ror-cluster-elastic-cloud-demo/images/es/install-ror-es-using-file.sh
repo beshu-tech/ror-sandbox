@@ -16,19 +16,29 @@ echo "Installing ES ROR from file..."
 /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch file:///tmp/ror.zip
 ROR_VERSION=$(unzip -p /tmp/ror.zip plugin-descriptor.properties | grep -oP '^version=\K.*')
 
-echo "Patching ES ROR $ROR_VERSION..."
-if greater_than_or_equal "$ES_VERSION" "7.0.0"; then
-  if greater_than_or_equal "$ROR_VERSION" "1.64.0"; then
-    /usr/share/elasticsearch/jdk/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch --I_UNDERSTAND_AND_ACCEPT_ES_PATCHING=yes
-  else
-    /usr/share/elasticsearch/jdk/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch
-  fi
-elif greater_than_or_equal "$ES_VERSION" "6.7.0"; then
-  if greater_than_or_equal "$ROR_VERSION" "1.64.0"; then
-    "$JAVA_HOME"/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch --I_UNDERSTAND_AND_ACCEPT_ES_PATCHING=yes
-  else
-    "$JAVA_HOME"/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch
-  fi
+if [[ -z "$ROR_VERSION" ]]; then
+  echo "No $ROR_VERSION variable is set"
+  exit 2
 fi
 
+echo "Patching ES ROR $ROR_VERSION..."
+
+# Set Java path based on ES version
+if greater_than_or_equal "$ES_VERSION" "7.0.0"; then
+  JAVA_BIN_PATH="/usr/share/elasticsearch/jdk/bin/java"
+elif greater_than_or_equal "$ES_VERSION" "6.7.0"; then
+  JAVA_BIN_PATH="$JAVA_HOME/bin/java"
+else
+  echo "Unsupported ES version: $ES_VERSION"
+  exit 1
+fi
+
+# Set OPTIONS based on ROR version
+if greater_than_or_equal "$ROR_VERSION" "1.64.0"; then
+  OPTIONS="--I_UNDERSTAND_AND_ACCEPT_ES_PATCHING=yes"
+else
+  OPTIONS=""
+fi
+
+$JAVA_BIN_PATH -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch $OPTIONS
 echo "DONE!"

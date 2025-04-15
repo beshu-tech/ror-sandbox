@@ -12,7 +12,7 @@ if [[ -z "$ES_VERSION" ]]; then
   exit 1
 fi
 
-if [ ! -v ROR_VERSION ] || [ -z "$ROR_VERSION" ]; then
+if [[ ! -v ROR_VERSION || -z "$ROR_VERSION" ]]; then
   echo "No ROR_VERSION variable is set"
   exit 2
 fi

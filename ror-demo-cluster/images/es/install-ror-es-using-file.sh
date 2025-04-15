@@ -16,7 +16,7 @@ echo "Installing ES ROR from file..."
 /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch file:///tmp/ror.zip
 ROR_VERSION=$(unzip -p /tmp/ror.zip plugin-descriptor.properties | grep -oP '^version=\K.*')
 
-if [ ! -v ROR_VERSION ] || [ -z "$ROR_VERSION" ]; then
+if [[ ! -v ROR_VERSION || -z "$ROR_VERSION" ]]; then
   echo "No ROR_VERSION variable is set"
   exit 2
 fi

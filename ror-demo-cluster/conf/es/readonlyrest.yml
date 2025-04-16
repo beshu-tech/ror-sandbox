@@ -21,6 +21,14 @@ readonlyrest:
       kibana:
         access: admin
 
+    - name: "Test"
+      auth_key: user3:test
+      kibana:
+        access: ro
+        allowed_api_paths:
+        - http_method: GET
+          http_path: "^/api/.*$"
+
     - name: "End users"
       groups: ["EndUsers"]
       indices: ["frontend_logs", "kibana_sample_data_*"]

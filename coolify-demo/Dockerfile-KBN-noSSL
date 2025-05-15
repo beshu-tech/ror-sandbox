@@ -1,10 +1,12 @@
 # Stage 1: Builder stage | pull Ubuntu, install tools, download Kibana bundle and patch configs
 # required to be separate since from Kibana 9 we have min. image without packaging tools
 ARG KBN_VERSION=9.0.1
+ARG ROR_VERSION=1.64.1
+
 FROM ubuntu:20.04 AS builder
 
 ARG KBN_VERSION
-ARG ROR_VERSION=1.64.1
+ARG ROR_VERSION
 
 RUN apt-get update && apt-get install -y --no-install-recommends bash sed wget ca-certificates \
     && rm -rf /var/lib/apt/lists/*
@@ -23,8 +25,10 @@ RUN for f in ror-newplatform-kibana.yml ror-oldplatform-kibana.yml; do \
     done
 
 # Stage 2: start from the official Kibana image and copy in everything we need
+ARG KBN_VERSION
 FROM docker.elastic.co/kibana/kibana:${KBN_VERSION}
 
+ARG KBN_VERSION
 ARG ROR_VERSION
 
 USER root

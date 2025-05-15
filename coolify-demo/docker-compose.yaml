@@ -7,8 +7,8 @@ services:
       context: ../ror-demo-cluster
       dockerfile: images/es/Dockerfile-use-ror-binaries-from-api
       args:
-        ES_VERSION: ${ES_VERSION:-8.14.3}
-        ROR_VERSION: ${ROR_ES_VERSION:-1.60.0}
+        ES_VERSION: ${ES_VERSION:-9.0.1}
+        ROR_VERSION: ${ROR_ES_VERSION:-1.64.1}
     ports:
       - "19200:9200"
       - "19300:9300"
@@ -19,7 +19,7 @@ services:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
-      - ES_VERSION=${ES_VERSION:-8.14.3}
+      - ES_VERSION=${ES_VERSION:-9.0.1}
     healthcheck:
       test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:9200/_cluster/health" ]
       interval: 10s
@@ -38,8 +38,8 @@ services:
       context: ..
       dockerfile: coolify-demo/Dockerfile-KBN-noSSL
       args:
-        KBN_VERSION: ${KBN_VERSION:-8.14.3}
-        ROR_VERSION: ${ROR_KBN_VERSION:-1.60.0}
+        KBN_VERSION: ${KBN_VERSION:-9.0.1}
+        ROR_VERSION: ${ROR_KBN_VERSION:-1.64.1}
     depends_on:
       es-ror:
         condition: service_healthy

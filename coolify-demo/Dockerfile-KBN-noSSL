@@ -6,7 +6,7 @@ FROM ubuntu:20.04 AS builder
 ARG KBN_VERSION
 ARG ROR_VERSION=1.64.1
 
-RUN apt-get update && apt-get install -y --no-install-recommends bash sed wget \
+RUN apt-get update && apt-get install -y --no-install-recommends bash sed wget ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build

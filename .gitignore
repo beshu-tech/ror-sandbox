@@ -6,3 +6,5 @@
 ror-cluster-elastic-cloud-demo/certs-generator/output
 ror-cluster-elastic-cloud-demo/certs-generator/input
 ror-cluster-elastic-cloud-demo/certs
+**/.env
+**/subst-xpack

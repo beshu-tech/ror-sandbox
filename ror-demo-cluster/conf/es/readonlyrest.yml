@@ -10,6 +10,7 @@ readonlyrest:
     outputs: [index]
 
   access_control_rules:
+
     - name: "KIBANA"
       type: allow
       auth_key: kibana:kibana
@@ -22,7 +23,7 @@ readonlyrest:
 
     - name: "End users"
       groups: ["EndUsers"]
-      indices: ["frontend_logs"]
+      indices: ["frontend_logs", "kibana_sample_data_*"]
       kibana:
         index: .kibana_end_@{user}
         access: rw
@@ -30,7 +31,7 @@ readonlyrest:
 
     - name: "Business users"
       groups: ["BusinessUsers"]
-      indices: ["business_logs"]
+      indices: ["business_logs", "kibana_sample_data_*"]
       kibana:
         index: .kibana_business_@{user}
         access: rw

@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-echo "Preparing ES+KBN with ROR environment ..."
-
 determine_ror_es_dockerfile () {
   read_es_version
 
@@ -14,13 +12,13 @@ Your choice: " choice
 
     case "$choice" in
       1 )
-        export ES_DOCKERFILE="Dockerfile-use-ror-binaries-from-api"
+        echo "ES_DOCKERFILE=Dockerfile-use-ror-binaries-from-api" >> .env
 
         read_ror_es_version
         break
         ;;
       2 )
-        export ES_DOCKERFILE="Dockerfile-use-ror-binaries-from-file"
+        echo "ES_DOCKERFILE=Dockerfile-use-ror-binaries-from-file" >> .env
         read_es_ror_file_path
         break
         ;;
@@ -40,7 +38,7 @@ read_es_version () {
       continue
     fi
 
-    export ES_VERSION=$esVersion
+    echo "ES_VERSION=$esVersion" >> .env
     break
   done
 }
@@ -53,7 +51,7 @@ read_ror_es_version () {
       continue
     fi
 
-    export ROR_ES_VERSION=$rorVersion
+    echo "ROR_ES_VERSION=$rorVersion" >> .env
     break
   done
 }
@@ -62,7 +60,7 @@ read_es_ror_file_path () {
   while true; do
     read -p "Enter ES ROR file path (it has to be placed in $(dirname "$0")): " path
     if [ -f "$path" ]; then
-      export ES_ROR_FILE=$path
+      echo "ES_ROR_FILE=$path" >> .env
       break
     else
       echo "Cannot find file $path. Please try again ..."
@@ -83,13 +81,13 @@ Your choice: " choice
 
     case "$choice" in
       1 )
-        export KBN_DOCKERFILE="Dockerfile-use-ror-binaries-from-api"
+        echo "KBN_DOCKERFILE=Dockerfile-use-ror-binaries-from-api" >> .env
 
         read_ror_kbn_version
         break
         ;;
       2 )
-        export KBN_DOCKERFILE="Dockerfile-use-ror-binaries-from-file"
+        echo "KBN_DOCKERFILE=Dockerfile-use-ror-binaries-from-file" >> .env
         read_kbn_ror_file_path
         break
         ;;
@@ -109,7 +107,7 @@ read_kbn_version () {
       continue
     fi
 
-    export KBN_VERSION=$kbnVersion
+    echo "KBN_VERSION=$kbnVersion" >> .env
     break
   done
 }
@@ -122,7 +120,7 @@ read_ror_kbn_version () {
       continue
     fi
 
-    export ROR_KBN_VERSION=$rorVersion
+    echo "ROR_KBN_VERSION=$rorVersion" >> .env
     break
   done
 }
@@ -131,7 +129,7 @@ read_kbn_ror_file_path () {
   while true; do
     read -p "Enter KBN ROR file path (it has to be placed in $(dirname "$0")): " path
     if [ -f "$path" ]; then
-      export KBN_ROR_FILE=$path
+      echo "KBN_ROR_FILE=$path" >> .env
       break
     else
       echo "Cannot find file $path. Please try again ..."
@@ -140,6 +138,7 @@ read_kbn_ror_file_path () {
   done
 }
 
+> .env
 echo "-----------------"
 determine_ror_es_dockerfile
 echo "-----------------"

@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends bash sed wget c
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
-RUN wget -q https://artifacts.elastic.co/downloads/kibana/kibana-${KBN_VERSION}-linux-x86_64.tar.gz \
+RUN wget https://artifacts.elastic.co/downloads/kibana/kibana-${KBN_VERSION}-linux-x86_64.tar.gz \
   && tar xzf kibana-${KBN_VERSION}-linux-x86_64.tar.gz \
   && mv kibana-${KBN_VERSION}-linux-x86_64 kibana
 COPY ./ror-demo-cluster /build/ror-demo-cluster

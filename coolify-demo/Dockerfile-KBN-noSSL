@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends bash sed wget c
 WORKDIR /build
 RUN wget https://artifacts.elastic.co/downloads/kibana/kibana-${KBN_VERSION}-linux-x86_64.tar.gz \
   && tar xzf kibana-${KBN_VERSION}-linux-x86_64.tar.gz \
-  && mv kibana-${KBN_VERSION}-linux-x86_64 kibana
+  && extracted_dir=$(tar -tf kibana-${KBN_VERSION}-linux-x86_64.tar.gz | head -1 | cut -f1 -d"/") \
+  && mv "$extracted_dir" kibana
 COPY ./ror-demo-cluster /build/ror-demo-cluster
 
 WORKDIR /build/ror-demo-cluster

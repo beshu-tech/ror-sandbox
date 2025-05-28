@@ -1,9 +1,4 @@
 readonlyrest:
-  ssl:
-    enable: true
-    keystore_file: "ror-keystore.jks"
-    keystore_pass: readonlyrest
-    key_pass: readonlyrest
 
   audit:
     enabled: true
@@ -15,6 +10,10 @@ readonlyrest:
       type: allow
       auth_key: kibana:kibana
       verbosity: error
+
+    - name: "APM"
+      type: allow
+      auth_key: apm:test
 
     - name: "Admins"
       groups: [Administrators]

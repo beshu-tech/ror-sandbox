@@ -1,6 +1,6 @@
 services:
 
-  es-ror:
+  es01-ror:
     build:
       context: .
       dockerfile: images/es/${ES_DOCKERFILE:-ES_DOCKERFILE_NOT_CONFIGURED}
@@ -9,14 +9,16 @@ services:
         ROR_VERSION: ${ROR_ES_VERSION:-ROR_ES_VERSION_NOT_CONFIGURED}
         ROR_FILE: ${ES_ROR_FILE:-ES_ROR_FILE_NOT_CONFIGURED}
     ports:
-      - "19200:9200"
-      - "19300:9300"
-      - "5005:5005"
+      - "19201:9200"
+      - "19301:9300"
+      - "5001:5005"
     environment:
-      - cluster.name=ror-es-cluster
-      - node.name=es-ror-single
-      - discovery.type=single-node
+      - cluster.name=es-cluster
+      - node.name=es01-master
+      - node.roles=master,data
       - bootstrap.memory_lock=true
+      - discovery.seed_hosts=es02-ror,es03-ror
+      - cluster.initial_master_nodes=es01-master,es02-master,es03-master
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
     healthcheck:
@@ -31,6 +33,80 @@ services:
       memlock:
         soft: -1
         hard: -1
+    volumes:
+      - ./repositories:/tmp/repositories
+
+  es02-ror:
+    build:
+      context: .
+      dockerfile: images/es/${ES_DOCKERFILE:-ES_DOCKERFILE_NOT_CONFIGURED}
+      args:
+        ES_VERSION: ${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+        ROR_VERSION: ${ROR_ES_VERSION:-ROR_ES_VERSION_NOT_CONFIGURED}
+        ROR_FILE: ${ES_ROR_FILE:-ES_ROR_FILE_NOT_CONFIGURED}
+    ports:
+      - "19202:9200"
+      - "19302:9300"
+      - "5002:5005"
+    environment:
+      - cluster.name=es-cluster
+      - node.name=es02-master
+      - node.roles=master,data
+      - bootstrap.memory_lock=true
+      - discovery.seed_hosts=es01-ror,es03-ror
+      - cluster.initial_master_nodes=es01-master,es02-master,es03-master
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+    healthcheck:
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:9200/_cluster/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    networks:
+      - es-ror-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./repositories:/tmp/repositories
+
+  es03-ror:
+    build:
+      context: .
+      dockerfile: images/es/${ES_DOCKERFILE:-ES_DOCKERFILE_NOT_CONFIGURED}
+      args:
+        ES_VERSION: ${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+        ROR_VERSION: ${ROR_ES_VERSION:-ROR_ES_VERSION_NOT_CONFIGURED}
+        ROR_FILE: ${ES_ROR_FILE:-ES_ROR_FILE_NOT_CONFIGURED}
+    ports:
+      - "19203:9200"
+      - "19303:9300"
+      - "5003:5005"
+    environment:
+      - cluster.name=es-cluster
+      - node.name=es03-master
+      - node.roles=master,data
+      - bootstrap.memory_lock=true
+      - discovery.seed_hosts=es01-ror,es02-ror
+      - cluster.initial_master_nodes=es01-master,es02-master,es03-master
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+    healthcheck:
+      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:9200/_cluster/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    networks:
+      - es-ror-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./repositories:/tmp/repositories
 
   kbn-ror:
     build:
@@ -41,12 +117,16 @@ services:
         ROR_VERSION: ${ROR_KBN_VERSION:-ROR_KBN_VERSION_NOT_CONFIGURED}
         ROR_FILE: ${KBN_ROR_FILE:-KBN_ROR_FILE_NOT_CONFIGURED}
     depends_on:
-      es-ror:
+      es01-ror:
+        condition: service_healthy
+      es02-ror:
+        condition: service_healthy
+      es03-ror:
         condition: service_healthy
     ports:
       - "15601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: https://es-ror:9200
+      ELASTICSEARCH_HOSTS: '["https://es01-ror:9200","https://es02-ror:9200","https://es03-ror:9200"]'
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     healthcheck:
       test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:5601/api/features" ]
@@ -66,12 +146,12 @@ services:
       context: .
       dockerfile: images/cluster-initializer/Dockerfile
     depends_on:
-      es-ror:
+      es01-ror:
         condition: service_healthy
       kbn-ror:
         condition: service_healthy
     environment:
-      ELASTICSEARCH_ADDRESS: https://es-ror:9200
+      ELASTICSEARCH_ADDRESS: https://es01-ror:9200
       ELASTICSEARCH_USER: kibana
       ELASTICSEARCH_PASSWORD: kibana
     healthcheck:

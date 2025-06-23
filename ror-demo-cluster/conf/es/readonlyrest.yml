@@ -17,6 +17,7 @@ readonlyrest:
       verbosity: error
 
     - name: "Admins"
+      verbosity: error
       groups: [Administrators]
       kibana:
         access: admin

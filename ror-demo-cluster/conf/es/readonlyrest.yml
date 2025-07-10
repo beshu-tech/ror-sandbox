@@ -5,9 +5,8 @@ readonlyrest:
     keystore_pass: readonlyrest
     key_pass: readonlyrest
 
-  audit:
-    enabled: true
-    outputs: [index]
+  prompt_for_basic_auth: true
+  audit_collector: true
 
   access_control_rules:
 
@@ -15,6 +14,14 @@ readonlyrest:
       type: allow
       auth_key: kibana:kibana
       verbosity: error
+
+    - name: "Accept RO requests to NL indices(LDAP)"
+      auth_key: test:test
+      kibana:
+         access: ro
+         hide_apps: ["readonlyrest_kbn", "kibana:dev_tools"]
+         index: ".kibana_nl"
+      indices: [ "business*", ".kibana*"]
 
     - name: "Admins"
       groups: [Administrators]

@@ -14,13 +14,13 @@ services:
     ports:
       - "19200:9200"
       - "19300:9300"
-      - "5000:5000"
+      - "5005:5005"
     environment:
       - cluster.name=ror-es-cluster
       - node.name=es-ror-single
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
       - ADMIN_USER_PASS=password
       - KIBANA_USER_PASS=kibana

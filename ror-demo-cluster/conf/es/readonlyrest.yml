@@ -44,6 +44,44 @@ readonlyrest:
         access: rw
         hide_apps: ["Security", "Observability"]
 
+    # Requirement B (RW access to all tracy-* indices)
+    - name: test1
+      groups_or: ["kib_tracy_default_adm_ext98107", "kib_tracy_tenant1_adm_ext98107"]
+      indices:
+        patterns: ["tracy-*"]
+        must_involve_indices: true
+
+    # Requirement B (forbid dev-tools access to indices starting with ".")
+    - name: "Forbid dev tools for hidden indices for (kib_tracy_default_adm_ext98107, kib_tracy_tenant1_adm_ext98107)"
+      type: forbid
+      groups_or: ["kib_tracy_default_adm_ext98107", "kib_tracy_tenant1_adm_ext98107"]
+      indices: [".*"]
+      headers_or: ["x-ror-kibana-request-path:/*/api/console/*"]
+
+    # Requirement A (RW access to "default" tenant Kibana indices)
+    - name: kib_tracy_default_adm_ext98107
+      groups_or: ["kib_tracy_default_adm_ext98107"]
+      kibana: 
+        access: rw
+        index: ".kibana_tracy_default"
+
+    # Requirement A (RW access to "tenant1" tenant Kibana indices)
+    - name: kib_tracy_tenant1_adm_ext98107
+      groups_or: ["kib_tracy_tenant1_adm_ext98107"]
+      kibana: 
+        access: rw
+        index: ".kibana_tracy_tenant1"
+
+    - name: els_tracy_adm_ext98107_allow
+      type: allow
+      groups_or: ["els_tracy_adm_ext98107"]
+      indices: 
+        patterns: ["tracy-*"] 
+        must_involve_indices: false
+      actions:
+        - "indices:*"
+        - "cluster:monitor/*"
+
   users:
     - username: admin
       auth_key: admin:admin
@@ -68,3 +106,11 @@ readonlyrest:
       groups:
         - id: "EndUsers"
           name: "End Users"
+
+    - username: adm3
+      auth_key: adm3:test
+      groups:
+        - id: "kib_tracy_default_adm_ext98107"
+          name: "kib_tracy_default_adm_ext98107"
+        - id: "kib_tracy_tenant1_adm_ext98107" 
+          name: "kib_tracy_tenant1_adm_ext98107"

@@ -65,16 +65,6 @@ readonlyrest:
         access: rw
         index: ".kibana_tracy_tenant1"
 
-    - name: els_tracy_adm_ext98107_allow
-      type: allow
-      groups_or: ["els_tracy_adm_ext98107"]
-      indices: 
-        patterns: ["tracy-*"] 
-        must_involve_indices: false
-      actions:
-        - "indices:*"
-        - "cluster:monitor/*"
-
   users:
     - username: admin
       auth_key: admin:admin

@@ -5,8 +5,9 @@ readonlyrest:
     keystore_pass: readonlyrest
     key_pass: readonlyrest
 
-  prompt_for_basic_auth: true
-  audit_collector: true
+  audit:
+    enabled: true
+    outputs: [index]
 
   access_control_rules:
 
@@ -14,14 +15,6 @@ readonlyrest:
       type: allow
       auth_key: kibana:kibana
       verbosity: error
-
-    - name: "Accept RO requests to NL indices(LDAP)"
-      auth_key: test:test
-      kibana:
-         access: ro
-         hide_apps: ["readonlyrest_kbn", "kibana:dev_tools"]
-         index: ".kibana_nl"
-      indices: [ "business*", ".kibana*"]
 
     - name: "Admins"
       groups: [Administrators]
@@ -45,7 +38,7 @@ readonlyrest:
         hide_apps: ["Security", "Observability"]
 
     # Requirement B (RW access to all tracy-* indices)
-    - name: test1
+    - name: "Allow RW access to all tracy-* indices"
       groups_or: ["kib_tracy_default_adm_ext98107", "kib_tracy_tenant1_adm_ext98107"]
       indices:
         patterns: ["tracy-*"]

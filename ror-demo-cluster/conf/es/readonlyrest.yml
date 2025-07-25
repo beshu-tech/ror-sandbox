@@ -37,34 +37,27 @@ readonlyrest:
         access: rw
         hide_apps: ["Security", "Observability"]
 
-    # Requirement B (RW access to all tracy-* indices)
-    - name: "Allow RW access to all tracy-* indices"
-      groups_or: ["kib_tracy_default_adm_ext98107", "kib_tracy_tenant1_adm_ext98107"]
-      indices:
-        patterns: ["tracy-*"]
-        must_involve_indices: true
-
-    # Requirement B (forbid dev-tools access to indices starting with ".")
-    - name: "Forbid dev tools for hidden indices for (kib_tracy_default_adm_ext98107, kib_tracy_tenant1_adm_ext98107)"
-      type: forbid
-      groups_or: ["kib_tracy_default_adm_ext98107", "kib_tracy_tenant1_adm_ext98107"]
-      indices: [".*"]
-      headers_or: ["x-ror-kibana-request-path:/*/api/console/*"]
-
-    # Requirement A (RW access to "default" tenant Kibana indices)
-    - name: kib_tracy_default_adm_ext98107
-      groups_or: ["kib_tracy_default_adm_ext98107"]
-      kibana: 
+    # Requirement A
+    - name: kib_tracy_default_adm
+      groups_or: ["kib_tracy_default_adm"]
+      indices: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
+      kibana:
         access: rw
         index: ".kibana_tracy_default"
 
-    # Requirement A (RW access to "tenant1" tenant Kibana indices)
-    - name: kib_tracy_tenant1_adm_ext98107
-      groups_or: ["kib_tracy_tenant1_adm_ext98107"]
-      kibana: 
+    # Requirement A
+    - name: kib_tracy_tenant1_adm
+      groups_or: ["kib_tracy_tenant1_adm"]
+      indices: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
+      kibana:
         access: rw
         index: ".kibana_tracy_tenant1"
 
+    # Requirement B
+    - name: "Allow RW access to all tracy-* indices"
+      groups_or: ["kib_tracy_default_adm", "kib_tracy_tenant1_adm"]
+      indices: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
+        
   users:
     - username: admin
       auth_key: admin:admin
@@ -93,7 +86,7 @@ readonlyrest:
     - username: adm3
       auth_key: adm3:test
       groups:
-        - id: "kib_tracy_default_adm_ext98107"
-          name: "kib_tracy_default_adm_ext98107"
-        - id: "kib_tracy_tenant1_adm_ext98107" 
-          name: "kib_tracy_tenant1_adm_ext98107"
+        - id: "kib_tracy_default_adm"
+          name: "kib_tracy_default_adm"
+        - id: "kib_tracy_tenant1_adm" 
+          name: "kib_tracy_tenant1_adm"

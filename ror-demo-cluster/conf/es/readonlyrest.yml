@@ -40,9 +40,7 @@ readonlyrest:
     # Requirement B (solution 1.)
     - name: "Allow RW access to all tracy-* indices"
       groups_or: ["kib_tracy_default_adm", "kib_tracy_tenant1_adm"]
-      indices:
-        patterns: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
-        must_involve_indices: true  # this has to be true otherwise user cannot login
+      indices: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
         
     # Requirement A
     - name: kib_tracy_default_adm
@@ -59,11 +57,6 @@ readonlyrest:
       kibana:
         access: rw
         index: ".kibana_tracy_tenant1"
-
-    # Requirement B (solution 2: alternative to solution 1)
-    #- name: "Allow RW access to all tracy-* indices"
-    #  groups_or: ["kib_tracy_default_adm", "kib_tracy_tenant1_adm"]
-    #  indices: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
 
   users:
     - username: admin

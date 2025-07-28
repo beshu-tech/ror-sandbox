@@ -2,7 +2,18 @@ cluster.name: ror-cluster
 node.name: ror-es01
 network.host: 0.0.0.0
 
-xpack.security.enabled: false
+xpack.security.enabled: true
 
-http.type: ssl_netty4
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.verification_mode: none
+xpack.security.http.ssl.client_authentication: none
+xpack.security.http.ssl.keystore.path: elastic-certificates.p12
+xpack.security.http.ssl.truststore.path: elastic-certificates.p12
+
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: none
+xpack.security.transport.ssl.client_authentication: none
+xpack.security.transport.ssl.keystore.path: elastic-certificates.p12
+xpack.security.transport.ssl.truststore.path: elastic-certificates.p12
+
 path.repo: /tmp/repositories

@@ -5,88 +5,198 @@ readonlyrest:
     keystore_pass: readonlyrest
     key_pass: readonlyrest
 
-  audit:
-    enabled: true
-    outputs: [index]
-
   access_control_rules:
 
-    - name: "KIBANA"
-      type: allow
-      auth_key: kibana:kibana
-      verbosity: error
+  - name: "KIBANA"
+    type: allow
+    auth_key: kibana:kibana
+    verbosity: error
 
-    - name: "Admins"
-      groups: [Administrators]
-      kibana:
-        access: admin
+  - name: "ADMIN"
+    type: allow
+    auth_key: admin:admin
+    verbosity: error
 
-    - name: "End users"
-      groups: ["EndUsers"]
-      indices: ["frontend_logs", "kibana_sample_data_*"]
-      kibana:
-        index: .kibana_end_@{user}
-        access: rw
-        hide_apps: ["Security", "Observability"]
+### ADMIN USER ACCESS
+## AD GROUPS:
+# ELASTICSEARCH_TEST_Admins - platform admins
+# cen88278 or cen57439
+  - name: kib_tracy_default_padm
+    groups_or: ["kib_tracy_default_padm"]
+    kibana:
+      access: unrestricted
+      index: ".kibana_tracy_default"
+  - name: kib_tracy_tenant1_padm
+    groups_or: ["kib_tracy_tenant1_padm"]
+    kibana:
+      access: unrestricted
+      index: ".kibana_tracy_tenant1"
 
-    - name: "Business users"
-      groups: ["BusinessUsers"]
-      indices: ["business_logs", "kibana_sample_data_*"]
-      kibana:
-        index: .kibana_business_@{user}
-        access: rw
-        hide_apps: ["Security", "Observability"]
+### USER ACCESS
+## AD GROUPS:
+# ELS_TRACY_TRACY_ADM - all access to TRACY indices ( no security settings )
+# ELS_TRACY_TRACY_KDEV - read/write/delete access to TRACY prod clones data indices only test environment ( like ELS_TRACY_TRACY_ADM but only exist on test env )
+# ELS_TRACY_TRACY_SDEV - read/write/delete access to TRACY synthetic data indices only test environment ( like ELS_TRACY_TRACY_ADM but only exist on test env )
+# ELS_TRACY_TRACY_OPS - read/write access to TRACY indices ( no delete indices )
+# ELS_TRACY_TRACY_USR - readonly access to TRACY indices
+# KIB_TRACY_ALL_ADM - read/write access to ALL tenants ( default tenant is the first tenant)
+# KIB_TRACY_ALL_USR - readonly access to ALL tenants
+# KIB_TRACY_TENANT1_ADM - read/write access to TENANT1 tenant
 
-    # Requirement B (solution 1.)
-    - name: "Allow RW access to all tracy-* indices"
-      groups_or: ["kib_tracy_default_adm", "kib_tracy_tenant1_adm"]
-      indices: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
-        
-    # Requirement A
-    - name: kib_tracy_default_adm
-      groups_or: ["kib_tracy_default_adm"]
-      indices: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
-      kibana:
-        access: rw
-        index: ".kibana_tracy_default"
+# tracy_usr1
+  - name: kib_tracy_default_ro
+    groups_or: ["kib_tracy_default_ro"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: ro
+      index: ".kibana_tracy_default"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
 
-    # Requirement A
-    - name: kib_tracy_tenant1_adm
-      groups_or: ["kib_tracy_tenant1_adm"]
-      indices: ["deva-*", "int-*", "prs-*", "pred-*", "tracy-*"]
-      kibana:
-        access: rw
-        index: ".kibana_tracy_tenant1"
+  - name: kib_tracy_tenant1_ro
+    groups_or: ["kib_tracy_tenant1_ro"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: ro
+      index: ".kibana_tracy_tenant1"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+# tracy_usr2
+  - name: kib_tracy_default_tracy_usr2
+    groups_or: ["kib_tracy_default_tracy_usr2"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: rw
+      index: ".kibana_tracy_default"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+  - name: kib_tracy_tenant1_tracy_usr2
+    groups_or: ["kib_tracy_tenant1_tracy_usr2"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: rw
+      index: ".kibana_tracy_tenant1"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+# tracy_usr3
+  - name: "Forbid els access tracy_usr3"
+    type: forbid
+    groups_or: ["kib_tracy_default_tracy_usr3", "kib_tracy_tenant1_tracy_usr3"]
+    actions:
+      - "cluster:admin/*"
+      
+  - name: "Allow els access tracy_usr3"
+    groups_or: ["kib_tracy_default_tracy_usr3", "kib_tracy_tenant1_tracy_usr3"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    actions:
+      - "indices:monitor/*"
+      - "indices:data/*"
+      - "indices:admin/aliases"
+      - "indices:admin/aliases/*"
+      - "indices:admin/mappings/*"
+      - "indices:admin/template/*"
+      - "indices:admin/rollover"
+      - "indices:admin/refresh"
+      - "indices:admin/flush"
+      - "indices:admin/script/*"
+      - "indices:admin/tasks/cancel"
+      - "cluster:monitor/*"
+      - "cluster:admin/ingest/*"
+
+  - name: "Allow kib access default tenant tracy_usr3"
+    groups_or: ["kib_tracy_default_tracy_usr3"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: rw
+      index: ".kibana_tracy_default"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+  - name: "Allow kib access tenant1 tenant tracy_usr3"
+    groups_or: ["kib_tracy_tenant1_tracy_usr3"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: rw
+      index: ".kibana_tracy_tenant1"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+# tracy_adm1
+  - name: "Allow els access tracy_adm1"
+    groups_or: ["kib_tracy_tenant1_usr"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+
+  - name: "Allow kib access tenant1 tenant tracy_adm1"
+    groups_or: ["kib_tracy_tenant1_usr"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: ro
+      index: ".kibana_tracy_tenant1"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+# tracy_adm2
+  - name: "Allow els access tracy_adm2"
+    groups_or: ["els_tracy_adm"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+
+# tracy_adm3
+  # Requirement B ( RW access to all tracy-* indices )
+  - name: "Allow els access tracy_adm3"
+    groups_or: ["kib_tracy_default_adm", "kib_tracy_tenant1_adm"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+
+  # Requirement A ( RW access to default tenant )
+  - name: "Allow kib access default tenant tracy_adm3"
+    groups_or: ["kib_tracy_default_adm"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: rw
+      index: ".kibana_tracy_default"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
+
+  # Requirement A ( RW access to tenant1 tenant )
+  - name: "Allow kib access tenant1 tenant tracy_adm3"
+    groups_or: ["kib_tracy_tenant1_adm"]
+    indices: ["dev*", "int-*", "prs-*", "pred-*"]
+    kibana:
+      access: rw
+      index: ".kibana_tracy_tenant1"
+      hide_apps: [ "Security", "Enterprise Search", "Elasticsearch", "Observability"]
 
   users:
-    - username: admin
-      auth_key: admin:admin
-      groups:
-        - id: "Administrators"
-          name: "Administrators"
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
+  - username: "tracy_adm1" # ELS_TRACY_TRACY_ADM && KIB_TRACY_TENANT1_USR
+    groups: 
+    - id: "kib_tracy_tenant1_usr"
+      name: "tenant1 tenant"
+    auth_key: "tracy_adm1:tracy_adm1"
+  - username: "tracy_adm2" # ELS_TRACY_TRACY_ADM && NO KIBANA GROUP
+    groups: 
+    - id: "els_tracy_adm"
+      name: "tracy admin" # name has to be specified even though it wont be used
+    auth_key: "tracy_adm2:tracy_adm2"
+  - username: "tracy_adm3" # ELS_TRACY_TRACY_ADM && KIB_TRACY_ALL_ADM
+    groups: 
+    - id: "kib_tracy_default_adm"
+      name: "default tenant"
+    - id: "kib_tracy_tenant1_adm"
+      name: "tenant1 tenant" # every other tenant has to have another group id
+    auth_key: "tracy_adm3:tracy_adm3"
+  - username: "tracy_usr1" # ELS_TRACY_TRACY_USR && KIB_TRACY_ALL_USR
+    groups: 
+    - id: "kib_tracy_default_ro"
+      name: "default tenant"
+    - id: "kib_tracy_tenant1_ro"
+      name: "tenant1 tenant" # every other tenant has to have another group id
+    auth_key: "tracy_usr1:tracy_usr1"
+  - username: "tracy_usr2" # ELS_TRACY_TRACY_USR && KIB_TRACY_ALL_ADM
+    groups: 
+    - id: "kib_tracy_default_tracy_usr2"
+      name: "default tenant"
+    - id: "kib_tracy_tenant1_tracy_usr2"
+      name: "tenant1 tenant"
+    auth_key: "tracy_usr2:tracy_usr2"
+  - username: "tracy_usr3" # ELS_TRACY_TRACY_OPS && KIB_TRACY_ALL_ADM
+    groups: 
+    - id: "kib_tracy_default_tracy_usr3"
+      name: "default tenant"
+    - id: "kib_tracy_tenant1_tracy_usr3"
+      name: "tenant1 tenant"
+    auth_key: "tracy_usr3:tracy_usr3"
 
-    - username: user1
-      auth_key: user1:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
-
-    - username: user2
-      auth_key: user2:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
-
-    - username: adm3
-      auth_key: adm3:test
-      groups:
-        - id: "kib_tracy_default_adm"
-          name: "kib_tracy_default_adm"
-        - id: "kib_tracy_tenant1_adm" 
-          name: "kib_tracy_tenant1_adm"

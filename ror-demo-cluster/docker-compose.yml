@@ -12,6 +12,9 @@ services:
       - "19200:9200"
       - "19300:9300"
       - "5005:5005"
+    depends_on:
+      ldap:
+        condition: service_started
     environment:
       - cluster.name=ror-es-cluster
       - node.name=es-ror-single
@@ -19,6 +22,9 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+      - LDAP_ADMIN_PASSWORD=password
+      - LDAP_HOST=ldap
+      - LDAP_PORT=3890
     healthcheck:
       test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:9200/_cluster/health" ]
       interval: 10s
@@ -82,6 +88,22 @@ services:
       start_period: 60s
     volumes:
       - ./init-scripts:/scripts 
+    networks:
+      - es-ror-network
+
+  ldap:
+    image: nitnelave/lldap:v0.3.0
+    user: "33:33"
+    hostname: ldap
+    ports:
+      - "3890:3890" # ldap port
+      - "17170:17170" # ldap frontend
+    volumes:
+      - "./ldap/data/:/data"
+    environment:
+      - LLDAP_JWT_SECRET=secret
+      - LLDAP_LDAP_USER_PASS=password
+      - LLDAP_LDAP_BASE_DN=dc=example,dc=com
     networks:
       - es-ror-network
 

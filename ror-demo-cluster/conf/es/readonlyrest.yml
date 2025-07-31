@@ -198,10 +198,38 @@ readonlyrest:
         - id: "kib_tracy_tenant1_tracy_usr2"
           name: "tenant1 tenant"
       auth_key: "tracy_usr2:tracy_usr2"
-    - username: "tracy_usr3" # ELS_TRACY_TRACY_OPS && KIB_TRACY_ALL_ADM
-      groups:
-        - id: "kib_tracy_default_tracy_usr3"
+    - username: "tracy_usr3" 
+      # the LDAP auth below is an equivalent to the oidc auth above (from ROR settings perspective) but easier to test in ROR Sandbox
+      #ror_kbn_auth: 
+      #  name: "oidc1"
+      ldap_auth: 
+          name: "ldap1"
+          groups: [ "*" ]
+      groups: 
+      - local_group:
+          id: "kib_tracy_default_tracy_usr3"
           name: "default tenant"
-        - id: "kib_tracy_tenant1_tracy_usr3"
+        external_group_ids: [ "*"]
+      - local_group:
+          id: "kib_tracy_tenant1_tracy_usr3"
           name: "tenant1 tenant"
-      auth_key: "tracy_usr3:tracy_usr3"
+        external_group_ids: [ "*" ]   
+  
+  ldaps:
+
+    - name: ldap1
+
+      host: "${env:LDAP_HOST}"
+      port: ${env:LDAP_PORT}
+      ssl_enabled: false
+      ssl_trust_all_certs: true
+
+      bind_dn: "uid=admin,ou=people,dc=example,dc=com"
+      bind_password: "${env:LDAP_ADMIN_PASSWORD}"
+
+      search_user_base_DN: "ou=People,dc=example,dc=com"
+      search_groups_base_DN: "ou=Groups,dc=example,dc=com"
+      user_id_attribute: "uid"                                  
+      unique_member_attribute: "uniqueMember"
+
+      cache_ttl: 10s

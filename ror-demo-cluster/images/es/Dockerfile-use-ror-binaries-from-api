@@ -10,6 +10,10 @@ COPY conf/es/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
 COPY conf/es/log4j2.properties /usr/share/elasticsearch/config/log4j2.properties
 COPY conf/es/ror-keystore.jks /usr/share/elasticsearch/config/ror-keystore.jks
 COPY images/es/install-ror-es-using-api.sh /tmp/install-ror.sh
+COPY conf/es/ca.crt /usr/share/elasticsearch/config/ca.crt
+COPY conf/es/elasticsearch.crt /usr/share/elasticsearch/config/elasticsearch.crt
+COPY conf/es/elasticsearch.csr /usr/share/elasticsearch/config/elasticsearch.csr
+COPY conf/es/elasticsearch.key /usr/share/elasticsearch/config/elasticsearch.key
 
 USER root
 RUN /tmp/install-ror.sh

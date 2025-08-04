@@ -1,10 +1,19 @@
-readonlyrest:
-  ssl:
-    enable: true
-    keystore_file: "ror-keystore.jks"
-    keystore_pass: readonlyrest
-    key_pass: readonlyrest
+helpers:
+  cr: &common-rules
+    kibana_access: rw
+    kibana_hide_apps: ["Enterprise Search|Overview"]
+    kibana_index: ".kibana_@{acl:current_group}"
 
+  ag: &all-groups
+    groups:
+      - id: admins_group
+        name: administrators
+      - id: infosec_group
+        name: infosec
+      - id: template_group
+        name: template
+
+readonlyrest:
   audit:
     enabled: true
     outputs: [index]
@@ -16,48 +25,54 @@ readonlyrest:
       auth_key: kibana:kibana
       verbosity: error
 
-    - name: "Admins"
-      groups: [Administrators]
-      kibana:
-        access: admin
+    - name: "APM"
+      type: allow
+      auth_key: apm:test
 
-    - name: "End users"
-      groups: ["EndUsers"]
-      indices: ["frontend_logs", "kibana_sample_data_*"]
-      kibana:
-        index: .kibana_end_@{user}
-        access: rw
-        hide_apps: ["Security", "Observability"]
+    - name: PERSONAL_GRP
+      groups: [Personal]
+      <<: *common-rules
+      kibana_index: ".kibana_@{user}"
 
-    - name: "Business users"
-      groups: ["BusinessUsers"]
-      indices: ["business_logs", "kibana_sample_data_*"]
+    - name: ADMIN_GRP
+      groups: [admins_group]
+      <<: *common-rules
+      kibana_access: admin
+
+    - name: infosec
+      groups: [infosec_group]
+      <<: *common-rules
+      kibana_hide_apps:
+        ["Enterprise Search|Overview", "Observability", "Management"]
+
+    - name: Template Tenancy
+      groups: [template_group]
+      <<: *common-rules
+
+    - name: "Reporting tests: user2"
+      auth_key: user2:dev
       kibana:
-        index: .kibana_business_@{user}
+        index: ".kibana_user2"
         access: rw
-        hide_apps: ["Security", "Observability"]
+      indices: ["invoices"]
+
+    - name: "Reporting tests: user3"
+      auth_key: user3:dev
+      kibana:
+        index: ".kibana_user3"
+        access: rw
+      indices: ["invoices"]
 
   users:
     - username: admin
       auth_key: admin:admin
-      groups:
-        - id: "Administrators"
-          name: "Administrators"
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
+      <<: *all-groups
 
     - username: user1
       auth_key: user1:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
+      <<: *all-groups
 
-    - username: user2
-      auth_key: user2:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
+  impersonation:
+    - impersonator: admin
+      users: ["*"]
+      auth_key: admin:dev

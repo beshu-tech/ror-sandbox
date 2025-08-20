@@ -49,11 +49,17 @@ services:
       ELASTICSEARCH_HOSTS: https://es-ror:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:5601/api/features" ]
+      test: ["CMD-SHELL", "curl -fsSk --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused https://127.0.0.1:5601/login >/dev/null || exit 1"]
       interval: 10s
-      timeout: 10s
-      retries: 30
-      start_period: 120s
+      timeout: 5s
+      retries: 50
+      start_period: 90s
+    #healthcheck:
+    #  test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:5601/api/features" ]
+    #  interval: 10s
+    #  timeout: 10s
+    #  retries: 50
+    #  start_period: 30s
     networks:
       - es-ror-network
     ulimits:

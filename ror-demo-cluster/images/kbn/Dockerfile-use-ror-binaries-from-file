@@ -7,6 +7,7 @@ ARG ROR_FILE=please_set_ror_file_path
 
 COPY conf/kbn/ror-newplatform-kibana.yml /usr/share/kibana/config/ror-newplatform-kibana.yml
 COPY conf/kbn/ror-oldplatform-kibana.yml /usr/share/kibana/config/ror-oldplatform-kibana.yml
+COPY conf/kbn/ror-newplatform-kibana-with-enterprise-settings.yml /usr/share/kibana/config/ror-newplatform-kibana-with-enterprise-settings.yml
 COPY conf/kbn/kibana.crt /usr/share/kibana/config/kibana.crt
 COPY conf/kbn/kibana.key /usr/share/kibana/config/kibana.key
 COPY conf/keycloak/new-keycloak.crt /usr/share/kibana/config/keycloak-ca.crt

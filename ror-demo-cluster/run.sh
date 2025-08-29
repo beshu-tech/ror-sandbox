@@ -10,8 +10,9 @@ if ! docker compose version &>/dev/null; then
   exit 2
 fi
 
-if ! docker compose config > /dev/null; then
-  echo "Cannot validate docker compose configuration. It seems you have to upgrade your Docker installation. See https://docs.docker.com/engine/install/"
+# validate base compose file
+if ! docker compose -f docker-compose.yml config > /dev/null; then
+  echo "Cannot validate base docker-compose.yml."
   exit 3
 fi
 
@@ -26,11 +27,22 @@ echo -e "
                                          __/ |
 "
 
-./../utils/collect-info-about-ror-es-kbn.sh
+./../utils/collect-info-about-ror-es-kbn.sh || true
 
 echo "Starting Elasticsearch and Kibana with installed ROR plugins ..."
 
-docker compose up -d --build --wait --remove-orphans --force-recreate 
+# Build compose file list; include Keycloak override only when ROR_ACTIVATION_KEY is set
+COMPOSE_ARGS=("-f" "docker-compose.yml")
+if [ -n "${ROR_ACTIVATION_KEY:-}" ]; then
+  if [ -f docker-compose.enterprise.yml ]; then
+    COMPOSE_ARGS+=("-f" "docker-compose.enterprise.yml")
+    echo "Including docker-compose.enterprise.yml"
+  fi
+fi
+
+# Run docker compose with selected files
+docker compose "${COMPOSE_ARGS[@]}" up -d --build --wait --remove-orphans --force-recreate
+
 docker compose logs -f > ror-cluster.log 2>&1 &
 
 echo -e "
@@ -41,4 +53,9 @@ echo -e "
 ***********************************************************************
 "
 
-echo -e "You can access ROR KBN here: https://localhost:15601 (login via 'Keycloak' button; users: 'timelord:timelord', 'user1:user1').\nKeycloak admin console: http://localhost:8080/auth (admin:admin)"
+
+if [ -n "${ROR_ACTIVATION_KEY:-}" ]; then
+  echo -e "You can access ROR KBN here: https://localhost:15601 (login via 'Keycloak' button; users: 'timelord:timelord', 'user1:user1').\nKeycloak admin console: http://localhost:8080/auth (admin:admin)"
+else
+  echo -e "You can access ROR KBN here: https://localhost:15601"
+fi

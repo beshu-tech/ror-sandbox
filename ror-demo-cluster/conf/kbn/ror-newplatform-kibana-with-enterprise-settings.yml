@@ -12,7 +12,7 @@ server.ssl.certificate: /usr/share/kibana/config/kibana.crt
 server.ssl.key: /usr/share/kibana/config/kibana.key
 server.ssl.redirectHttpFromPort: 80
 
-readonlyrest_kbn.logLevel: trace
+readonlyrest_kbn.logLevel: info
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
 readonlyrest_kbn:
   auth:

@@ -44,7 +44,7 @@ elif greater_than_or_equal "$KBN_VERSION" "7.9.0" ; then
 fi
 
   if greater_than_or_equal "$KBN_VERSION" "7.9.0"; then
-    if [[ -n "$ROR_ACTIVATION_KEY" ]]; then
+    if [[ "${ROR_LICENSE_EDITION:-}" == "kbn_ent" ]]; then
       mv /usr/share/kibana/config/ror-newplatform-kibana-with-enterprise-settings.yml /usr/share/kibana/config/kibana.yml
     else
       mv /usr/share/kibana/config/ror-newplatform-kibana.yml /usr/share/kibana/config/kibana.yml
@@ -55,4 +55,3 @@ fi
   fi
 
 echo "DONE!"
-

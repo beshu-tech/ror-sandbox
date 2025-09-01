@@ -22,18 +22,18 @@ readonlyrest_kbn:
         buttonName: "Keycloak OIDC"
         type: "oidc"
         protocol: "https"
-        issuer: 'http://keycloak:8080/realms/ror'
-        authorizationURL: 'http://keycloak:8080/realms/ror/protocol/openid-connect/auth'
-        tokenURL: 'http://keycloak:8080/realms/ror/protocol/openid-connect/token'
-        userInfoURL: 'http://keycloak:8080/realms/ror/protocol/openid-connect/userinfo'
-        jwksURL: 'http://keycloak:8080/realms/ror/protocol/openid-connect/certs'
+        issuer: 'http://kc.localhost:8080/realms/ror'
+        authorizationURL: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/auth'
+        tokenURL: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/token'
+        userInfoURL: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/userinfo'
+        jwksURL: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/certs'
         clientID: 'kibana-ror'
         clientSecret: 'kibanasecret123'
         scope: 'openid profile email'
         usernameParameter: 'preferred_username'
         groupsParameter: 'groups'
         kibanaExternalHost: 'localhost:15601'
-        logoutUrl: 'http://keycloak:8080/realms/ror/protocol/openid-connect/logout'
+        logoutUrl: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/logout'
       oidc_lemon_ldap:
         buttonName: "LemonLDAP OpenID"
         type: "oidc"
@@ -50,4 +50,3 @@ readonlyrest_kbn:
         kibanaExternalHost: 'localhost:15601'
         logoutUrl: 'https://oidctest.wsweet.org/oauth2/logout'
         jwksURL: 'https://oidctest.wsweet.org/oauth2/jwks'
-

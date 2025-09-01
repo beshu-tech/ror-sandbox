@@ -92,7 +92,7 @@ echo -e "
 
 
 if [[ "${ROR_LICENSE_EDITION:-}" == "kbn_ent" ]]; then
-  echo -e "You can access ROR KBN here: https://localhost:15601 (login via 'Keycloak' button; users: 'timelord:timelord', 'user1:user1').\nKeycloak admin console: http://localhost:8080/auth (admin:admin)"
+  echo -e "You can access ROR KBN here: https://localhost:15601 (login via 'Keycloak' button; users: 'timelord:timelord', 'user1:user1').\nKeycloak admin console: http://kc.localhost:8080/auth (admin:admin)"
 else
   echo -e "You can access ROR KBN here: https://localhost:15601"
 fi

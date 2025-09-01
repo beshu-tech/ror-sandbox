@@ -44,11 +44,28 @@ elif greater_than_or_equal "$KBN_VERSION" "7.9.0" ; then
 fi
 
   if greater_than_or_equal "$KBN_VERSION" "7.9.0"; then
-    if [[ "${ROR_LICENSE_EDITION:-}" == "kbn_ent" ]]; then
-      mv /usr/share/kibana/config/ror-newplatform-kibana-with-enterprise-settings.yml /usr/share/kibana/config/kibana.yml
-    else
-      mv /usr/share/kibana/config/ror-newplatform-kibana.yml /usr/share/kibana/config/kibana.yml
-    fi
+    case "${ROR_LICENSE_EDITION:-}" in
+      kbn_ent)
+        mv /usr/share/kibana/config/enterprise-ror-newplatform-kibana.yml \
+           /usr/share/kibana/config/kibana.yml
+        ;;
+     kbn_pro)
+     mv /usr/share/kibana/config/pro-ror-newplatform-kibana.yml \
+                /usr/share/kibana/config/kibana.yml
+         ;;
+     kbn_free)
+     mv /usr/share/kibana/config/free-ror-newplatform-kibana.yml \
+                     /usr/share/kibana/config/kibana.yml
+         ;;
+      "")
+        echo "ERROR: ROR_LICENSE_EDITION is not set" >&2
+        exit 1
+        ;;
+      *)
+        echo "ERROR: Unsupported ROR_LICENSE_EDITION='${ROR_LICENSE_EDITION}'" >&2
+        exit 2
+        ;;
+    esac
   else
     mv /usr/share/kibana/config/ror-oldplatform-kibana.yml /usr/share/kibana/config/kibana.yml
     rm -rf /usr/share/kibana/optimize # for some reason we have to remove it and let kibana optimize it on startup

@@ -31,25 +31,17 @@ echo -e "
 
 ./../utils/collect-info-about-ror-es-kbn.sh
 
-# Extract edition; fail if helper cannot parse
-script="$(cd "$(dirname "$0")" >/dev/null 2>&1 && pwd)/../utils/extract_license_edition.sh"
-if [ -x "$script" ]; then
-  output="$($script "${ROR_ACTIVATION_KEY}" 2>&1)"
-  rc=$?
-  if [ $rc -ne 0 ]; then
-    echo "ERROR: extract_license_edition helper failed (rc=$rc):" >&2
-    echo "$output" >&2
-    exit $rc
-  elif [ -z "$output" ]; then
-    echo "ERROR: extract_license_edition helper returned empty edition" >&2
-    exit 2
-  else
-    export ROR_LICENSE_EDITION="$output"
-    echo "Auto-detected ROR_LICENSE_EDITION=$ROR_LICENSE_EDITION"
-  fi
+output="$(../utils/extract_license_edition.sh "${ROR_ACTIVATION_KEY}" 2>&1)"  rc=$?
+if [ $rc -ne 0 ]; then
+  echo "ERROR: extract_license_edition helper failed (rc=$rc):" >&2
+  echo "$output" >&2
+  exit $rc
+elif [ -z "$output" ]; then
+  echo "ERROR: extract_license_edition helper returned empty edition" >&2
+  exit 2
 else
-  echo "ERROR: extract_license_edition helper not found or not executable" >&2
-  exit 1
+  export ROR_LICENSE_EDITION="$output"
+  echo "Auto-detected ROR_LICENSE_EDITION=$ROR_LICENSE_EDITION"
 fi
 
 echo "Starting Elasticsearch and Kibana with installed ROR plugins ..."

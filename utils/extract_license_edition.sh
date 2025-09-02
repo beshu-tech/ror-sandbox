@@ -54,18 +54,21 @@ fi
 }
 
 # if not defined or empty, return FREE
-if [ -z "${ROR_ACTIVATION_KEY:-}" ]; then
+if [ -z "${rorActivationLicense:-}" ]; then
   printf 'FREE\n'
   exit 0
 fi
 
 # Enforce JWT format strictly; fail early if not a JWT
-if ! echo "$ROR_ACTIVATION_KEY" | grep -qE '^[^\.]+\.[^\.]+\.[^\.]+$'; then
+if ! echo "$rorActivationLicense" | grep -qE '^[^\.]+\.[^\.]+\.[^\.]+$'; then
   echo "ERROR: ROR_ACTIVATION_KEY is not a JWT (expected three dot-separated parts). Aborting." >&2
   exit 1
 fi
 
-extractedEdition="$(executeExtractLicense)"
+if ! extractedEdition="$(executeExtractLicense)"; then
+  printf '%s\n' "ERROR: failed to extract edition" >&2
+  exit 2
+fi
 
 case "${extractedEdition:-}" in
   kbn_ent)
@@ -85,7 +88,7 @@ case "${extractedEdition:-}" in
     exit 2
     ;;
   *)
-    printf "ERROR: unknown edition: %s" "$edition" >&2
+    printf "ERROR: unknown edition: %s" "$extractedEdition" >&2
     exit 3
     ;;
 esac

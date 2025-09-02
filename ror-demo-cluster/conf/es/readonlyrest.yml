@@ -31,6 +31,7 @@ readonlyrest:
         index: .kibana_business_@{user}
         access: rw
         hide_apps: ["Security", "Observability"]
+
   users:
     - username: admin
       auth_key: admin:admin

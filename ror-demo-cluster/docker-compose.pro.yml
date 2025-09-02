@@ -1,0 +1,2 @@
+# Intentionally left blank. Let's extend it when we have a pro only docker compose config.
+version: '0.0'

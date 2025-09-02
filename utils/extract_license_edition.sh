@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
-# Extract 'license.edition' from a JWT (prints edition)
-# Usage: extract_license_edition.sh <jwt>
+# Extract 'license.edition' from a ROR_ACTIVATION_KEY
+# Usage: extract_license_edition.sh <rorActivationLicense>
 set -eu
 [ "$#" -ge 1 ] || { printf '%s\n' "Missing argument: JWT required" >&2; exit 1; }
-jwt="$1"
+rorActivationLicense="$1"
 
 function extractLicense() {
   local tmpf rc output edition
   tmpf=$(mktemp 2>/dev/null || (printf '/tmp/extract_license_edition.XXXXXX' && mktemp -t extract_license_edition))
-  JWT="$jwt" python3 - <<'PY' >"$tmpf" 2>&1
+  JWT="$rorActivationLicense" python3 - <<'PY' >"$tmpf" 2>&1
 import os,base64,json,sys
 s=os.environ.get('JWT','')
 parts=s.split('.')
@@ -41,15 +41,51 @@ PY
   return 0
 }
 
-
-
 # Execute the python snippet: prefer local python3, fallback to docker
-
+function executeExtractLicense() {
 if command -v python3 >/dev/null 2>&1; then
 extractLicense
 
 else
-  printf '%s' "$jwt" | docker run --rm -i python:3.12-slim python3 - <<PY
+  printf '%s' "$rorActivationLicense" | docker run --rm -i python:3.12-slim python3 - <<PY
 extractLicense
 PY
 fi
+}
+
+# if not defined or empty, return FREE
+if [ -z "${ROR_ACTIVATION_KEY:-}" ]; then
+  printf 'FREE\n'
+  exit 0
+fi
+
+# Enforce JWT format strictly; fail early if not a JWT
+if ! echo "$ROR_ACTIVATION_KEY" | grep -qE '^[^\.]+\.[^\.]+\.[^\.]+$'; then
+  echo "ERROR: ROR_ACTIVATION_KEY is not a JWT (expected three dot-separated parts). Aborting." >&2
+  exit 1
+fi
+
+extractedEdition="$(executeExtractLicense)"
+
+case "${extractedEdition:-}" in
+  kbn_ent)
+    printf 'ENT'
+    exit 0
+    ;;
+  kbn_pro)
+    printf 'PRO'
+    exit 0
+    ;;
+  kbn_free)
+    printf 'FREE'
+    exit 0
+    ;;
+  '')
+    printf "ERROR: no edition extracted" >&2
+    exit 2
+    ;;
+  *)
+    printf "ERROR: unknown edition: %s" "$edition" >&2
+    exit 3
+    ;;
+esac

@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-docker compose rm --stop --force
+docker compose -f docker-compose.base.yml rm --stop --force

@@ -2,4 +2,4 @@
 
 rm -rf output
 mkdir output
-docker-compose --file generate-certs-docker-compose.yml up --build --no-deps
+docker-compose --file generate-certs-docker-compose.base.yml up --build --no-deps

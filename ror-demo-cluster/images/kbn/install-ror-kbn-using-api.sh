@@ -45,15 +45,15 @@ fi
 
   if greater_than_or_equal "$KBN_VERSION" "7.9.0"; then
     case "${ROR_LICENSE_EDITION:-}" in
-      kbn_ent)
+      ENT)
         mv /usr/share/kibana/config/enterprise-ror-newplatform-kibana.yml \
            /usr/share/kibana/config/kibana.yml
         ;;
-     kbn_pro)
+     PRO)
      mv /usr/share/kibana/config/pro-ror-newplatform-kibana.yml \
                 /usr/share/kibana/config/kibana.yml
          ;;
-     kbn_free)
+     FREE)
      mv /usr/share/kibana/config/free-ror-newplatform-kibana.yml \
                      /usr/share/kibana/config/kibana.yml
          ;;

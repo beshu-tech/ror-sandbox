@@ -47,16 +47,16 @@ fi
     case "${ROR_LICENSE_EDITION:-}" in
       ENT)
         mv /usr/share/kibana/config/enterprise-ror-newplatform-kibana.yml \
-           /usr/share/kibana/config/kibana.yml
+          /usr/share/kibana/config/kibana.yml
         ;;
-     PRO)
-     mv /usr/share/kibana/config/pro-ror-newplatform-kibana.yml \
-                /usr/share/kibana/config/kibana.yml
-         ;;
-     FREE)
-     mv /usr/share/kibana/config/free-ror-newplatform-kibana.yml \
-                     /usr/share/kibana/config/kibana.yml
-         ;;
+      PRO)
+        mv /usr/share/kibana/config/pro-ror-newplatform-kibana.yml \
+          /usr/share/kibana/config/kibana.yml
+        ;;
+      FREE)
+        mv /usr/share/kibana/config/free-ror-newplatform-kibana.yml \
+          /usr/share/kibana/config/kibana.yml
+        ;;
       "")
         echo "ERROR: ROR_LICENSE_EDITION is not set" >&2
         exit 1

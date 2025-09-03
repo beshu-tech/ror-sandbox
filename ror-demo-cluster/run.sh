@@ -31,7 +31,12 @@ echo -e "
 ./../utils/collect-info-about-ror-es-kbn.sh
 
 # Call the extract helper using an explicit relative path (./../utils/...)
-output="$(./../utils/extract_license_edition.sh "${ROR_ACTIVATION_KEY}" 2>&1)"  rc=$?
+if output="$(./../utils/extract_license_edition.sh "${ROR_ACTIVATION_KEY}" 2>&1)"; then
+  rc=0
+else
+  rc=$?
+fi
+
 if [ $rc -ne 0 ]; then
   echo "ERROR: Failed to extract the ROR license edition (exit code: $rc)." >&2
   echo "$output" >&2

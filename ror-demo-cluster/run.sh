@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-# Change to the directory where this script is located
 cd "$(dirname "$0")" || exit 1
 
 if ! docker version &>/dev/null; then
@@ -14,18 +13,18 @@ if ! docker compose version &>/dev/null; then
 fi
 
 if ! docker compose config > /dev/null; then
-  echo "Invalid docker-compose.yml configuration."
-  exit 1
+  echo "Cannot validate docker compose configuration. It seems you have to upgrade your Docker installation. See https://docs.docker.com/engine/install/"
+  exit 3
 fi
 
 echo -e "
 
   _____                _  ____        _       _____  ______  _____ _______
- |  __ \\              | |/ __ \\      | |     |  __ \\|  ____|/ ____|__   __|
+ |  __ \              | |/ __ \      | |     |  __ \|  ____|/ ____|__   __|
  | |__) |___  __ _  __| | |  | |_ __ | |_   _| |__) | |__  | (___    | |
- |  _  // _ \\/ _| |/ _| | |  | | '_ \\| | | | |  _  /|  __|  \\___ \\   | |
- | | \\ \\  __/ (_| | (_| | |__| | | | | | |_| | | \\ \\| |____ ____) |  | |
- |_|  \\_\\___|\\__,_|\\__,_|\\____/|_| |_|_|\\__, |_|  \\_\\______|_____/   |_|
+ |  _  // _ \/ _| |/ _| | |  | | '_ \| | | | |  _  /|  __|  \___ \   | |
+ | | \ \  __/ (_| | (_| | |__| | | | | | |_| | | \ \| |____ ____) |  | |
+ |_|  \_\___|\__,_|\__,_|\____/|_| |_|_|\__, |_|  \_\______|_____/   |_|
                                          __/ |
 "
 
@@ -34,11 +33,11 @@ echo -e "
 # Call the extract helper using an explicit relative path (./../utils/...)
 output="$(./../utils/extract_license_edition.sh "${ROR_ACTIVATION_KEY}" 2>&1)"  rc=$?
 if [ $rc -ne 0 ]; then
-  echo "ERROR: extract_license_edition helper failed (rc=$rc):" >&2
+  echo "ERROR: Failed to extract the ROR license edition (exit code: $rc)." >&2
   echo "$output" >&2
   exit $rc
 elif [ -z "$output" ]; then
-  echo "ERROR: extract_license_edition helper returned empty edition" >&2
+  echo "ERROR: Could not determine the ROR license edition (the extract_license_edition helper returned no result)." >&2
   exit 2
 else
   export ROR_LICENSE_EDITION="$output"
@@ -61,7 +60,7 @@ echo -e "
 
 case "${ROR_LICENSE_EDITION:-}" in
   ENT)
-    echo -e "You can access ROR KBN here: https://localhost:15601 (login via 'Keycloak' button; users: 'extUser1:extUser1', 'extUser2:extUser2').\nKeycloak admin console: http://kc.localhost:8080/auth (admin:admin)"
+    echo -e "You can access ROR KBN here: https://localhost:15601 (login via 'Keycloak' button; users: 'extUser1:extUser1', 'extUser2:extUser2').\nKeycloak admin console: http://kc.localhost:8080/admin (admin:admin)"
     ;;
   PRO|FREE)
     echo -e "You can access ROR KBN here: https://localhost:15601"

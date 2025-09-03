@@ -27,6 +27,7 @@ function extractLicense() {
   esac
 
   tmpf=$(mktemp 2>/dev/null || (printf '/tmp/extract_license_edition.XXXXXX' && mktemp -t extract_license_edition))
+  trap ' [ -n "${tmpf:-}" ] && [ -f "${tmpf:-}" ] && rm -f -- "${tmpf}" 2>/dev/null || true' EXIT
 
   # Run the Python code using here-doc piped to the command stored in cmd array
   # Using printf '%s' and process substitution for portability
@@ -48,12 +49,10 @@ try:
 except Exception as e:
     sys.stderr.write(str(e) + \"\n\")
     sys.exit(2)
-" | "${cmd[@]}" - >"$tmpf" 2>error.log
+" | "${cmd[@]}" - >"$tmpf" 2>/dev/stderr
 
   rc=$?
   output=$(cat "$tmpf" 2>/dev/null || true)
-  rm -f "$tmpf" 2>/dev/null || true
-
   if [ "$rc" -ne 0 ]; then
     printf '%s\n' "$output" >&2
     return 2
@@ -71,10 +70,8 @@ except Exception as e:
 function executeExtractLicense() {
 if command -v python3 >/dev/null 2>&1; then
   extractLicense local
-
 else
   extractLicense docker
-
 fi
 }
 

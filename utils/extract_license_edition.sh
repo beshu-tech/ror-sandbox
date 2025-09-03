@@ -6,9 +6,32 @@ set -eu
 rorActivationLicense="$1"
 
 function extractLicense() {
+  local executionVariant="$1"
   local tmpf rc output edition
+  local cmd args
+
+  case "$executionVariant" in
+    local)
+      cmd=(python3)
+      args=()
+      export JWT="$rorActivationLicense"
+      ;;
+    docker)
+      cmd=(docker run --rm -i -e JWT="$rorActivationLicense" python:3.12-alpine python3)
+      args=()
+      ;;
+    *)
+      printf '%s\n' "ERROR: unsupported execution variant: $executionVariant" >&2
+      return 1
+      ;;
+  esac
+
   tmpf=$(mktemp 2>/dev/null || (printf '/tmp/extract_license_edition.XXXXXX' && mktemp -t extract_license_edition))
-  JWT="$rorActivationLicense" python3 - <<'PY' >"$tmpf" 2>&1
+
+  # Run the Python code using here-doc piped to the command stored in cmd array
+  # Using printf '%s' and process substitution for portability
+  # Note: in docker command, can pipe here-doc via stdin
+  printf '%s\n' "
 import os,base64,json,sys
 s=os.environ.get('JWT','')
 parts=s.split('.')
@@ -23,33 +46,35 @@ try:
     j=json.loads(decoded.decode('utf-8'))
     print(j.get('license',{}).get('edition',''))
 except Exception as e:
-    sys.stderr.write(str(e) + "\n")
+    sys.stderr.write(str(e) + \"\n\")
     sys.exit(2)
-PY
+" | "${cmd[@]}" - >"$tmpf" 2>error.log
+
   rc=$?
   output=$(cat "$tmpf" 2>/dev/null || true)
   rm -f "$tmpf" 2>/dev/null || true
+
   if [ "$rc" -ne 0 ]; then
     printf '%s\n' "$output" >&2
     return 2
   fi
+
   edition=$(printf '%s' "$output" | tr -d '\r' | sed -n '1p')
   if [ -z "$edition" ]; then
     return 2
   fi
+
   printf '%s' "$edition"
   return 0
 }
 
-# Execute the python snippet: prefer local python3, fallback to docker
 function executeExtractLicense() {
 if command -v python3 >/dev/null 2>&1; then
-extractLicense
+  extractLicense local
 
 else
-  printf '%s' "$rorActivationLicense" | docker run --rm -i python:3.12-slim python3 - <<PY
-extractLicense
-PY
+  extractLicense docker
+
 fi
 }
 

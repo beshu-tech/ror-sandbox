@@ -31,7 +31,7 @@ function putDocument() {
   INDEX_NAME=$1
   DOCUMENT_CONTENT=$2
 
-set -x
+  set -x 
 
   respone=$(curl -k -s -L -w "\n%{http_code}" -u $ELASTICSEARCH_USER:$ELASTICSEARCH_PASSWORD \
     -X POST "$ELASTICSEARCH_ADDRESS/$INDEX_NAME/_doc/" \

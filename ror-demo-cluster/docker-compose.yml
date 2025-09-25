@@ -70,8 +70,12 @@ services:
       keycloak:
         condition: service_healthy
         required: false
-    ports:
-      - "15601:5601"
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          memory: 1G
     environment:
       ELASTICSEARCH_HOSTS: https://es-ror:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
@@ -88,6 +92,24 @@ services:
         soft: -1
         hard: -1
 
+  kbn-proxy:
+    build:
+      context: .
+      dockerfile: images/kbn/Proxy-Dockerfile
+    depends_on:
+      kbn-ror:
+        condition: service_healthy
+    ports:
+      - "5601:443"
+    healthcheck:
+      test: [ "CMD", "curl", "-k", "--fail", "-u", "kibana:kibana", "https://localhost:443/api/status" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    networks:
+      - es-ror-network
+      
   initializer:
     build:
       context: .

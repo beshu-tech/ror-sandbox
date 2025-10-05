@@ -58,14 +58,11 @@ readonlyrest:
           name: "End Users"
 
     - username: "*"
-      ror_kbn_auth:
+      ror_kbn_authentication:
         name: "kbn1"
-        groups: ["*"]
       groups:
-        - local_group:
-            id: "EndUsers"
-            name: "End Users"
-          external_group_ids: [ "*" ]
+        - id: "EndUsers"
+          name: "End Users"
 
   ror_kbn:
     - name: kbn1

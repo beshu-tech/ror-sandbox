@@ -43,7 +43,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
     healthcheck:
-      test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:9200/_cluster/health >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin http://127.0.0.1:9200/_cluster/health >/dev/null || exit 1"]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -54,6 +54,15 @@ services:
       memlock:
         soft: -1
         hard: -1
+
+  es-ror-proxy:
+    image: mitmproxy/mitmproxy
+    command:
+      mitmdump --set validate_inbound_headers=false --mode reverse:http://es-ror:9200 --verbose
+    depends_on:
+      - es-ror
+    networks:
+      - es-ror-network
 
   kbn-ror:
     build:
@@ -67,13 +76,15 @@ services:
     depends_on:
       es-ror:
         condition: service_healthy
+      es-ror-proxy:
+        condition: service_started
       keycloak:
         condition: service_healthy
         required: false
     ports:
       - "15601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: https://es-ror:9200
+      ELASTICSEARCH_HOSTS: http://es-ror-proxy:8080
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     healthcheck:
       test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]
@@ -98,7 +109,7 @@ services:
       kbn-ror:
         condition: service_healthy
     environment:
-      ELASTICSEARCH_ADDRESS: https://es-ror:9200
+      ELASTICSEARCH_ADDRESS: http://es-ror:9200
       ELASTICSEARCH_USER: kibana
       ELASTICSEARCH_PASSWORD: kibana
     healthcheck:
@@ -112,6 +123,21 @@ services:
     networks:
       - es-ror-network
 
+
+  ldap:
+    image: osixia/openldap:1.3.0
+    command: [--copy-service]
+    volumes:
+      - ./conf/ldap/example-com.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/example-com.ldif
+    ports:
+      - "389:389"
+      - "636:636"
+    environment:
+      - LDAP_ADMIN_PASSWORD=password
+      - LDAP_DOMAIN=example.com
+    networks:
+      - es-ror-network
+      
 networks:
   es-ror-network:
     driver: bridge

@@ -9,23 +9,23 @@ function pick_randomly() {
 
 function putDocument() {
   if [ "$#" -ne 2 ]; then
-    echo "ERROR: Three parameters required: 1) index name, 2) document JSON string"
+    echo "ERROR: Two parameters required: 1) index name, 2) document JSON string"
     return 1
   fi
 
   if ! [ -v ELASTICSEARCH_ADDRESS ] || [ -z "$ELASTICSEARCH_ADDRESS" ]; then
     echo "ERROR: required variable ELASTICSEARCH_ADDRESS not set or empty"
-    exit 2
+    return 2
   fi
 
   if ! [ -v ELASTICSEARCH_USER ] || [ -z "$ELASTICSEARCH_USER" ]; then
     echo "ERROR: required variable ELASTICSEARCH_USER not set or empty"
-    exit 3
+    return 3
   fi
 
   if ! [ -v ELASTICSEARCH_PASSWORD ] || [ -z "$ELASTICSEARCH_PASSWORD" ]; then
     echo "ERROR: required variable ELASTICSEARCH_PASSWORD not set or empty"
-    exit 4
+    return 4
   fi
 
   INDEX_NAME=$1
@@ -43,6 +43,46 @@ set -x
 
   if [[ "$http_status" != 2* ]] ; then
     echo "ERROR: Cannot add document [$DOCUMENT_CONTENT] to index=[$INDEX_NAME].\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY"
+    return 5
+  fi
+
+  return 0
+}
+
+function importSavedObjects() {
+  if [ "$#" -ne 1 ]; then
+    echo "ERROR: One parameter required: 1) saved objects file"
+    return 1
+  fi
+
+  SAVED_OBJECTS_FILE=$1
+
+  if ! [ -v KIBANA_ADDRESS ] || [ -z "$KIBANA_ADDRESS" ]; then
+    echo "ERROR: required variable KIBANA_ADDRESS not set or empty"
+    return 2
+  fi
+
+  if ! [ -v ELASTICSEARCH_USER ] || [ -z "$ELASTICSEARCH_USER" ]; then
+    echo "ERROR: required variable ELASTICSEARCH_USER not set or empty"
+    return 3
+  fi
+
+  if ! [ -v ELASTICSEARCH_PASSWORD ] || [ -z "$ELASTICSEARCH_PASSWORD" ]; then
+    echo "ERROR: required variable ELASTICSEARCH_PASSWORD not set or empty"
+    return 4
+  fi
+
+  RESPONSE=$(curl -k -s -L -w "\n%{http_code}" -u "$ELASTICSEARCH_USER:$ELASTICSEARCH_PASSWORD" \
+    -X POST "$KIBANA_ADDRESS/api/saved_objects/_import?overwrite=true" \
+    -H "kbn-xsrf: true" \
+    -F "file=@${SAVED_OBJECTS_FILE}"
+  )
+
+  HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+  RESPONSE_BODY=$(echo "$RESPONSE" | sed \$d)
+
+  if [[ "$HTTP_STATUS" != 2* ]] ; then
+    echo "ERROR: Cannot import saved objects from file [$SAVED_OBJECTS_FILE].\nHTTP status: $HTTP_STATUS, response body: $RESPONSE_BODY"
     return 5
   fi
 

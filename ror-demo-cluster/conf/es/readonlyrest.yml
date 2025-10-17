@@ -19,53 +19,85 @@ readonlyrest:
       actions: [ "indices:data/read/async_search/delete", "indices:data/read/async_search/get", "indices:data/read/close_point_in_time" ]
       type: allow
 
-    - name: "Permit specific group to MandR firewall logs"
-      ldap_authentication:
-        name: "ourQIMdomain"
-        groups: [ "ElasticsearchMandRLogs" ]
-      indices: ["mandr-*"]
-      actions: ["indices:data/read/*"]
-      type: allow
 
-    - name: "Deny everyone else to MandR"
+
+    - name: "Deny other than ElasticsearchMandRLogs groups to access MandR firewall logs"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups_not_any_of: [ "ElasticsearchMandRLogs" ]
       indices: ["mandr-*"]
       actions: ["indices:data/read/*"]
       type: forbid
 
+    #- name: "Permit specific group to MandR firewall logs"
+    #  ldap_authentication:
+    #    name: "ourQIMdomain"
+    #    groups: [ "ElasticsearchMandRLogs" ]
+    #  indices: ["mandr-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: allow
+
+    #- name: "Deny everyone else to MandR"
+    #  indices: ["mandr-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: 
+    #    policy: forbid
+    #    response_message: "It's forbidden!!!"
 
 
 
-    - name: "Permit specific group to QIM firewall logs"
+
+    - name: "Deny other than ElasticsearchQIMFirewallLogs groups to access QIM firewall logs"
       ldap_auth:
         name: "ourQIMdomain"
-        groups: [ "ElasticsearchQIMFirewallLogs" ]
-      indices: ["qim-paloaltonew-*"]
-      actions: ["indices:data/read/*"]
-      type: allow
-
-    - name: "Deny everyone else to QIM firewall logs"
+        groups_not_any_of: [ "ElasticsearchQIMFirewallLogs" ]
       indices: ["qim-paloaltonew-*"]
       actions: ["indices:data/read/*"]
       type: forbid
 
+    #- name: "Permit specific group to QIM firewall logs"
+    #  ldap_authentication:
+    #    name: "ourQIMdomain"
+    #    groups: [ "ElasticsearchQIMFirewallLogs" ]
+    #  indices: ["qim-paloaltonew-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: allow
+
+    #- name: "Deny everyone else to QIM firewall logs"
+    #  indices: ["qim-paloaltonew-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: 
+    #    policy: forbid
+    #    response_message: "It's forbidden!!!"
 
 
 
-    - name: "Permit specific group to Cipher app logs"
+
+    - name: "Deny other than ElasticsearchQIMFirewallLogs groups to access Cipher app logs"
       ldap_auth:
         name: "ourQIMdomain"
-        groups: [ "ElasticsearchCipherLogs" ]
-      indices: ["cipherlogs-*"]
-      actions: ["indices:data/read/*"]
-      type: allow
-
-    - name: "Deny everyone else to Cipher app logs"
+        groups_not_any_of: [ "ElasticsearchCipherLogs" ]
       indices: ["cipherlogs-*"]
       actions: ["indices:data/read/*"]
       type: forbid
+
+    #- name: "Permit specific group to Cipher app logs"
+    #  ldap_authentication:
+    #    name: "ourQIMdomain"
+    #    groups: [ "ElasticsearchCipherLogs" ]
+    #  indices: ["cipherlogs-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: allow
+
+    #- name: "Deny everyone else to Cipher app logs"
+    #  indices: ["cipherlogs-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: 
+    #    policy: forbid
+    #    response_message: "It's forbidden!!!"
 
     - name: "ElasticsearchRestrictedDashboardOnly group member 1 of 2"
-      ldap_authentication:
+      ldap_auth:
         name: "ourQIMdomain"
         groups: [ "ElasticsearchRestrictedDashboardOnly" ]
       indices: ["*"]

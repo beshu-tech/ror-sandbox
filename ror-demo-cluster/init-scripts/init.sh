@@ -35,6 +35,8 @@ function index_documents() {
   done
 }
 
-generate_log_documents 100 | index_documents "mandr-logs"
-generate_log_documents 50 | index_documents "qim-paloaltonew-logs"
-generate_log_documents 60 | index_documents "cipherlogs-logs"
+generate_log_documents 1 | index_documents "mandr-logs"
+generate_log_documents 1 | index_documents "qim-paloaltonew-logs"
+generate_log_documents 1 | index_documents "cipherlogs-logs"
+
+importSavedObjects "saved_objects.ndjson"

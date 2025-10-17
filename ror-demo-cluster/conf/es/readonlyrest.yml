@@ -48,7 +48,7 @@ readonlyrest:
 
 
     - name: "Deny other than ElasticsearchQIMFirewallLogs groups to access QIM firewall logs"
-      ldap_authentication:
+      ldap_auth:
         name: "ourQIMdomain"
         groups_not_any_of: [ "ElasticsearchQIMFirewallLogs" ]
       indices: ["qim-paloaltonew-*"]
@@ -74,7 +74,7 @@ readonlyrest:
 
 
     - name: "Deny other than ElasticsearchQIMFirewallLogs groups to access Cipher app logs"
-      ldap_authentication:
+      ldap_auth:
         name: "ourQIMdomain"
         groups_not_any_of: [ "ElasticsearchCipherLogs" ]
       indices: ["cipherlogs-*"]

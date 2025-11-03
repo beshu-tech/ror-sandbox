@@ -38,3 +38,4 @@ function index_documents() {
 generate_log_documents 100 | index_documents "frontend_logs"
 generate_log_documents 50 | index_documents "business_logs"
 generate_log_documents 60 | index_documents "system_logs"
+generate_log_documents 100 | index_documents "filebeat-2025.09"

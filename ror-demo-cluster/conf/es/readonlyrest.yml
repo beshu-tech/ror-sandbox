@@ -11,6 +11,13 @@ readonlyrest:
       auth_key: kibana:kibana
       verbosity: error
 
+    - name: "API_ELABORATOR"
+      type: allow
+      token_authentication:
+        token: "a7bb8c237a6ab83adf401db1eb4e653150662590e6bd39da537bf9e5257d59b9" 
+        username: api_elaborator
+      indices: ["filebeat-*"]
+      
     - name: "Admins"
       groups: [Administrators]
       kibana:

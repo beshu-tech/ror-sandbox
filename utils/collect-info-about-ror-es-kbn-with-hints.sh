@@ -4,7 +4,16 @@ determine_ror_es_dockerfile () {
   ROR_API_RESPONSE=$1
 
   ES_VERSIONS_ARR=($(echo "$ROR_API_RESPONSE" | jq .[0] | jq 'to_entries | map(.value)' | jq .[].esVersions.es -cr | jq .[] -cr | uniq))
-  DEFAULT_ES_VERSION=$(echo ${ES_VERSIONS_ARR[0]})
+
+  # Only versions without "-" and suffix are taken into account when determining the default version
+  ES_VERSIONS_ARR_FILTERED=()
+  for v in "${ES_VERSIONS_ARR[@]}"; do
+    if [[ "$v" != *"-"* ]]; then
+      ES_VERSIONS_ARR_FILTERED+=("$v")
+    fi
+  done
+
+  DEFAULT_ES_VERSION=$(echo ${ES_VERSIONS_ARR_FILTERED[0]})
   ES_VERSIONS_STR=$(printf "%s," "${ES_VERSIONS_ARR[@]}")
 
   read_es_version "$DEFAULT_ES_VERSION" "$ES_VERSIONS_STR"

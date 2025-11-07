@@ -42,7 +42,7 @@ By default, services from sandbox expose these ports:
 * `19200` - Elasticsearch REST
 * `19300` - Elasticsearch transport 
 * `15601` - Kibana 
-* `5000` - remote debugger port (Elasticsearch)
+* `5005` - remote debugger port (Elasticsearch)
 
 ## Running clusters
 

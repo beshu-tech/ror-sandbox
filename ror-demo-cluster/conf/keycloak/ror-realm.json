@@ -22,7 +22,7 @@
       "clientId": "ror-saml",
       "name": "ror-saml",
       "description": "Sample configuration of ReadonlyREST plugin with a SAML Provider",
-      "adminUrl": "http://localhost:15601/ror_kbn_saml_kc/assert",
+      "adminUrl": "https://localhost:15601/ror_kbn_saml_kc/assert",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,

@@ -99,7 +99,7 @@ readonlyrest_kbn:
       scope: 'openid users roles'
       usernameParameter: 'sub'
       groupsParameter: 'roles'
-      kibanaExternalHost: 'localhost:8443/deva-notix'
+      kibanaExternalHost: 'localhost:8443'
       logoutUrl: 'https://oidctest.wsweet.org/oauth2/logout'
       jwksURL: 'https://oidctest.wsweet.org/oauth2/jwks'
 

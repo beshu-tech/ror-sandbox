@@ -11,7 +11,7 @@
       "redirectUris": ["*"],
       "webOrigins": ["*"],
       "attributes": {
-        "post.logout.redirect.uris": "https://localhost:15601/*"
+        "post.logout.redirect.uris": "https://localhost:8443/*"
       },
       "protocolMappers": [
         {

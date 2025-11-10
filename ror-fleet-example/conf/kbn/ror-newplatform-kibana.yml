@@ -20,8 +20,8 @@ xpack.fleet.agentPolicies:
 readonlyrest_kbn.logLevel: trace
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
 
-logging.loggers:
-  - name: elasticsearch.query
-    level: warn
-  - name: http.server.response
-    level: debug
+#logging.loggers:
+#  - name: elasticsearch.query
+#    level: warn
+#  - name: http.server.response
+#    level: debug

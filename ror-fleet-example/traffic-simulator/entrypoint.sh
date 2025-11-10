@@ -16,5 +16,5 @@ while true; do
 
   make_request "$URL"
 
-  sleep 1
+  sleep 10000
 done

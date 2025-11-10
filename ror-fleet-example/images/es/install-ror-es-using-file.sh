@@ -15,9 +15,9 @@ echo "Installing ES ROR from file..."
 
 echo "Patching ES ROR $ROR_VERSION..."
 if greater_than_or_equal "$ES_VERSION" "7.0.0"; then
-  /usr/share/elasticsearch/jdk/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch
+  /usr/share/elasticsearch/jdk/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch --I_UNDERSTAND_AND_ACCEPT_ES_PATCHING yes
 elif greater_than_or_equal "$ES_VERSION" "6.7.0"; then
-  "$JAVA_HOME"/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch
+  "$JAVA_HOME"/bin/java -jar /usr/share/elasticsearch/plugins/readonlyrest/ror-tools.jar patch --I_UNDERSTAND_AND_ACCEPT_ES_PATCHING yes
 fi
 
 echo "DONE!"

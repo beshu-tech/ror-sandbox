@@ -1,9 +1,13 @@
 server.name: kibana-ror
 server.host: 0.0.0.0
+server.basePath: /deva-notix
+server.rewriteBasePath: false
+server.publicBaseUrl: "https://localhost:8443/deva-notix"
 
 elasticsearch.username: kibana
 elasticsearch.password: kibana
 elasticsearch.ssl.verificationMode: none
+server.xsrf.allowlist: []
 
 # generated with:
 # $ openssl req -x509 -batch -nodes -days 3650 -newkey rsa:2048 -keyout kibana.key -out kibana.crt
@@ -12,5 +16,55 @@ server.ssl.certificate: /usr/share/kibana/config/kibana.crt
 server.ssl.key: /usr/share/kibana/config/kibana.key
 server.ssl.redirectHttpFromPort: 80
 
-readonlyrest_kbn.logLevel: info
+xpack.security.encryptionKey: "19+230i1902i310293213i109312i31209302193219039120i3j23h31h3h213h123!"
+xpack.encryptedSavedObjects.encryptionKey: "19+230i1902i310293213i109312i31209302193219039120i3j23h31h3h213h123!"
+
+xpack.reporting.encryptionKey: "19+230i1902i310293213i109312i31209302193219039120i3j23h31h3h213h123!"
+xpack.reporting.queue.timeout: 120000
+xpack.reporting.csv.maxSizeBytes: 10485760
+
+# disable "Your data is not secure. Don't lose one bit. Secure your data for free with Elastic."
+xpack.security.showInsecureClusterWarning: false
+
+# alternative to disable spaces
+xpack.spaces.maxSpaces: 0
+
+# Explore underlying data
+xpack.discoverEnhanced.actions.exploreDataInContextMenu.enabled: true
+xpack.discoverEnhanced.actions.exploreDataInChart.enabled: true
+
+# session lifecycle management
+xpack.security.session.idleTimeout: 3d
+xpack.security.session.lifespan: 7d
+xpack.security.session.cleanupInterval: 1d
+
+readonlyrest_kbn.logLevel: trace
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
+readonlyrest_kbn.store_sessions_in_index: true
+
+#################### Kibana additional settings ###################
+newsfeed.enabled: false
+telemetry.optIn: false
+telemetry.enabled: false
+telemetry.allowChangingOptInStatus: false
+i18n.locale: en
+
+#################### Kibana logging settings ######################
+
+logging.appenders.roll-file.type: rolling-file
+logging.appenders.roll-file.fileName: /usr/share/kibana/logs/kibana.log
+logging.appenders.roll-file.policy.type: time-interval
+logging.appenders.roll-file.policy.interval: 24h
+logging.appenders.roll-file.policy.modulate: true
+logging.appenders.roll-file.strategy.type: numeric
+logging.appenders.roll-file.strategy.pattern: '.%i'
+logging.appenders.roll-file.strategy.max: 2
+logging.appenders.roll-file.layout.type: json
+logging.root.appenders: [roll-file,default]
+logging.root.level: info
+
+
+#################### Kibana CCS settings ######################
+monitoring.ui.ccs.enabled: false
+
+

@@ -39,7 +39,7 @@ readonlyrest_kbn:
         tokenURL: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/token'
         userInfoURL: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/userinfo'
         jwksURL: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/certs'
-        clientID: 'kibana-ror'
+        clientID: 'ror-oidc'
         clientSecret: 'kibanasecret123'
         scope: 'openid profile email'
         usernameParameter: 'preferred_username'

@@ -12,61 +12,156 @@ readonlyrest:
       verbosity: error
 
     - name: "Admins"
-      groups: [Administrators]
-      kibana:
-        access: admin
-
-    - name: "End users"
-      groups: ["EndUsers"]
-      indices: ["frontend_logs", "kibana_sample_data_*"]
-      kibana:
-        index: .kibana_end_@{user}
-        access: rw
-        hide_apps: ["Security", "Observability"]
-
-    - name: "Business users"
-      groups: ["BusinessUsers"]
-      indices: ["business_logs", "kibana_sample_data_*"]
-      kibana:
-        index: .kibana_business_@{user}
-        access: rw
-        hide_apps: ["Security", "Observability"]
-
-  users:
-    - username: admin
       auth_key: admin:admin
-      groups:
-        - id: "Administrators"
-          name: "Administrators"
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
+      verbosity: error
 
-    - username: user1
-      auth_key: user1:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
-        - id: "BusinessUsers"
-          name: "Business Users"
+    - name: "huh, weird, need to permit certain stuff on async_search"
+      actions: [ "indices:data/read/async_search/delete", "indices:data/read/async_search/get", "indices:data/read/close_point_in_time" ]
+      type: allow
 
-    - username: user2
-      auth_key: user2:test
-      groups:
-        - id: "EndUsers"
-          name: "End Users"
 
-    - username: "*"
-      ror_kbn_auth:
-        name: "kbn1"
-        groups: ["*"]
-      groups:
-        - local_group:
-            id: "EndUsers"
-            name: "End Users"
-          external_group_ids: [ "*" ]
 
-  ror_kbn:
-    - name: kbn1
-      signature_key: "9yzBfnLaTYLfGPzyKW9es76RKYhUVgmuv6ZtehaScj5msGpBpa5FWpwk295uJYaaffTFnQC5tsknh2AguVDaTrqCLfM5zCTqdE4UGNL73h28Bg4dPrvTAFQyygQqv4xfgnevBED6VZYdfjXAQLc8J8ywaHQQSmprZqYCWGE6sM3vzNUEWWB3kmGrEKa4sGbXhmXZCvL6NDnEJhXPDJAzu9BMQxn8CzVLqrx6BxDgPYF8gZCxtyxMckXwCaYXrxAGbjkYH69F4wYhuAdHSWgRAQCuWwYmWCA6g39j4VPge5pv962XYvxwJpvn23Y5KvNZ5S5c6crdG4f4gTCXnU36x92fKMQzsQV9K4phcuNvMWkpqVB6xMA5aPzUeHcGytD93dG8D52P5BxsgaJJE6QqDrk3Y2vyLw9ZEbJhPRJxbuBKVCBtVx26Ldd46dq5eyyzmNEyQGLrjQ4qd978VtG8TNT5rkn4ETJQEju5HfCBbjm3urGLFVqxhGVawecT4YM9Rry4EqXWkRJGTFQWQRnweUFbKNbVTC9NxcXEp6K5rSPEy9trb5UYLYhhMJ9fWSBMuenGRjNSJxeurMRCaxPpNppBLFnp8qW5ezfHgCBpEjkSNNzP4uXMZFAXmdUfJ8XQdPTWuYfdHYc5TZWnzrdq9wcfFQRDpDB2zX5Myu96krDt9vA7wNKfYwkSczA6qUQV66jA8nV4Cs38cDAKVBXnxz22ddAVrPv8ajpu7hgBtULMURjvLt94Nc5FDKw79CTTQxffWEj9BJCDCpQnTufmT8xenywwVJvtj49yv2MP2mGECrVDRmcGUAYBKR8G6ZnFAYDVC9UhY46FGWDcyVX3HKwgtHeb45Ww7dsW8JdMnZYctaEU585GZmqTJp2LcAWRcQPH25JewnPX8pjzVpJNcy7avfA2bcU86bfASvQBDUCrhjgRmK2ECR6vzPwTsYKRgFrDqb62FeMdrKgJ9vKs435T5ACN7MNtdRXHQ4fj5pNpUMDW26Wd7tt9bkBTqEGf"
+    #- name: "Deny other than ElasticsearchMandRLogs groups to access MandR firewall logs"
+    #  ldap_auth:
+    #    name: "ourQIMdomain"
+    #    groups_not_any_of: [ "ElasticsearchMandRLogs" ]
+    #  indices: ["mandr-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: forbid
+
+    - name: "Permit specific group to MandR firewall logs"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchMandRLogs" ]
+      indices: ["mandr-*"]
+      actions: ["indices:data/read/*"]
+      type: allow
+
+    - name: "Deny everyone else to MandR"
+      ldap_authentication:
+        name: "ourQIMdomain"
+      indices: ["mandr-*"]
+      actions: ["indices:data/read/*"]
+      type: forbid
+
+
+
+
+    #- name: "Deny other than ElasticsearchQIMFirewallLogs groups to access QIM firewall logs"
+    #  ldap_auth:
+    #    name: "ourQIMdomain"
+    #    groups_not_any_of: [ "ElasticsearchQIMFirewallLogs" ]
+    #  indices: ["qim-paloaltonew-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: forbid
+
+    - name: "Permit specific group to QIM firewall logs"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchQIMFirewallLogs" ]
+      indices: ["qim-paloaltonew-*"]
+      actions: ["indices:data/read/*"]
+      type: allow
+
+    - name: "Deny everyone else to QIM firewall logs"
+      ldap_authentication:
+        name: "ourQIMdomain"
+      indices: ["qim-paloaltonew-*"]
+      actions: ["indices:data/read/*"]
+      type: forbid
+
+
+
+
+    #- name: "Deny other than ElasticsearchQIMFirewallLogs groups to access Cipher app logs"
+    #  ldap_auth:
+    #    name: "ourQIMdomain"
+    #    groups_not_any_of: [ "ElasticsearchCipherLogs" ]
+    #  indices: ["cipherlogs-*"]
+    #  actions: ["indices:data/read/*"]
+    #  type: forbid
+
+    - name: "Permit specific group to Cipher app logs"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchCipherLogs" ]
+      indices: ["cipherlogs-*"]
+      actions: ["indices:data/read/*"]
+      type: allow
+
+    - name: "Deny everyone else to Cipher app logs"
+      ldap_authentication:
+        name: "ourQIMdomain"
+      indices: ["cipherlogs-*"]
+      actions: ["indices:data/read/*"]
+      type: forbid
+
+    - name: "ElasticsearchRestrictedDashboardOnly group member 1 of 2"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchRestrictedDashboardOnly" ]
+      indices: ["*"]
+      kibana_access: ro
+      kibana_hide_apps: [ "Observability", "Management", "ROR Manage Kibana",  "ROR Security Settings"  ]
+
+    - name: "ElasticsearchRestrictedDashboardOnly group member 2 of 2"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchRestrictedDashboardOnly" ]
+      indices: ["*"]
+      actions: ["*"]
+
+
+
+    - name: "ElasticsearchSuperUsers group 1 of 2"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchSuperUsers" ]
+      indices: ["*"]
+      kibana_access: rw
+      kibana_hide_apps: [ "ROR Security Settings" ]
+
+    - name: "ElasticsearchSuperUsers group 2 of 2"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchSuperUsers" ]
+      indices: ["*"]
+      actions: ["*"]
+
+
+
+    - name: "ElasticsearchReadAllIndices group 1 of 2"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchReadAllIndices" ]
+      indices: ["*"]
+      kibana_access: rw
+      kibana_hide_apps: [ "ROR Security Settings" ]
+
+    - name: "ElasticsearchReadAllIndices group 2 of 2"
+      ldap_auth:
+        name: "ourQIMdomain"
+        groups: [ "ElasticsearchReadAllIndices" ]
+      indices: ["*"]
+      actions: ["indices:data/read/*","cluster:monitor/*", "cluster:admin/rradmin/refreshsettings"]
+
+  ldaps:
+
+    - name: ourQIMdomain
+      host: ldap
+      port: 389
+      ssl_enabled: false                                        # default true
+      ssl_trust_all_certs: true                                 # default false
+      bind_dn: "cn=admin,dc=example,dc=com"                     # skip for anonymous bind
+      bind_password: "password"                                 # skip for anonymous bind
+      connection_pool_size: 10                                  # default 30
+      connection_timeout: 10s                                   # default 1
+      request_timeout: 10s                                      # default 1
+      cache_ttl: 60s                                            # default 0 - cache disabled
+      search_user_base_DN: "dc=example,dc=com"
+      search_groups_base_DN: "dc=example,dc=com"
+      user_id_attribute: "uid"                              
+      unique_member_attribute: "uniqueMember"                             
+      group_search_filter: "(cn=*)"                                 
+      group_name_attribute: "cn"  
+      nested_groups_depth: 3

@@ -21,7 +21,9 @@ readonlyrest:
 
     - name: "Fleet (Temp1)"
       type: allow
-      headers_or: [ "Authorization:Bearer*" ]
+      token_authentication: 
+        token: "dynamic"
+        username: "fleet"
 
     - name: "Fleet (Temp2)"
       type: allow
@@ -31,11 +33,11 @@ readonlyrest:
       type: allow
       headers_or: [ "Authorization:APIKey*" ]
 
-    - name: "Fleet"
-      type: allow
-      token_authentication:
-        token: "Bearer AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE3MzQ2OTE3Nzg2Nzk6dDZjOTVQcHdTcHVpUFZDNXltS3BPQQ"
-        username: "fleet"
+    #- name: "Fleet"
+    #  type: allow
+    #  token_authentication:
+    #    token: "Bearer AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE3MzQ2OTE3Nzg2Nzk6dDZjOTVQcHdTcHVpUFZDNXltS3BPQQ"
+    #    username: "fleet"
 
     - name: "End users"
       groups: ["EndUsers"]

@@ -17,7 +17,7 @@ xpack.fleet.agentPolicies:
         package:
           name: fleet_server
 
-readonlyrest_kbn.logLevel: trace
+readonlyrest_kbn.logLevel: info
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
 
 #logging.loggers:

@@ -3,7 +3,7 @@ var apm = require('elastic-apm-node').start({
     serverUrl: 'https://agent1:8200',
     serviceName: 'service1',
     environment: 'ror-test-env',
-    serverCaCertFile: '/example-app/certs/ca.crt',
+    serverCaCertFile: '/certs/ca.crt',
     // secretToken: 'myverysecrettoken',
     logLevel: 'debug'
   });

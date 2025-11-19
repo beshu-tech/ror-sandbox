@@ -1,9 +1,9 @@
-FROM docker.elastic.co/elastic-agent/elastic-agent:8.12.2
+FROM docker.elastic.co/elastic-agent/elastic-agent:8.14.3
 
 USER root
 
 RUN apt-get update && \
-    apt-get install -y curl jq
+    apt-get install -y curl jq net-tools
 
 COPY entrypoint.sh /entrypoint.sh
 

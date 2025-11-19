@@ -3,7 +3,7 @@ services:
   elasticsearch:
     build:
       context: .
-      dockerfile: images/es/${ES_DOCKERFILE:-ES_DOCKERFILE_NOT_CONFIGURED}
+      dockerfile: elasticsearch/image/${ES_DOCKERFILE:-ES_DOCKERFILE_NOT_CONFIGURED}
       args:
         ES_VERSION: ${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
         ROR_VERSION: ${ROR_ES_VERSION:-ROR_ES_VERSION_NOT_CONFIGURED}
@@ -61,7 +61,7 @@ services:
   kibana:
     build:
       context: .
-      dockerfile: images/kbn/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
+      dockerfile: kibana/image/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
       args:
         KBN_VERSION: ${KBN_VERSION:-KBN_VERSION_NOT_CONFIGURED}
         ROR_VERSION: ${ROR_KBN_VERSION:-ROR_KBN_VERSION_NOT_CONFIGURED}
@@ -130,7 +130,7 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
-    image: docker.elastic.co/beats/elastic-agent:8.12.2
+    image: docker.elastic.co/beats/elastic-agent:8.14.3
     hostname: fleet-server
     volumes:
       - ./certs:/certs:z
@@ -182,6 +182,8 @@ services:
         condition: service_healthy
       kibana:
         condition: service_healthy
+      fleet-initializer:
+        condition: service_completed_successfully
     volumes:
       - ./certs:/certs:z
     ports:

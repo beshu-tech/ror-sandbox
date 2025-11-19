@@ -26,12 +26,10 @@ echo -e "
                                          __/ |
 "
 
-./../utils/collect-info-about-ror-es-kbn.sh
-
 echo "Starting Elasticsearch and Kibana with installed ROR plugins ..."
 
-docker compose up -d --build --wait --remove-orphans --force-recreate
-docker compose logs -f > ror-cluster.log 2>&1 &
+docker compose --env-file .env_showcase up -d --build --wait --remove-orphans --force-recreate
+docker compose --env-file .env_showcase logs -f > ror-cluster.log 2>&1 &
 
 echo -e "
 ***********************************************************************
@@ -41,4 +39,4 @@ echo -e "
 ***********************************************************************
 "
 
-echo -e "You can access ROR KBN here: https://localhost:15601 (users: 'user1:test', 'user2:test' or admin user: 'admin:admin')"
+echo -e "You can access ROR KBN here: https://localhost:5601 (users: 'user1:test', 'user2:test' or admin user: 'admin:admin')"

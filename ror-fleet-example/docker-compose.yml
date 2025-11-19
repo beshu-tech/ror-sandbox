@@ -165,6 +165,16 @@ services:
       - FLEET_SERVER_ELASTICSEARCH_CA=/certs/ca.crt
       - ELASTIC_AGENT_LOG_LEVEL=debug
       - ELASTIC_AGENT_LOG_SELECTORS=*
+    healthcheck:
+      test: 
+        [
+          "CMD-SHELL",
+          "curl -f -k --cacert /certs/ca.crt https://localhost:8220/api/status | grep -q '\"status\":\"HEALTHY\"'"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
     networks:
       - fleet-example-network
   
@@ -181,7 +191,7 @@ services:
       kibana:
         condition: service_healthy
       fleet-server:
-        condition: service_started
+        condition: service_healthy
     networks:
       - fleet-example-network  
 

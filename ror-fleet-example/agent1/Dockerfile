@@ -1,4 +1,4 @@
-FROM docker.elastic.co/elastic-agent/elastic-agent:8.14.3
+FROM docker.elastic.co/elastic-agent/elastic-agent:8.15.0
 
 USER root
 

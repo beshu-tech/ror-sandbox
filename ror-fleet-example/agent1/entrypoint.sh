@@ -1,5 +1,13 @@
 #!/bin/bash -ex
 
+echo "=== Agent1 Environment Variables ==="
+echo "KIBANA_HOST: $KIBANA_HOST"
+echo "KIBANA_FLEET_CA: $KIBANA_FLEET_CA"
+echo "FLEET_URL: $FLEET_URL"
+echo "FLEET_CA: $FLEET_CA"
+echo "FLEET_ENROLL: $FLEET_ENROLL"
+echo "===================================="
+
 POLICY_ID="elastic-policy"
 FLEET_ENROLLMENT_TOKEN=$(curl -k -s \
   -u kibana:kibana \

@@ -32,6 +32,14 @@ while true; do
 
     set -x
     
+    # Check Kibana status and publicBaseUrl
+    echo "=== Checking Kibana Info ==="
+    curl -s -u "kibana:kibana" --cacert /certs/ca.crt https://kibana:5601/api/status | jq '.version, .status'
+    
+    # First, check current Fleet settings
+    echo "=== Current Fleet settings BEFORE our changes ==="
+    curl -s -u "kibana:kibana" --cacert /certs/ca.crt https://kibana:5601/api/fleet/settings | jq .
+    
     # Create agent policy
     if ! check_curl "Create Elastic Agent Policy" \
       -s -u "kibana:kibana" --cacert /certs/ca.crt \
@@ -81,6 +89,18 @@ while true; do
       echo "Failed to update fleet output, exiting..."
       exit 1
     fi
+    
+    # Check Fleet settings AFTER our changes
+    echo "=== Fleet settings AFTER our changes ==="
+    curl -s -u "kibana:kibana" --cacert /certs/ca.crt https://kibana:5601/api/fleet/settings | jq .
+    
+    # Check the agent policy details
+    echo "=== Agent Policy Details ==="
+    curl -s -u "kibana:kibana" --cacert /certs/ca.crt https://kibana:5601/api/fleet/agent_policies/elastic-policy | jq .
+    
+    # Check enrollment tokens
+    echo "=== Enrollment Tokens ==="
+    curl -s -u "kibana:kibana" --cacert /certs/ca.crt https://kibana:5601/api/fleet/enrollment_api_keys | jq '.items[] | select(.policy_id == "elastic-policy")'
 
     echo "✓ All fleet configuration completed successfully!"
     break

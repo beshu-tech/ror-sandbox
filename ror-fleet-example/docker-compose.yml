@@ -217,12 +217,13 @@ services:
       context: service1
       dockerfile: Dockerfile
     hostname: service1
-    command: node /example-app/app.js
     depends_on:
       elasticsearch:
         condition: service_healthy
       kibana:
         condition: service_healthy
+      agent1:
+        condition: service_started
     expose:
       - 3000
     ports:

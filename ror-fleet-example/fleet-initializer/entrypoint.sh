@@ -60,12 +60,25 @@ while true; do
       exit 1
     fi
 
+    # Get the latest available APM package version
+    echo "=== Detecting APM package version ==="
+    APM_VERSION=$(curl -s -u "kibana:kibana" --cacert /certs/ca.crt \
+      "https://kibana:5601/api/fleet/epm/packages/apm" | jq -r '.item.version')
+    
+    if [ -z "$APM_VERSION" ] || [ "$APM_VERSION" = "null" ]; then
+      echo "ERROR: Could not detect APM package version"
+      exit 1
+    fi
+    
+    echo "Detected APM package version: $APM_VERSION"
+    echo "======================================"
+
     # Create APM package policy
     if ! check_curl "Create APM Package Policy" \
       -s -u "kibana:kibana" --cacert /certs/ca.crt \
       -XPOST -H "kbn-xsrf: kibana" -H "Content-type: application/json" \
       "https://kibana:5601/api/fleet/package_policies" \
-      -d '{"name":"apm2","namespace":"default","policy_id":"elastic-policy", "package":{"name": "apm", "version":"8.15.0"},"inputs":[{"type":"apm","enabled":true,"streams":[],"policy_template":"apmserver","vars":{"host":{"value":"0.0.0.0:8200","type":"text"},"url":{"value":"https://agent1:8200","type":"text"},"tls_enabled":{"value":true,"type":"bool"},"tls_certificate":{"value":"/certs/agent1.crt","type":"text"},"tls_key":{"value":"/certs/agent1.key","type":"text"}}}]}'; then
+      -d "{\"name\":\"apm2\",\"namespace\":\"default\",\"policy_id\":\"elastic-policy\", \"package\":{\"name\": \"apm\", \"version\":\"$APM_VERSION\"},\"inputs\":[{\"type\":\"apm\",\"enabled\":true,\"streams\":[],\"policy_template\":\"apmserver\",\"vars\":{\"host\":{\"value\":\"0.0.0.0:8200\",\"type\":\"text\"},\"url\":{\"value\":\"https://agent1:8200\",\"type\":\"text\"},\"tls_enabled\":{\"value\":true,\"type\":\"bool\"},\"tls_certificate\":{\"value\":\"/certs/agent1.crt\",\"type\":\"text\"},\"tls_key\":{\"value\":\"/certs/agent1.key\",\"type\":\"text\"}}}]}"; then
       echo "Failed to create APM package policy, exiting..."
       exit 1
     fi

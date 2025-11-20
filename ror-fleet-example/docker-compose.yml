@@ -49,19 +49,6 @@ services:
     networks:
       - fleet-example-network
 
-  es-proxy:
-    image: mitmproxy/mitmproxy
-    volumes:
-      - ./certs:/certs:z
-    ports:
-      - 18080:8080
-    command:
-      mitmdump --mode reverse:https://elasticsearch:9200 --ssl-insecure --script /certs/showbody.py
-    depends_on:
-      - elasticsearch
-    networks:
-      - fleet-example-network
-
   kibana:
     build:
       context: .
@@ -82,8 +69,7 @@ services:
       - ROR_ACTIVATION_KEY=$ROR_ACTIVATION_KEY
       - SERVER_NAME=kibana
       - SERVER_PUBLICBASEURL=https://kibana:5601
-      - ELASTICSEARCH_HOSTS=https://es-proxy:8080
-      # - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=kibana
       - ELASTICSEARCH_PASSWORD=kibana
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
@@ -109,19 +95,6 @@ services:
     networks:
       - fleet-example-network
 
-  fleet-es-proxy:
-    image: mitmproxy/mitmproxy
-    volumes:
-      - ./certs:/certs:z
-    ports:
-      - 28080:8080
-    command:
-      mitmdump --mode reverse:https://elasticsearch:9200 --certs /certs/fleet-es-proxy.pem --ssl-insecure --script /certs/showbody.py
-    depends_on:
-      - elasticsearch 
-    networks:
-      - fleet-example-network
-
   fleet-server:
     depends_on:
       kibana:
@@ -144,7 +117,7 @@ services:
       - KIBANA_HOST=https://kibana:5601
       - KIBANA_FLEET_CA=/certs/ca.crt
       - FLEET_URL=https://fleet-server:8220
-      - FLEET_SERVER_ELASTICSEARCH_HOST=https://fleet-es-proxy:8080
+      - FLEET_SERVER_ELASTICSEARCH_HOST=https://elasticsearch:9200
       - FLEET_CA=/certs/ca.crt
       - ELASTICSEARCH_USERNAME=kibana
       - ELASTICSEARCH_PASSWORD=kibana

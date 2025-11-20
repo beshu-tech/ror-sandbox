@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if ! command -v docker compose > /dev/null; then
+if ! command -v docker-compose > /dev/null; then
   echo "The script require docker-compose to be installed on your machine."
   exit 1
 fi
@@ -20,8 +20,8 @@ echo -e "
 
 echo "Starting Elasticsearch and Kibana with installed X-Pack ..."
 
-docker compose up -d --build --remove-orphans --force-recreate
-docker compose logs -f > xpack-cluster.log 2>&1 &
+docker-compose up -d --build --remove-orphans --force-recreate
+docker-compose logs -f > xpack-cluster.log 2>&1 &
 
 echo -e "
 ***********************************************************************

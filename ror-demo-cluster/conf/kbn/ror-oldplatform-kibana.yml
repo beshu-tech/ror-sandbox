@@ -3,7 +3,7 @@ server.host: 0.0.0.0
 
 elasticsearch.username: kibana
 elasticsearch.password: kibana
-# elasticsearch.ssl.verificationMode: none
+elasticsearch.ssl.verificationMode: none
 
 # generated with:
 # $ openssl req -x509 -batch -nodes -days 3650 -newkey rsa:2048 -keyout kibana.key -out kibana.crt

@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-docker compose rm --stop --force
+docker-compose rm --stop --force

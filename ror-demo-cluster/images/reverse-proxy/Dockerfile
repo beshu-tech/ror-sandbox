@@ -1,7 +1,7 @@
 # Dockerfile
 FROM httpd:2.4
 
-# Enable required modules: proxy, balancer, lbmethod, rewrite, headers, slotmem, ssl, wstunnel, socache
+# Enable required modules: proxy, balancer, lbmethod, rewrite, headers, slotmem, ssl, wstunnel, socache, cache
 RUN sed -i \
     -e 's/^#\(LoadModule slotmem_shm_module modules\/mod_slotmem_shm.so\)/\1/' \
     -e 's/^#\(LoadModule socache_shmcb_module modules\/mod_socache_shmcb.so\)/\1/' \

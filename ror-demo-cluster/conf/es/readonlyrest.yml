@@ -66,6 +66,10 @@ readonlyrest:
             id: "EndUsers"
             name: "End Users"
           external_group_ids: [ "*" ]
+        - local_group:
+            id: "BusinessUsers"
+            name: "Business Users"
+          external_group_ids: [ "*" ]
 
   ror_kbn:
     - name: kbn1

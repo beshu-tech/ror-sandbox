@@ -96,7 +96,7 @@ readonlyrest_kbn:
       scope: 'openid profile email'
       usernameParameter: 'preferred_username'
       groupsParameter: 'groups'
-      kibanaExternalHost: 'localhost:8443/deva-notix'
+      kibanaExternalHost: 'localhost:8443'
       logoutUrl: 'http://kc.localhost:8080/realms/ror/protocol/openid-connect/logout'
     oidc_lemon_ldap:
       buttonName: "LemonLDAP OpenID"

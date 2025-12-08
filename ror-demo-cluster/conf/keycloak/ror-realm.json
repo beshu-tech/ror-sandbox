@@ -22,7 +22,7 @@
       "clientId": "ror-saml",
       "name": "ror-saml",
       "description": "Sample configuration of ReadonlyREST plugin with a SAML Provider",
-      "adminUrl": "https://localhost:15601/ror_kbn_saml_kc/assert",
+      "adminUrl": "https://localhost:8443/deva-notix/ror_kbn_saml_kc/assert",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
@@ -44,12 +44,12 @@
       "protocol": "saml",
       "attributes": {
         "saml.assertion.signature": "false",
-        "saml_assertion_consumer_url_redirect": "https://localhost:15601/ror_kbn_saml_kc/assert",
+        "saml_assertion_consumer_url_redirect": "https://localhost:8443/deva-notix/ror_kbn_saml_kc/assert",
         "saml.force.post.binding": "true",
         "saml.multivalued.roles": "false",
-        "saml_single_logout_service_url_post": "https://localhost:15601/ror_kbn_saml_kc/notifyLogout",
+        "saml_single_logout_service_url_post": "https://localhost:8443/deva-notix/ror_kbn_saml_kc/notifyLogout",
         "saml.encrypt": "false",
-        "saml_assertion_consumer_url_post": "https://localhost:15601/ror_kbn_saml_kc/assert",
+        "saml_assertion_consumer_url_post": "https://localhost:8443/deva-notix/ror_kbn_saml_kc/assert",
         "saml.server.signature": "true",
         "saml.server.signature.keyinfo.ext": "false",
         "exclude.session.state.from.auth.response": "false",
@@ -63,31 +63,36 @@
         "saml.onetimeuse.condition": "false",
         "saml_signature_canonicalization_method": "http://www.w3.org/2001/10/xml-exc-c14n#"
       },
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
       "protocolMappers": [
         {
-          "name": "username",
+          "id": "93c6e2c2-4517-4f58-a11f-01636d632ee7",
+          "name": "memberOf",
           "protocol": "saml",
-          "protocolMapper": "saml-user-property-mapper",
+          "protocolMapper": "saml-group-membership-mapper",
           "consentRequired": false,
           "config": {
-            "user.attribute": "username",
-            "friendly.name": "UserName",
-            "attribute.name": "UserName",
-            "attribute.nameformat": "Basic"
+            "single": "true",
+            "attribute.nameformat": "Basic",
+            "full.path": "false",
+            "attribute.name": "memberOf"
           }
-        },
-        {
-          "name": "email",
-          "protocol": "saml",
-          "protocolMapper": "saml-user-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "email",
-            "friendly.name": "email",
-            "attribute.name": "email",
-            "attribute.nameformat": "Basic"
-          }
-        }]
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "role_list",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
     },
     {
       "clientId": "ror-oidc",
@@ -121,7 +126,24 @@
     }
   ],
   "groups": [
-    {"name": "extEndUsers"}
+      {
+        "id": "f0f0e6ef-ecfa-45d4-b7aa-c9b8b84926f9",
+        "name": "extEndUsers",
+        "path": "/extEndUsers",
+        "attributes": {},
+        "realmRoles": [],
+        "clientRoles": {},
+        "subGroups": []
+      },
+      {
+        "id": "f0f0e6ef-ecfa-45d4-b7aa-c9b8b84926f1",
+        "name": "extBusinessUsers",
+        "path": "/extBusinessUsers",
+        "attributes": {},
+        "realmRoles": [],
+        "clientRoles": {},
+        "subGroups": []
+      }
   ],
   "users": [
     {
@@ -129,8 +151,8 @@
       "enabled": true,
       "emailVerified": true,
       "credentials": [ { "type": "password", "value": "extUser1", "temporary": false } ],
-      "groups": ["extEndUsers"],
-      "realmRoles": ["offline_access", "uma_authorization"]
+      "groups": ["extEndUsers", "extBusinessUsers"],
+      "realmRoles": ["extEndUsers", "extBusinessUsers"]
     },
     {
       "username": "extUser2",
@@ -138,7 +160,7 @@
       "emailVerified": true,
       "credentials": [ { "type": "password", "value": "extUser2", "temporary": false } ],
       "groups": ["extEndUsers"],
-      "realmRoles": ["offline_access", "uma_authorization"]
+      "realmRoles": ["extEndUsers"]
     }
   ],
   "defaultDefaultClientScopes": ["web-origins", "role_list", "profile", "roles", "email"],

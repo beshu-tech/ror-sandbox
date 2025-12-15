@@ -5,5 +5,22 @@ elasticsearch.hosts: [ "${ES_API_URL}" ]
 elasticsearch.username: kibana_system
 elasticsearch.password: elastic
 elasticsearch.ssl.verificationMode: none
-
+xpack.security.encryptionKey: "19+230i1902i310293213i109312i31209302193219039120i3j23h31h3h213h123!"
+xpack.encryptedSavedObjects.encryptionKey: "19+230i1902i310293213i109312i31209302193219039120i3j23h31h3h213h123!"
 monitoring.ui.container.elasticsearch.enabled: true
+  
+  
+  curl -X PUT "http://localhost:29200/_index_template/logs-myapp" \
+-H 'Content-Type: application/json' \
+  -d '{
+"index_patterns": ["logs-myapp-*"],
+"data_stream": {},
+"template": {
+  "mappings": {
+    "properties": {
+      "message": { "type": "text" }
+    }
+  }
+}
+}'
+-u elastic:elastic

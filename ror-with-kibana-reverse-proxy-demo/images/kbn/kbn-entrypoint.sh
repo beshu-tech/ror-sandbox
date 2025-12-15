@@ -26,8 +26,7 @@ if [ -n "${SERVER_NAME:-}" ]; then
   for tmpl in \
     /usr/share/kibana/config/enterprise-ror-newplatform-kibana.yml \
     /usr/share/kibana/config/pro-ror-newplatform-kibana.yml \
-    /usr/share/kibana/config/free-ror-newplatform-kibana.yml \
-    /usr/share/kibana/config/ror-oldplatform-kibana.yml; do
+    /usr/share/kibana/config/free-ror-newplatform-kibana.yml; do
     _replace_server_name_in_file "$tmpl" "${SERVER_NAME}"
   done
 fi

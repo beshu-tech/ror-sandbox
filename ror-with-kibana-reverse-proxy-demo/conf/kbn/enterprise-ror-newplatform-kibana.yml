@@ -1,4 +1,4 @@
-server.name: kibana-ror
+server.name: SERVER_NAME_PLACEHOLDER
 server.host: 0.0.0.0
 server.basePath: /deva-notix
 server.rewriteBasePath: true

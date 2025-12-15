@@ -1,3 +1,43 @@
+# common Kibana service template (top-level extension, not a service)
+x-kbn-common: &kbn-common
+  build:
+    context: .
+    dockerfile: images/kbn/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
+    args:
+      KBN_VERSION: ${KBN_VERSION:-KBN_VERSION_NOT_CONFIGURED}
+      ROR_VERSION: ${ROR_KBN_VERSION:-ROR_KBN_VERSION_NOT_CONFIGURED}
+      ROR_FILE: ${KBN_ROR_FILE:-KBN_ROR_FILE_NOT_CONFIGURED}
+      ROR_LICENSE_EDITION: ${ROR_LICENSE_EDITION:-ROR_LICENSE_EDITION_NOT_CONFIGURED}
+  depends_on:
+    es-ror:
+      condition: service_healthy
+    keycloak:
+      condition: service_healthy
+      required: false
+  environment:
+    ELASTICSEARCH_HOSTS: https://es-ror:9200
+    ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+  # Mount host-provided entrypoint at runtime so we don't add a layer in the image
+  volumes:
+    - ./images/kbn/kbn-entrypoint.sh:/usr/local/bin/kbn-entrypoint.sh:ro
+  entrypoint: ["sh", "/usr/local/bin/kbn-entrypoint.sh"]
+  healthcheck:
+    test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]
+    interval: 10s
+    timeout: 10s
+    retries: 30
+    start_period: 60s
+  networks:
+    - es-ror-network
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+
+x-kbn-common-env: &kbn-common-env
+    ELASTICSEARCH_HOSTS: https://es-ror:9200
+    ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+
 services:
   # Enterprise-only service
   keycloak:
@@ -55,50 +95,19 @@ services:
         soft: -1
         hard: -1
 
-  # common Kibana service template to avoid duplication
-  x-kbn-common: &kbn-common
-    build:
-      context: .
-      dockerfile: images/kbn/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
-      args:
-        KBN_VERSION: ${KBN_VERSION:-KBN_VERSION_NOT_CONFIGURED}
-        ROR_VERSION: ${ROR_KBN_VERSION:-ROR_KBN_VERSION_NOT_CONFIGURED}
-        ROR_FILE: ${KBN_ROR_FILE:-KBN_ROR_FILE_NOT_CONFIGURED}
-        ROR_LICENSE_EDITION: ${ROR_LICENSE_EDITION:-ROR_LICENSE_EDITION_NOT_CONFIGURED}
-    depends_on:
-      es-ror:
-        condition: service_healthy
-      keycloak:
-        condition: service_healthy
-        required: false
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]
-      interval: 10s
-      timeout: 10s
-      retries: 30
-      start_period: 60s
-    networks:
-      - es-ror-network
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-
   kbn-ror:
     <<: *kbn-common
     ports:
       - "15601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: https://es-ror:9200
-      ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+      <<: *kbn-common-env
       SERVER_NAME: ${SERVER_NAME:-kbn-ror}
   kbn-ror-2:
     <<: *kbn-common
     ports:
       - "15602:5601"
     environment:
-      ELASTICSEARCH_HOSTS: https://es-ror:9200
-      ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+      <<: *kbn-common-env
       SERVER_NAME: ${SERVER_NAME:-kbn-ror-2}
 
   initializer:

@@ -19,8 +19,8 @@ RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf \
  && echo "Listen 443" >> /usr/local/apache2/conf/httpd.conf
 
 # Copy vhost and include it
-COPY images/reverse-proxy/deva-notix.conf /usr/local/apache2/conf/extra/deva-notix.conf
-RUN echo "Include conf/extra/deva-notix.conf" >> /usr/local/apache2/conf/httpd.conf
+COPY images/reverse-proxy/reverse-proxy-without-rewrite-base-path.conf /usr/local/apache2/conf/extra/reverse-proxy-without-rewrite-base-path.conf
+RUN echo "Include conf/extra/reverse-proxy-without-rewrite-base-path.conf" >> /usr/local/apache2/conf/httpd.conf
 
 # Copy TLS certs (provide server.crt and server.key under images/reverse-proxy/certs)
 COPY conf/reverse-proxy/certs/ /usr/local/apache2/conf/certs/

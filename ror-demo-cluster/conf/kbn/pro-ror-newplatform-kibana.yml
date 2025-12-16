@@ -66,5 +66,3 @@ logging.root.level: info
 
 #################### Kibana CCS settings ######################
 monitoring.ui.ccs.enabled: false
-
-

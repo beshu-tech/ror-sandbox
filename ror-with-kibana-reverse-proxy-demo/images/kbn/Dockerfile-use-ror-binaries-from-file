@@ -6,9 +6,9 @@ ARG KBN_VERSION=please_set_kbn_version_arg
 ARG ROR_FILE=please_set_ror_file_path
 ARG ROR_LICENSE_EDITION=please_set_ror_license_edition_arg
 
-COPY conf/kbn/enterprise-ror-newplatform-kibana.yml /usr/share/kibana/config/enterprise-ror-newplatform-kibana.yml
-COPY conf/kbn/pro-ror-newplatform-kibana.yml /usr/share/kibana/config/pro-ror-newplatform-kibana.yml
-COPY conf/kbn/free-ror-newplatform-kibana.yml /usr/share/kibana/config/free-ror-newplatform-kibana.yml
+COPY conf/kbn/enterprise-ror-kibana.yml /usr/share/kibana/config/enterprise-ror-kibana.yml
+COPY conf/kbn/pro-ror-kibana.yml /usr/share/kibana/config/pro-ror-kibana.yml
+COPY conf/kbn/free-ror-kibana.yml /usr/share/kibana/config/free-ror-kibana.yml
 COPY conf/kbn/kibana.crt /usr/share/kibana/config/kibana.crt
 COPY conf/kbn/kibana.key /usr/share/kibana/config/kibana.key
 COPY images/kbn/install-ror-kbn-using-file.sh /tmp/install-ror.sh

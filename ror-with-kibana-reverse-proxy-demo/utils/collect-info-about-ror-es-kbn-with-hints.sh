@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-source "$(dirname "$0")/collect-info-about-ror-es-kbn-with-hints-common.sh"
+source "../utils/collect-info-about-ror-es-kbn-with-hints-common.sh"
+source "$(dirname "$0")/collect-info-common.sh"
+
 
 ROR_API_RESPONSE=''
 STATUS_CODE=$(curl -s --max-time 5 -o /tmp/ror-api-response.txt -w "%{http_code}" https://api.beshu.tech/list_es_versions/20)
@@ -19,4 +21,6 @@ determine_ror_es_dockerfile "$ROR_API_RESPONSE"
 echo "-----------------"
 source .env
 determine_ror_kbn_dockerfile "$ROR_API_RESPONSE" "$ES_VERSION" "$ROR_ES_VERSION"
+echo "-----------------"
+read_rewrite_base_path
 echo "-----------------"

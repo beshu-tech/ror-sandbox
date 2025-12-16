@@ -28,7 +28,7 @@ echo -e "
                                          __/ |
 "
 
-./../utils/collect-info-about-ror-es-kbn.sh
+./utils/collect-info-about-ror-es-kbn.sh
 
 # Call the extract helper using an explicit relative path (./../utils/...)
 if output="$(./../utils/extract_license_edition.sh "${ROR_ACTIVATION_KEY}" 2>&1)"; then

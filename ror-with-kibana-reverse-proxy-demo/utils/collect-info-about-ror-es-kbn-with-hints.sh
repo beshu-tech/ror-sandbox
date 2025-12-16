@@ -22,5 +22,5 @@ echo "-----------------"
 source .env
 determine_ror_kbn_dockerfile "$ROR_API_RESPONSE" "$ES_VERSION" "$ROR_ES_VERSION"
 echo "-----------------"
-read_rewrite_base_path
+read_REWRITE_BASE_PATH_BY_KIBANA
 echo "-----------------"

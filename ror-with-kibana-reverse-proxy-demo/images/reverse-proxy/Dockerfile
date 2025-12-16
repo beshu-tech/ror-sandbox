@@ -1,6 +1,8 @@
 # Dockerfile
 FROM httpd:2.4
 
+ARG REWRITE_BASE_PATH_BY_KIBANA=please_set_REWRITE_BASE_PATH_BY_KIBANA_arg
+
 # Enable required modules: proxy, balancer, lbmethod, rewrite, headers, slotmem, ssl, wstunnel, socache
 RUN sed -i \
     -e 's/^#\(LoadModule slotmem_shm_module modules\/mod_slotmem_shm.so\)/\1/' \
@@ -19,8 +21,18 @@ RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf \
  && echo "Listen 443" >> /usr/local/apache2/conf/httpd.conf
 
 # Copy vhost and include it
-COPY images/reverse-proxy/reverse-proxy-without-rewrite-base-path.conf /usr/local/apache2/conf/extra/reverse-proxy-without-rewrite-base-path.conf
-RUN echo "Include conf/extra/reverse-proxy-without-rewrite-base-path.conf" >> /usr/local/apache2/conf/httpd.conf
+COPY images/reverse-proxy/reverse-proxy-with-rewrite-base-path.conf /tmp/reverse-proxy-with-rewrite-base-path.conf
+COPY images/reverse-proxy/reverse-proxy-without-rewrite-base-path.conf /tmp/reverse-proxy-without-rewrite-base-path.conf
+
+
+RUN mkdir -p /usr/local/apache2/conf/extra \
+ && if [ "$REWRITE_BASE_PATH_BY_KIBANA" = "true" ]; then \
+      cp /tmp/reverse-proxy-without-rewrite-base-path.conf /usr/local/apache2/conf/extra/reverse-proxy.conf; \
+    else \
+      cp /tmp/reverse-proxy-with-rewrite-base-path.conf /usr/local/apache2/conf/extra/reverse-proxy.conf; \
+    fi \
+ && echo "Include conf/extra/reverse-proxy.conf" >> /usr/local/apache2/conf/httpd.conf \
+ && rm -f /tmp/reverse-proxy-*.conf
 
 # Copy TLS certs (provide server.crt and server.key under images/reverse-proxy/certs)
 COPY conf/reverse-proxy/certs/ /usr/local/apache2/conf/certs/

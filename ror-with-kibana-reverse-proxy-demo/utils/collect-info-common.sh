@@ -1,17 +1,17 @@
-read_rewrite_base_path () {
-  DEFAULT_REWRITE_BASE_PATH=true
+read_REWRITE_BASE_PATH_BY_KIBANA () {
+  DEFAULT_REWRITE_BASE_PATH_BY_KIBANA_BY_Kibana=true
 
   while true; do
-    read -p "Rewrite base path? (true/false) [default: $DEFAULT_REWRITE_BASE_PATH]: " value
+    read -p "Rewrite base path by Kibana? (true/false) [default: $DEFAULT_REWRITE_BASE_PATH_BY_KIBANA_BY_Kibana]: " value
 
     if [[ -z "$value" ]]; then
-      echo "REWRITE_BASE_PATH=$DEFAULT_REWRITE_BASE_PATH" >> .env
+      echo "REWRITE_BASE_PATH_BY_KIBANA=$DEFAULT_REWRITE_BASE_PATH_BY_KIBANA_BY_Kibana" >> .env
       break
     fi
 
     case "$value" in
       true|false)
-        echo "REWRITE_BASE_PATH=$value" >> .env
+        echo "REWRITE_BASE_PATH_BY_KIBANA=$value" >> .env
         break
         ;;
       *)

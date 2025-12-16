@@ -9,5 +9,5 @@ determine_ror_es_dockerfile
 echo "-----------------"
 determine_ror_kbn_dockerfile
 echo "-----------------"
-read_rewrite_base_path
+read_REWRITE_BASE_PATH_BY_KIBANA
 echo "-----------------"

@@ -102,6 +102,7 @@ services:
     environment:
       <<: *kbn-common-env
       SERVER_NAME: ${SERVER_NAME:-kbn-ror}
+      REWRITE_BASE_PATH_BY_KIBANA: ${REWRITE_BASE_PATH_BY_KIBANA:-REWRITE_BASE_PATH_BY_KIBANA_NOT_CONFIGURED}
   kbn-ror-2:
     <<: *kbn-common
     ports:
@@ -109,7 +110,7 @@ services:
     environment:
       <<: *kbn-common-env
       SERVER_NAME: ${SERVER_NAME:-kbn-ror-2}
-
+      REWRITE_BASE_PATH_BY_KIBANA: ${REWRITE_BASE_PATH_BY_KIBANA:-REWRITE_BASE_PATH_BY_KIBANA_NOT_CONFIGURED}
   initializer:
     build:
       context: .
@@ -137,6 +138,8 @@ services:
     build:
       context: .
       dockerfile: images/reverse-proxy/Dockerfile
+      args:
+        REWRITE_BASE_PATH_BY_KIBANA: ${REWRITE_BASE_PATH_BY_KIBANA:-REWRITE_BASE_PATH_BY_KIBANA_NOT_CONFIGURED}
     depends_on:
       es-ror:
         condition: service_healthy

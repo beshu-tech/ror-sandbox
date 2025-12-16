@@ -1,7 +1,7 @@
 server.name: SERVER_NAME_PLACEHOLDER
 server.host: 0.0.0.0
 server.basePath: /ror-demo
-server.rewriteBasePath: true
+server.rewriteBasePath: REWRITE_BASE_PATH_BY_KIBANA_PLACEHOLDER
 server.publicBaseUrl: "https://localhost:8443/ror-demo"
 
 elasticsearch.username: kibana

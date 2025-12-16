@@ -39,7 +39,7 @@ services:
   kbn-ror:
     build:
       context: .
-      dockerfile: images/kbn-2/${KBN_DOCKERFILE}
+      dockerfile: images/kbn/${KBN_DOCKERFILE}
       args:
         KBN_VERSION: $KBN_VERSION
         ROR_VERSION: $ROR_KBN_VERSION

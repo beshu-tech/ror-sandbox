@@ -137,10 +137,3 @@ read_kbn_ror_file_path () {
     fi
   done
 }
-
-> .env
-echo "-----------------"
-determine_ror_es_dockerfile
-echo "-----------------"
-determine_ror_kbn_dockerfile
-echo "-----------------"

@@ -108,7 +108,7 @@ services:
       retries: 30
       start_period: 60s
     volumes:
-      - ./init-scripts:/scripts 
+      - ../shared/init-scripts:/scripts
     networks:
       - es-ror-network
 

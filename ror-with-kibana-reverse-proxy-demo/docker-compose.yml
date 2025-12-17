@@ -150,6 +150,9 @@ services:
     ports:
       - "8082:80"
       - "8443:443"
+    environment:
+      REWRITE_BASE_PATH_BY_KIBANA: ${REWRITE_BASE_PATH_BY_KIBANA:-REWRITE_BASE_PATH_BY_KIBANA_NOT_CONFIGURED}
+    entrypoint: [ "sh", "/usr/local/bin/reverse-proxy-entrypoint.sh" ]
 networks:
   es-ror-network:
     driver: bridge

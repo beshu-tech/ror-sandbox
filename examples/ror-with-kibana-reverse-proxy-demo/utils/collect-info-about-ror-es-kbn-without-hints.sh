@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source "../utils/collect-info-about-ror-es-kbn-without-hints-common.sh"
+source "../../utils/collect-info-about-ror-es-kbn-without-hints-common.sh"
 source "$(dirname "$0")/collect-info-common.sh"
 
 > .env

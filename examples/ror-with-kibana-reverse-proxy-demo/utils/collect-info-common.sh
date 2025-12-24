@@ -34,6 +34,6 @@ require_min_version() {
 
   if ! greater_than_or_equal $provided_version $min_version; then
     echo "ERROR: ror-with-kibana-reverse-proxy-demo does not support Elasticsearch/Kibana versions lower than $min_version"
-    exit -3
+    exit 3
   fi
 }

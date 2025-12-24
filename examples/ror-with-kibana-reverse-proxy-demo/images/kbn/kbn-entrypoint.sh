@@ -52,9 +52,9 @@ if [ -n "${SERVER_NAME:-}" ]; then
 
   # Also update template configs so source templates include server.name
   for tmpl in \
-    /usr/share/kibana/config/enterprise-ror-kibana.yml \
-    /usr/share/kibana/config/pro-ror-kibana.yml \
-    /usr/share/kibana/config/free-ror-kibana.yml; do
+    /usr/share/kibana/config/enterprise-ror-newplatform-kibana.yml \
+    /usr/share/kibana/config/pro-ror-newplatform-kibana.yml \
+    /usr/share/kibana/config/free-ror-newplatform-kibana.yml; do
     _replace_server_name_in_file "$tmpl" "${SERVER_NAME}"
   done
 fi
@@ -67,9 +67,9 @@ if [ -n "${REWRITE_BASE_PATH_BY_KIBANA:-}" ]; then
     _upsert_yaml_key "$cfg" "server.rewriteBasePath" "$rbp"
 
     for tmpl in \
-      /usr/share/kibana/config/enterprise-ror-kibana.yml \
-      /usr/share/kibana/config/pro-ror-kibana.yml \
-      /usr/share/kibana/config/free-ror-kibana.yml; do
+      /usr/share/kibana/config/enterprise-ror-newplatform-kibana.yml \
+      /usr/share/kibana/config/pro-ror-newplatform-kibana.yml \
+      /usr/share/kibana/config/free-ror-newplatform-kibana.yml; do
       _upsert_yaml_key "$tmpl" "server.rewriteBasePath" "$rbp"
     done
 

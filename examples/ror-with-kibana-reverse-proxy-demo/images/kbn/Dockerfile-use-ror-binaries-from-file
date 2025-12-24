@@ -15,16 +15,9 @@ COPY conf/kbn/kibana.key /usr/share/kibana/config/kibana.key
 COPY images/kbn/install-ror-kbn-using-file.sh /tmp/install-ror.sh
 COPY $ROR_FILE /tmp/ror.zip
 
-# add runtime entrypoint wrapper to inject SERVER_NAME into kibana.yml
-COPY images/kbn/kbn-entrypoint.sh /usr/local/bin/kbn-entrypoint.sh
-# Do not change file permissions here (may be disallowed in some build environments).
-
 USER root
 
 RUN /tmp/install-ror.sh && \
     chown -R kibana:kibana /usr/share/kibana/config
 
 USER kibana
-
-# Execute the script via sh so it does not need the executable bit set
-ENTRYPOINT ["sh", "/usr/local/bin/kbn-entrypoint.sh"]

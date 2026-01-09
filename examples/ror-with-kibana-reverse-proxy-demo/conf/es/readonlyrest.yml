@@ -10,7 +10,16 @@ readonlyrest:
       type: allow
       auth_key: kibana:kibana
       verbosity: error
-
+    - name: USER_DEFAULT
+      auth_key: user2:dev
+      verbosity: error
+      indices: [".kibana*",".reporting-*", ".ds-.kibana-*", ".kibana-reporting-*", "xxx-*", "kibana_sample_data_*"]
+      #            uri_re: [ "^/_(?:alias|nodes|cat|cluster|ml|ilm|license|mapping|settings|sql|analyze|autoscaling|ccr|component_template|dangling|data_stream|flush|
+      #            enrich|eql|ilm|ingest|index_template|migration|mtermvectors|processor|recovery|refresh|rank_eval|remote|rollup|script_context|script_language|scripts|se
+      #            arch_shards|searcheable_snapshots|security|segments|shard_stores|slm|snapshot|ssl|stats|tasks|template|transform|validate|watcher|xpack)" ]
+      kibana:
+        access: rw
+        index: ".kibana-xxx"
     - name: "Admins"
       groups: [Administrators]
       kibana:

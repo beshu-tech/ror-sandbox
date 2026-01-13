@@ -7,3 +7,5 @@ elasticsearch.password: elastic
 elasticsearch.ssl.verificationMode: none
 
 monitoring.ui.container.elasticsearch.enabled: true
+
+logging.root.level: trace

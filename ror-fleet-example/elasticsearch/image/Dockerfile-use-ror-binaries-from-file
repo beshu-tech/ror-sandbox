@@ -1,0 +1,24 @@
+ARG ES_VERSION=please_set_es_version_arg
+
+FROM docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+
+ARG ES_VERSION=please_set_es_version_arg
+ARG ROR_FILE=please_set_ror_file_path
+
+COPY elasticsearch/conf/readonlyrest.yml /usr/share/elasticsearch/config/readonlyrest.yml
+COPY elasticsearch/conf/log4j2.properties /usr/share/elasticsearch/config/log4j2.properties
+COPY elasticsearch/image/install-ror-es-using-file.sh /tmp/install-ror.sh
+COPY $ROR_FILE /tmp/ror.zip
+
+USER root
+
+# RUN echo "" | /usr/share/elasticsearch/bin/elasticsearch-keystore create &&\
+#     echo 'elastic' | /usr/share/elasticsearch/bin/elasticsearch-keystore add --stdin bootstrap.password -f  &&\
+#     printf 'readonlyrest' | /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.http.ssl.keystore.secure_password &&\
+#     printf 'readonlyrest' | /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.http.ssl.truststore.secure_password &&\
+#     printf 'readonlyrest' | /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password &&\
+#     printf 'readonlyrest' | /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password
+
+RUN /tmp/install-ror.sh
+
+USER elasticsearch

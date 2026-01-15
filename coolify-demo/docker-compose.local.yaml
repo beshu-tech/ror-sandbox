@@ -1,0 +1,17 @@
+services:
+
+  es-ror:
+    networks:
+      - es-ror-network
+
+  kbn-ror:
+    networks:
+      - es-ror-network
+
+  initializer:
+    networks:
+      - es-ror-network
+
+networks:
+  es-ror-network:
+    driver: bridge

@@ -12,11 +12,12 @@ server.ssl.key: /usr/share/kibana/config/kibana.key
 server.ssl.redirectHttpFromPort: 80
 
 readonlyrest_kbn.logLevel: info
-readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
-
-xpack.reporting.encryptionKey: "12312313123213123213123abcdefghijklm11"
-xpack.encryptedSavedObjects.encryptionKey: "12312313123213123213123abcdefghijklm11"
-
+readonlyrest_kbn.store_sessions_in_index: true
+# instance-specific settings
+readonlyrest_kbn.cookiePass: 'kibana-02-cookie-pass-1234567890'
+readonlyrest_kbn.sessions_index_name: ".ror-sessions-kibana-02"
 kibana.index: ".kibana-02"
-#xpack.task_manager.index: ".task-manager-02"
-#xpack.reporting.index: ".reporting-02"
+
+# the same on both instances
+xpack.reporting.encryptionKey: "kbn-ror-0x-reporting-encryption-key-1234567890"
+xpack.encryptedSavedObjects.encryptionKey: "kbn-ror-0x-encrypted-saved-objects-encryption-key-1234567890"

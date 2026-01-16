@@ -10,7 +10,7 @@ readonlyrest:
       type: allow
       auth_key: kibana:kibana
       verbosity: error
-    - name: USER_DEFAULT
+    
       auth_key: user2:dev
       verbosity: error
       indices: [".kibana*",".reporting-*", ".ds-.kibana-*", ".kibana-reporting-*", "xxx-*", "kibana_sample_data_*"]

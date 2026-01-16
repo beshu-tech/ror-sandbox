@@ -18,5 +18,5 @@ xpack.reporting.encryptionKey: "12312313123213123213123abcdefghijklm11"
 xpack.encryptedSavedObjects.encryptionKey: "12312313123213123213123abcdefghijklm11"
 
 kibana.index: ".kibana-02"
-xpack.task_manager.index: ".task-manager-02"
-xpack.reporting.index: ".reporting-02"
+#xpack.task_manager.index: ".task-manager-02"
+#xpack.reporting.index: ".reporting-02"

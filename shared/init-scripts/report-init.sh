@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 
 source utils/lib.sh
 
-for i in $(seq 0 100); do
+for i in $(seq 0 1000); do
   putDocument "example" "{\"id\": $i}"
 done
 
@@ -25,14 +25,16 @@ run_report () {
 }
 
 
-DEST_ID=$(import_saved_obj "user1" "test" "kbn-ror-01")
+DEST_ID_01=$(import_saved_obj "user1" "test" "kbn-ror-01")
 sleep 5
-for i in $(seq 0 3); do
-    run_report "user1" "test" "$DEST_ID" "kbn-ror-01"
+
+DEST_ID_02=$(import_saved_obj "user2" "test" "kbn-ror-02")
+sleep 5
+
+for i in $(seq 0 30); do
+    run_report "user1" "test" "$DEST_ID_01" "kbn-ror-01" &
 done
 
-DEST_ID=$(import_saved_obj "user2" "test" "kbn-ror-02")
-sleep 5
-for i in $(seq 0 5); do
-    run_report "user2" "test" "$DEST_ID" "kbn-ror-02"
+for i in $(seq 0 50); do
+    run_report "user2" "test" "$DEST_ID_02" "kbn-ror-02" &
 done

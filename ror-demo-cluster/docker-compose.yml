@@ -1,27 +1,4 @@
 services:
-  # Enterprise-only service
-  keycloak:
-    image: quay.io/keycloak/keycloak:20.0.5
-    profiles: ["ENT"]
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KEYCLOAK_FRONTEND_URL=http://kc.localhost:8080
-    volumes:
-      - ./conf/keycloak/ror-realm.json:/opt/keycloak/data/import/ror-realm.json:ro
-    command: ["start-dev", "--import-realm", "--hostname=kc.localhost", "--http-enabled=true", "--http-port=8080"]
-    ports:
-      - "8080:8080"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 5 --retry-connrefused http://127.0.0.1:8080/realms/ror/.well-known/openid-configuration >/dev/null || exit 1"]
-      interval: 10s
-      timeout: 10s
-      retries: 30
-      start_period: 40s
-    networks:
-      es-ror-network:
-        aliases:
-          - kc.localhost
 
   es-ror:
     build:
@@ -40,7 +17,7 @@ services:
       - node.name=es-ror-single
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Dcom.readonlyrest.settings.loading.attempts.count=1 -Dcom.readonlyrest.settings.loading.delay=0s"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
     healthcheck:
       test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:9200/_cluster/health >/dev/null || exit 1"]
@@ -55,10 +32,10 @@ services:
         soft: -1
         hard: -1
 
-  kbn-ror:
+  kbn-ror-01:
     build:
       context: .
-      dockerfile: images/kbn/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
+      dockerfile: images/kbn-01/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
       args:
         KBN_VERSION: ${KBN_VERSION:-KBN_VERSION_NOT_CONFIGURED}
         ROR_VERSION: ${ROR_KBN_VERSION:-ROR_KBN_VERSION_NOT_CONFIGURED}
@@ -67,14 +44,43 @@ services:
     depends_on:
       es-ror:
         condition: service_healthy
-      keycloak:
-        condition: service_healthy
-        required: false
     ports:
       - "15601:5601"
     environment:
       ELASTICSEARCH_HOSTS: https://es-ror:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+      SERVER_NAME: kbn-ror-01
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    networks:
+      - es-ror-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kbn-ror-02:
+    build:
+      context: .
+      dockerfile: images/kbn-02/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
+      args:
+        KBN_VERSION: ${KBN_VERSION:-KBN_VERSION_NOT_CONFIGURED}
+        ROR_VERSION: ${ROR_KBN_VERSION:-ROR_KBN_VERSION_NOT_CONFIGURED}
+        ROR_FILE: ${KBN_ROR_FILE:-KBN_ROR_FILE_NOT_CONFIGURED}
+        ROR_LICENSE_EDITION: ${ROR_LICENSE_EDITION:-ROR_LICENSE_EDITION_NOT_CONFIGURED}
+    depends_on:
+      es-ror:
+        condition: service_healthy
+    ports:
+      - "25601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: https://es-ror:9200
+      ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+      SERVER_NAME: kbn-ror-02
     healthcheck:
       test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]
       interval: 10s
@@ -95,7 +101,9 @@ services:
     depends_on:
       es-ror:
         condition: service_healthy
-      kbn-ror:
+      kbn-ror-01:
+        condition: service_healthy
+      kbn-ror-02:
         condition: service_healthy
     environment:
       ELASTICSEARCH_ADDRESS: https://es-ror:9200

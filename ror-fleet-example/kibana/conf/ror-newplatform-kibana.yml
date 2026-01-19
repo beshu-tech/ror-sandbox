@@ -1,0 +1,30 @@
+server.name: kibana-ror
+server.host: 0.0.0.0
+server.publicBaseUrl: "https://kibana:5601"
+
+xpack.fleet.agents.kibana.host: "https://kibana:5601"
+
+xpack.encryptedSavedObjects.encryptionKey: "random-string-above-32-or-more-characters"
+xpack.fleet.packages:
+  - name: fleet_server
+    version: latest
+  - name: system
+    version: latest
+xpack.fleet.agentPolicies:
+  - name: Fleet-Server-Policy
+    id: fleet-server-policy
+    namespace: default
+    monitoring_enabled: []
+    package_policies:
+      - name: fleet_server-1
+        package:
+          name: fleet_server
+
+readonlyrest_kbn.logLevel: trace
+readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
+
+#logging.loggers:
+# - name: elasticsearch.query
+#   level: warn
+# - name: http.server.response
+#   level: debug

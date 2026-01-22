@@ -99,6 +99,7 @@ services:
         condition: service_healthy
     environment:
       ELASTICSEARCH_ADDRESS: https://es-ror:9200
+      KIBANA_ADDRESS: https://kbn-ror:5601
       ELASTICSEARCH_USER: kibana
       ELASTICSEARCH_PASSWORD: kibana
     healthcheck:
@@ -112,6 +113,20 @@ services:
     networks:
       - es-ror-network
 
+  ldap:
+    image: osixia/openldap:1.3.0
+    command: [--copy-service]
+    volumes:
+      - ./conf/ldap/example-com.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/example-com.ldif
+    ports:
+      - "389:389"
+      - "636:636"
+    environment:
+      - LDAP_ADMIN_PASSWORD=password
+      - LDAP_DOMAIN=example.com
+    networks:
+      - es-ror-network
+      
 networks:
   es-ror-network:
     driver: bridge

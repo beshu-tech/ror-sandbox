@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 function greater_than_or_equal() {
   # Strip the -pre part (or any suffix starting with -) from both versions
@@ -14,7 +14,7 @@ fi
 
 echo "Installing ES ROR from file..."
 /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch file:///tmp/ror.zip
-ROR_VERSION=$(unzip -p /tmp/ror.zip plugin-descriptor.properties | grep -oP '^version=\K.*')
+ROR_VERSION=$(unzip -p /tmp/ror.zip '*/plugin-descriptor.properties' | grep -oP '^version=\K.*')
 
 if [[ ! -v ROR_VERSION || -z "$ROR_VERSION" ]]; then
   echo "No ROR_VERSION variable is set"

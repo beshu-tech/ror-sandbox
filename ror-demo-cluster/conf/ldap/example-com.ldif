@@ -1,0 +1,85 @@
+version: 1
+
+dn: ou=People,dc=example,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: People
+
+dn: cn=User1,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: User1
+sn: User1
+uid: user1
+userPassword: test
+
+dn: cn=User2,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: User2
+sn: User2
+uid: user2
+userPassword: test
+
+dn: cn=User3,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: User3
+sn: User3
+uid: user3
+userPassword: test
+
+dn: ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: Groups
+
+dn: cn=Group1,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: Group1
+o: Group1
+uniqueMember: cn=User1,ou=People,dc=example,dc=com
+
+dn: cn=Group2,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: Group2
+o: Group2
+uniqueMember: cn=User2,ou=People,dc=example,dc=com
+
+dn: cn=Group3,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: Group3
+o: Group3
+uniqueMember: cn=User3,ou=People,dc=example,dc=com
+
+dn: cn=Group4,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: Group4
+o: Group4
+uniqueMember: cn=User3,ou=People,dc=example,dc=com
+uniqueMember: cn=User2,ou=People,dc=example,dc=com
+uniqueMember: cn=User1,ou=People,dc=example,dc=com
+
+dn: cn=Group5,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: Group5
+o: Group5
+uniqueMember: cn=User3,ou=People,dc=example,dc=com
+
+dn: cn=Group6,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: Group6
+o: Group6
+uniqueMember: cn=User3,ou=People,dc=example,dc=com

@@ -65,10 +65,11 @@ echo -e "
 
 case "${ROR_LICENSE_EDITION:-}" in
   ENT)
-    echo -e "You can access ROR KBN here: https://localhost:15601 (login via 'Keycloak' button; users: 'extUser1:extUser1', 'extUser2:extUser2').\nKeycloak admin console: http://kc.localhost:8080/admin (admin:admin)"
+    echo -e "You can access ROR KBN via proxy here: https://localhost:8443/deva-notix (admin:admin) (login via 'Keycloak' button; users: 'extUser1:extUser1', 'extUser2:extUser2').\nKeycloak admin console: http://kc.localhost:8080/admin (admin:admin)"
+
     ;;
   PRO|FREE)
-    echo -e "You can access ROR KBN here: https://localhost:15601"
+    echo -e "You can access ROR KBN via proxy : https://localhost:8443/deva-notix (admin:admin)"
     ;;
   *)
     ;;

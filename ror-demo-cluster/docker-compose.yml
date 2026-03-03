@@ -40,7 +40,7 @@ services:
       - node.name=es-ror-single
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Dcom.readonlyrest.settings.loading.attempts.count=1 -Dcom.readonlyrest.settings.loading.delay=0s"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
     healthcheck:
       test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:9200/_cluster/health >/dev/null || exit 1"]

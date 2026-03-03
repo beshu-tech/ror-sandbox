@@ -1,10 +1,14 @@
 #!/bin/bash
-set -euo pipefail
+set -eu
+# Enable pipefail when running under bash (portable guard)
+if [ -n "${BASH_VERSION:-}" ]; then
+  set -o pipefail
+fi
 
 # Normalize various truthy/falsey values to "true" or "false"
 _normalize_bool() {
   local v="${1:-}"
-  v="${v,,}"               # lowercase
+  v="$(printf '%s' "$v" | tr '[:upper:]' '[:lower:]')"               # lowercase
   case "$v" in
     1|true|yes|y) echo "true" ;;
     0|false|no|n) echo "false" ;;

@@ -13,14 +13,14 @@ readonlyrest:
     - name: "Fleet server"
       type: allow
       token_authentication: 
-        token: "service-token"
+        type: "service-token"
         username: "fleet"
       indices: [".fleet-servers", ".fleet-agents", ".fleet-actions", ".fleet-policies", ".fleet-policies-leader", ".fleet-enrollment-api-keys"]
 
     - name: "Agents"
       type: allow
       token_authentication: 
-        token: "api-key"
+        type: "api-key"
         username: "fleet"
       indices: [".apm-agent-configuration", "metrics-*", "traces-*", "logs-*"]
 

@@ -35,6 +35,10 @@ while true; do
     # Check Kibana status and publicBaseUrl
     echo "=== Checking Kibana Info ==="
     curl -s -u "kibana:kibana" --cacert /certs/ca.crt https://kibana:5601/api/status | jq '.version, .status'
+
+    # Detect Kibana major version for API compatibility
+    KBN_MAJOR_VERSION=$(curl -s -u "kibana:kibana" --cacert /certs/ca.crt https://kibana:5601/api/status | jq -r '.version.number' | cut -d. -f1)
+    echo "Detected Kibana major version: $KBN_MAJOR_VERSION"
     
     # First, check current Fleet settings
     echo "=== Current Fleet settings BEFORE our changes ==="
@@ -83,14 +87,42 @@ while true; do
       exit 1
     fi
 
-    # Update fleet settings
-    if ! check_curl "Update Fleet Settings" \
-      -s -u "kibana:kibana" --cacert /certs/ca.crt \
-      -XPUT -H "kbn-xsrf: kibana" -H "Content-type: application/json" \
-      "https://kibana:5601/api/fleet/settings" \
-      -d '{"fleet_server_hosts": ["https://fleet-server:8220"]}'; then
-      echo "Failed to update fleet settings, exiting..."
-      exit 1
+    # Update fleet server hosts (API changed in Kibana 9.x)
+    if [ "$KBN_MAJOR_VERSION" -ge 9 ]; then
+      # In Kibana 9.x, fleet_server_hosts was removed from the settings endpoint.
+      # Fleet server hosts are now managed as separate resources.
+      EXISTING_HOST_ID=$(curl -s -u "kibana:kibana" --cacert /certs/ca.crt \
+        "https://kibana:5601/api/fleet/fleet_server_hosts" | jq -r '.items[0].id // empty')
+
+      if [ -n "$EXISTING_HOST_ID" ]; then
+        if ! check_curl "Update Fleet Server Host" \
+          -s -u "kibana:kibana" --cacert /certs/ca.crt \
+          -XPUT -H "kbn-xsrf: kibana" -H "Content-type: application/json" \
+          "https://kibana:5601/api/fleet/fleet_server_hosts/$EXISTING_HOST_ID" \
+          -d '{"host_urls":["https://fleet-server:8220"],"is_default":true}'; then
+          echo "Failed to update fleet server host, exiting..."
+          exit 1
+        fi
+      else
+        if ! check_curl "Create Fleet Server Host" \
+          -s -u "kibana:kibana" --cacert /certs/ca.crt \
+          -XPOST -H "kbn-xsrf: kibana" -H "Content-type: application/json" \
+          "https://kibana:5601/api/fleet/fleet_server_hosts" \
+          -d '{"name":"Default","host_urls":["https://fleet-server:8220"],"is_default":true}'; then
+          echo "Failed to create fleet server host, exiting..."
+          exit 1
+        fi
+      fi
+    else
+      # In Kibana 8.x, fleet server hosts are set via the settings endpoint
+      if ! check_curl "Update Fleet Settings" \
+        -s -u "kibana:kibana" --cacert /certs/ca.crt \
+        -XPUT -H "kbn-xsrf: kibana" -H "Content-type: application/json" \
+        "https://kibana:5601/api/fleet/settings" \
+        -d '{"fleet_server_hosts": ["https://fleet-server:8220"]}'; then
+        echo "Failed to update fleet settings, exiting..."
+        exit 1
+      fi
     fi
 
     # Update fleet output

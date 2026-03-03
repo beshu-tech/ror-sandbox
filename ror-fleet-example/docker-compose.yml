@@ -101,7 +101,7 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
-    image: docker.elastic.co/beats/elastic-agent:8.15.0
+    image: elastic/elastic-agent:${ES_VERSION}
     hostname: fleet-server
     volumes:
       - ./certs:/certs:z

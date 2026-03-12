@@ -12,7 +12,17 @@ server.ssl.certificate: /usr/share/kibana/config/kibana.crt
 server.ssl.key: /usr/share/kibana/config/kibana.key
 server.ssl.redirectHttpFromPort: 80
 
-readonlyrest_kbn.logLevel: info
+xpack.encryptedSavedObjects:
+  encryptionKey: "min-32-byte-long-strong-encryption-key"
+
+logging.loggers:
+  ### responses to an HTTP request
+  #- name: http.server.response
+  #  level: debug
+  - name: elasticsearch.query
+    level: debug
+
+readonlyrest_kbn.logLevel: trace
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
 readonlyrest_kbn:
   auth:

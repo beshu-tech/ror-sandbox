@@ -29,7 +29,15 @@ readonlyrest:
       indices: ["business_logs", "kibana_sample_data_*"]
       kibana:
         index: .kibana_business_@{user}
-        access: rw
+        access: ro
+        hide_apps: ["Security", "Observability"]
+
+    - name: "Test users"
+      groups: ["TestUsers"]
+      indices: ["business_logs", "kibana_sample_data_*"]
+      kibana:
+        index: .kibana_test_@{user}
+        access: ro_strict
         hide_apps: ["Security", "Observability"]
 
   users:
@@ -42,6 +50,8 @@ readonlyrest:
           name: "End Users"
         - id: "BusinessUsers"
           name: "Business Users"
+        - id: "TestUsers"
+          name: "Test Users"
 
     - username: user1
       auth_key: user1:test
@@ -50,6 +60,8 @@ readonlyrest:
           name: "End Users"
         - id: "BusinessUsers"
           name: "Business Users"
+        - id: "TestUsers"
+          name: "Test Users"
 
     - username: user2
       auth_key: user2:test

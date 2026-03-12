@@ -55,6 +55,15 @@ services:
         soft: -1
         hard: -1
 
+  es-ror-proxy:
+    image: mitmproxy/mitmproxy
+    command:
+      mitmdump --set validate_inbound_headers=false --mode reverse:https://es-ror:9200 --ssl-insecure --verbose
+    depends_on:
+      - es-ror
+    networks:
+      - es-ror-network
+
   kbn-ror:
     build:
       context: .
@@ -73,7 +82,7 @@ services:
     ports:
       - "15601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: https://es-ror:9200
+      ELASTICSEARCH_HOSTS: https://es-ror-proxy:8080
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     healthcheck:
       test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]

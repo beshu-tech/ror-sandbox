@@ -9,7 +9,7 @@ services:
     ports:
       - "29200:9200"
       - "29300:9300"
-      - "5005:5005"
+      - "5006:5005"
     environment:
       - cluster.name=xpack-es-cluster
       - node.name=es-xpack-single
@@ -30,6 +30,15 @@ services:
         soft: -1
         hard: -1
 
+  es-xpack-proxy:
+    image: mitmproxy/mitmproxy
+    command:
+      mitmdump --set validate_inbound_headers=false --mode reverse:https://es-xpack:9200 --ssl-insecure --verbose
+    depends_on:
+      - es-xpack
+    networks:
+      - es-xpack-network
+
   kbn-xpack:
     build:
       context: .
@@ -42,7 +51,7 @@ services:
     ports:
       - "25601:5601"
     environment:
-      ES_API_URL: https://es-xpack:9200
+      ES_API_URL: https://es-xpack-proxy:8080
     networks:
       - es-xpack-network
     ulimits:

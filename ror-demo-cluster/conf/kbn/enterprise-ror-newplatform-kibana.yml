@@ -15,12 +15,12 @@ server.ssl.redirectHttpFromPort: 80
 xpack.encryptedSavedObjects:
   encryptionKey: "min-32-byte-long-strong-encryption-key"
 
-logging.loggers:
-  ### responses to an HTTP request
-  #- name: http.server.response
-  #  level: debug
-  - name: elasticsearch.query
+logging:
+  root:
     level: debug
+  loggers:
+  - name: elasticsearch
+    level: trace
 
 readonlyrest_kbn.logLevel: trace
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'

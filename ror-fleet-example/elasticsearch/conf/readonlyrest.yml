@@ -24,6 +24,10 @@ readonlyrest:
         username: "fleet"
       indices: [".apm-agent-configuration", "metrics-*", "traces-*", "logs-*"]
 
+    - name: "Forbid access to service accounts and api keys"
+      type: forbid
+      actions: ["cluster:admin/xpack/security/service_account/*", "cluster:admin/xpack/security/api_key/*"]
+
     - name: "Admins"
       groups: [Administrators]
       kibana:

@@ -117,7 +117,7 @@ function putDocument() {
     putSingleDocument "$INDEX_NAME" "$2"
   else
     while IFS= read -r DOCUMENT_CONTENT; do
-      putSingleDocument "$INDEX_NAME" "$DOCUMENT_CONTENT"
+      putSingleDocument "$INDEX_NAME" "$DOCUMENT_CONTENT" || return $?
     done
   fi
 }

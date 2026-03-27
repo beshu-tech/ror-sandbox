@@ -87,6 +87,18 @@ function createDataStream() {
     return 5
   fi
 
+  response=$(curl -k -s -L -w "\n%{http_code}" -u "$ELASTICSEARCH_USER":"$ELASTICSEARCH_PASSWORD" \
+    -X PUT "$ELASTICSEARCH_ADDRESS/_data_stream/$STREAM_NAME"
+  )
+
+  http_status=$(echo "$response" | tail -n 1)
+  response_body=$(echo "$response" | sed \$d)
+
+  if [[ "$http_status" != 2* ]]; then
+    echo "ERROR: Cannot create data stream [$STREAM_NAME]. HTTP status: $http_status, response body: $response_body"
+    return 6
+  fi
+
   return 0
 }
 

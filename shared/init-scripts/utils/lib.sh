@@ -30,7 +30,7 @@ function createIndex() {
 
   INDEX_NAME=$1
 
-  response=$(curl -k -s -L -w "\n%{http_code}" -u $ELASTICSEARCH_USER:$ELASTICSEARCH_PASSWORD \
+  response=$(curl -k -s -L -w "\n%{http_code}" -u "$ELASTICSEARCH_USER":"$ELASTICSEARCH_PASSWORD" \
     -X PUT "$ELASTICSEARCH_ADDRESS/$INDEX_NAME" \
     -H "Content-Type: application/json"
   )
@@ -70,7 +70,7 @@ function createDataStream() {
   STREAM_NAME=$1
   TEMPLATE_NAME="${STREAM_NAME}-template"
 
-  response=$(curl -k -s -L -w "\n%{http_code}" -u $ELASTICSEARCH_USER:$ELASTICSEARCH_PASSWORD \
+  response=$(curl -k -s -L -w "\n%{http_code}" -u "$ELASTICSEARCH_USER":"$ELASTICSEARCH_PASSWORD" \
     -X PUT "$ELASTICSEARCH_ADDRESS/_index_template/$TEMPLATE_NAME" \
     -H "Content-Type: application/json" -d "{
       \"index_patterns\": [\"$STREAM_NAME\"],
@@ -126,7 +126,7 @@ function putSingleDocument() {
   INDEX_NAME=$1
   DOCUMENT_CONTENT=$2
 
-  response=$(curl -k -s -L -w "\n%{http_code}" -u $ELASTICSEARCH_USER:$ELASTICSEARCH_PASSWORD \
+  response=$(curl -k -s -L -w "\n%{http_code}" -u "$ELASTICSEARCH_USER":"$ELASTICSEARCH_PASSWORD" \
     -X POST "$ELASTICSEARCH_ADDRESS/$INDEX_NAME/_doc/" \
     -H "Content-Type: application/json" -d "$DOCUMENT_CONTENT"
   )

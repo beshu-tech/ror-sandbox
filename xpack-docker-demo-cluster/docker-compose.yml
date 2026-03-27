@@ -9,7 +9,7 @@ services:
     ports:
       - "29200:9200"
       - "29300:9300"
-      - "5005:5005"
+      - "25005:5005"
     environment:
       - cluster.name=xpack-es-cluster
       - node.name=es-xpack-single

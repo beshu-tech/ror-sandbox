@@ -2,7 +2,9 @@ readonlyrest:
 
   audit:
     enabled: true
-    outputs: [index]
+    outputs:
+      - type: index
+      - type: log
 
   access_control_rules:
 

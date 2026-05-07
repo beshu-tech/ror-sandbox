@@ -1,0 +1,38 @@
+stage ('Download Elasticsearch/ Kibana ROR Plugins') {
+  echo 'Downloading ROR plugin readonlyrest-${params.ROR_MAJOR_VER}.${params.ROR_MINOR_VER}.${params.ROR_PATCH_VER}_es${params.MAJOR_VER}.${params.MINOR_VER}.${params.PATCH_VER}'
+
+  ES_VERSION="${params.MAJOR_VER}.${params.MINOR_VER}.${params.PATCH_VER}"
+  ROR_VERSION="${params.ROR_MAJOR_VER}.${params.ROR_MINOR_VER}.${params.ROR_PATCH_VER}"
+
+  sh "wget \"https://api.beshu.tech/download/es?esVersion=${ES_VERSION}&pluginVersion=${ROR_VERSION}&email=rajesh.radhakrishnan@xperi.com\" -O src/readonlyrest-${ROR_VERSION}_es${ES_VERSION}.zip"
+
+  sh "wget \"https://api.beshu.tech/download/kbn?edition=kbn_universal&esVersion=${ES_VERSION}&pluginVersion=${ROR_VERSION}&email=rajesh.radhakrishnan@xperi.com\" -O src/readonlyrest_kbn_universal-${ROR_VERSION}_es${ES_VERSION}.zip"
+
+  dir ("src") {
+    sh "ls -ltr"
+    sh "ln -sf readonlyrest-${ROR_VERSION}_es${ES_VERSION}.zip readonlyrest.zip"
+    sh "ln -sf readonlyrest_kbn_universal-${ROR_VERSION}_es${ES_VERSION}.zip readonlyrest_kbn_universal.zip"
+  }
+}
+
+stage ('create rpm') {
+  echo 'Generating ror-configs-${BRANCH_NAME} rpm'
+
+  sh "/usr/local/bin/fpm -s dir \
+     -t rpm \
+     -a noarch \
+     -n ror-configs-${BRANCH_NAME} \
+     -v ${ROR_VERSION}_es${ES_VERSION} \
+     --iteration `date +%Y%m%d%H%M`.`git rev-parse --short HEAD` \
+     --log debug \
+     --vendor 'TV' \
+     --depends 'elasticsearch >= 8.19.0' \
+     --rpm-summary 'ReadonlyREST configs & scripts' \
+     --license GPL2+ \
+     --category Applications/Internet \
+     --after-install scripts/post-install.sh \
+     --before-upgrade scripts/pre-upgrade.sh \
+     --after-upgrade scripts/post-upgrade.sh \
+     --before-remove scripts/pre-uninstall.sh \
+     src/=/opt/elasticsearch/"
+}

@@ -1,0 +1,75 @@
+services:
+
+  pebble:
+    image: ghcr.io/letsencrypt/pebble:2.9.0
+    ports:
+      - "14000:14000"
+      - "15000:15000"
+    environment:
+      - PEBBLE_VA_NOSLEEP=1
+      - PEBBLE_VA_ALWAYS_VALID=1
+
+  dehydrated:
+    image: alpine:3.19
+    volumes:
+      - ./certs-dehydrated:/certs
+      - ./dehydrated.sh:/dehydrated.sh
+    depends_on:
+      - pebble
+    environment:
+      - DOMAIN=${DOMAIN}
+      - CA_URL=${CA_URL}
+    entrypoint: /bin/sh
+    command: /dehydrated.sh
+
+  certbot:
+    image: certbot/certbot:v2.11.0
+    volumes:
+      - ./certs-certbot:/certs
+      - ./certbot.sh:/certbot.sh
+    depends_on:
+      - pebble
+    environment:
+      - DOMAIN=${DOMAIN}
+      - CA_URL=${CA_URL}
+    entrypoint: /bin/sh
+    command: /certbot.sh
+
+  es-ror:
+    image: beshultd/elasticsearch-readonlyrest:8.14.3-ror-latest
+    user: "0:0"
+    ports:
+      - "9200:9200"
+    environment:
+      - I_UNDERSTAND_AND_ACCEPT_ES_PATCHING=yes
+      - KIBANA_USER_PASS=kibana
+      - ADMIN_USER_PASS=admin
+      - discovery.type=single-node
+    volumes:
+      - ./certs-certbot:/usr/share/elasticsearch/config/certs-certbot
+      - ./certs-dehydrated:/usr/share/elasticsearch/config/certs-dehydrated
+      - ./conf/es/readonlyrest.yml:/usr/share/elasticsearch/config/readonlyrest.yml
+      - ./conf/es/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    depends_on:
+      certbot:
+        condition: service_completed_successfully
+      dehydrated:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:9200/_cluster/health >/dev/null || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+
+  test:
+    image: alpine:3.19
+    entrypoint: /bin/sh
+    environment:
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./test.sh:/test.sh
+    depends_on:
+      es-ror:
+        condition: service_healthy
+    command: /test.sh

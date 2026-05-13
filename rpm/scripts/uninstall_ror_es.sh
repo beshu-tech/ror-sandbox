@@ -39,17 +39,23 @@ fi
 
 export ES_PATH_CONF="${ES_CONF}"
 
-echo "Unpatching Elasticsearch..."
-"${ES_JAVA_BIN}" -jar "${ROR_TOOLS_JAR}" unpatch \
-  --es-path="${ES_HOME}"
-
-echo "Verifying Elasticsearch is no longer patched..."
+echo "Checking if Elasticsearch is patched..."
 if "${ES_JAVA_BIN}" -jar "${ROR_TOOLS_JAR}" verify \
   --es-path="${ES_HOME}"; then
-  echo "ERROR: Elasticsearch still appears to be patched after unpatch." >&2
-  exit 1
+  echo "Unpatching Elasticsearch..."
+  "${ES_JAVA_BIN}" -jar "${ROR_TOOLS_JAR}" unpatch \
+    --es-path="${ES_HOME}"
+
+  echo "Verifying Elasticsearch is no longer patched..."
+  if "${ES_JAVA_BIN}" -jar "${ROR_TOOLS_JAR}" verify \
+    --es-path="${ES_HOME}"; then
+    echo "ERROR: Elasticsearch still appears to be patched after unpatch." >&2
+    exit 1
+  else
+    echo "Elasticsearch is unpatched."
+  fi
 else
-  echo "Elasticsearch is unpatched."
+  echo "Elasticsearch is not patched, skipping unpatch."
 fi
 
 echo "Removing ReadonlyREST Elasticsearch plugin..."

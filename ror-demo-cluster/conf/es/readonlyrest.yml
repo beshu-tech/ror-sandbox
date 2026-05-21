@@ -13,7 +13,7 @@ readonlyrest:
 
     - name: "admin"
       type: allow
-      groups: ["admin", "g1", "g2"]
+      groups: ["g1", "g2", "admin"]
       kibana:
         access: unrestricted
         index: .kibana_@{acl:current_group}
@@ -42,7 +42,7 @@ readonlyrest:
   users:
     - username: admin
       auth_key: admin:admin
-      groups: [admin, g1, g2]
+      groups: [g1, g2, admin]
 
     - username: user1
       auth_key: user1:test

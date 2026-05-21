@@ -12,6 +12,6 @@ createDataStream "logs-system-dev" && generate_log_documents 100 | putDocument "
 
 createIndex "data-business-index" && generate_log_documents 100 | putDocument "data-business-index"
 
-createKibanaDataView "admin" "admin" "logs-frontend-*" "Frontend logs" "@timestamp" "g1"
-createKibanaDataView "admin" "admin" "logs-business-*" "Business logs" "@timestamp" "g1"
-createKibanaDataView "admin" "admin" "logs-system-*" "System logs" "@timestamp" "g2"
+createKibanaDataView "logs-frontend-*" "Frontend logs" "@timestamp" "admin" "admin" "g1"
+createKibanaDataView "logs-business-*" "Business logs" "@timestamp" "admin" "admin" "g1"
+createKibanaDataView "logs-system-*" "System logs" "@timestamp" "admin" "admin" "g2"

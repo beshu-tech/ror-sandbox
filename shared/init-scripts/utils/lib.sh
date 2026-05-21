@@ -102,6 +102,55 @@ function createDataStream() {
   return 0
 }
 
+function createKibanaDataView() {
+  if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
+    echo "ERROR: Required: 1) index pattern (title), optionally 2) data view name, 3) time field name"
+    return 1
+  fi
+
+  if ! [ -v KIBANA_ADDRESS ] || [ -z "$KIBANA_ADDRESS" ]; then
+    echo "ERROR: required variable KIBANA_ADDRESS not set or empty"
+    exit 2
+  fi
+
+  if ! [ -v KIBANA_USER ] || [ -z "$KIBANA_USER" ]; then
+    echo "ERROR: required variable KIBANA_USER not set or empty"
+    exit 3
+  fi
+
+  if ! [ -v KIBANA_PASSWORD ] || [ -z "$KIBANA_PASSWORD" ]; then
+    echo "ERROR: required variable KIBANA_PASSWORD not set or empty"
+    exit 4
+  fi
+
+  INDEX_PATTERN=$1
+  DATA_VIEW_NAME=${2:-$INDEX_PATTERN}
+  TIME_FIELD_NAME=$3
+
+  data_view_fields="\"title\": \"$INDEX_PATTERN\", \"name\": \"$DATA_VIEW_NAME\""
+  if [ -n "$TIME_FIELD_NAME" ]; then
+    data_view_fields="$data_view_fields, \"timeFieldName\": \"$TIME_FIELD_NAME\""
+  fi
+
+  response=$(curl -k -s -L -w "\n%{http_code}" -u "$KIBANA_USER":"$KIBANA_PASSWORD" \
+    -X POST "$KIBANA_ADDRESS/api/data_views/data_view" \
+    -H "Content-Type: application/json" \
+    -H "kbn-xsrf: true" -d "{
+      \"data_view\": { $data_view_fields }
+    }"
+  )
+
+  http_status=$(echo "$response" | tail -n 1)
+  response_body=$(echo "$response" | sed \$d)
+
+  if [[ "$http_status" != 2* ]]; then
+    echo "ERROR: Cannot create Kibana data view [$DATA_VIEW_NAME] for index pattern [$INDEX_PATTERN]. HTTP status: $http_status, response body: $response_body"
+    return 5
+  fi
+
+  return 0
+}
+
 function putDocument() {
   if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
     echo "ERROR: Required: 1) index name, optionally 2) document JSON string (or via stdin)"

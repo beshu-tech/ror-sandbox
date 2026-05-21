@@ -13,24 +13,24 @@ readonlyrest:
 
     - name: "admin"
       type: allow
-      groups: ["admin"]
+      groups: ["admin", "g1", "g2"]
       kibana:
         access: unrestricted
-        index: .kibana_admin
+        index: .kibana_@{acl:current_group}
 
     - name: "Group1 users"
       type: allow
       groups_or: ["g1"]
       kibana:
         access: rw
-        index: .kibana_g1
+        index: .kibana_@{acl:current_group}
 
     - name: "Group2 users"
       type: allow
       groups_or: ["g2"]
       kibana:
         access: rw
-        index: .kibana_g2
+        index: .kibana_@{acl:current_group}
 
     - name: "NO tenancy user"
       type: allow
@@ -42,7 +42,7 @@ readonlyrest:
   users:
     - username: admin
       auth_key: admin:admin
-      groups: [admin]
+      groups: [admin, g1, g2]
 
     - username: user1
       auth_key: user1:test

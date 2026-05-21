@@ -101,6 +101,7 @@ services:
       ELASTICSEARCH_ADDRESS: https://es-ror:9200
       ELASTICSEARCH_USER: kibana
       ELASTICSEARCH_PASSWORD: kibana
+      KIBANA_ADDRESS: https://kbn-ror:5601
     healthcheck:
       test: "test -f /tmp/init_done || exit 1"
       interval: 10s

@@ -103,8 +103,8 @@ function createDataStream() {
 }
 
 function createKibanaDataView() {
-  if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
-    echo "ERROR: Required: 1) index pattern (title), optionally 2) data view name, 3) time field name"
+  if [ "$#" -lt 3 ] || [ "$#" -gt 6 ]; then
+    echo "ERROR: Required: 1) Kibana user, 2) Kibana password, 3) index pattern (title); optionally 4) data view name, 5) time field name, 6) tenancy (ROR group)"
     return 1
   fi
 
@@ -113,29 +113,30 @@ function createKibanaDataView() {
     exit 2
   fi
 
-  if ! [ -v KIBANA_USER ] || [ -z "$KIBANA_USER" ]; then
-    echo "ERROR: required variable KIBANA_USER not set or empty"
-    exit 3
-  fi
-
-  if ! [ -v KIBANA_PASSWORD ] || [ -z "$KIBANA_PASSWORD" ]; then
-    echo "ERROR: required variable KIBANA_PASSWORD not set or empty"
-    exit 4
-  fi
-
-  INDEX_PATTERN=$1
-  DATA_VIEW_NAME=${2:-$INDEX_PATTERN}
-  TIME_FIELD_NAME=$3
+  KIBANA_USER=$1
+  KIBANA_PASSWORD=$2
+  INDEX_PATTERN=$3
+  DATA_VIEW_NAME=${4:-$INDEX_PATTERN}
+  TIME_FIELD_NAME=$5
+  TENANCY=$6
 
   data_view_fields="\"title\": \"$INDEX_PATTERN\", \"name\": \"$DATA_VIEW_NAME\""
   if [ -n "$TIME_FIELD_NAME" ]; then
     data_view_fields="$data_view_fields, \"timeFieldName\": \"$TIME_FIELD_NAME\""
   fi
 
+  tenancy_header=()
+  tenancy_info="no tenancy header"
+  if [ -n "$TENANCY" ]; then
+    tenancy_header=(-H "x-ror-tenancy-id: $TENANCY")
+    tenancy_info="tenancy: [$TENANCY]"
+  fi
+
   response=$(curl -k -s -L -w "\n%{http_code}" -u "$KIBANA_USER":"$KIBANA_PASSWORD" \
     -X POST "$KIBANA_ADDRESS/api/data_views/data_view" \
     -H "Content-Type: application/json" \
-    -H "kbn-xsrf: true" -d "{
+    -H "kbn-xsrf: true" \
+    "${tenancy_header[@]}" -d "{
       \"data_view\": { $data_view_fields }
     }"
   )
@@ -144,7 +145,7 @@ function createKibanaDataView() {
   response_body=$(echo "$response" | sed \$d)
 
   if [[ "$http_status" != 2* ]]; then
-    echo "ERROR: Cannot create Kibana data view [$DATA_VIEW_NAME] for index pattern [$INDEX_PATTERN]. HTTP status: $http_status, response body: $response_body"
+    echo "ERROR: Cannot create Kibana data view [$DATA_VIEW_NAME] for index pattern [$INDEX_PATTERN] ($tenancy_info). HTTP status: $http_status, response body: $response_body"
     return 5
   fi
 

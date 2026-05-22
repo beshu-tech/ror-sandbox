@@ -30,7 +30,7 @@ readonlyrest:
       groups_or: ["g2"]
       kibana:
         access: rw
-        #index: .kibana_@{acl:current_group}
+        index: .kibana_@{acl:current_group}
 
     - name: "NO tenancy user"
       type: allow

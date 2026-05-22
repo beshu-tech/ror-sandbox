@@ -17,7 +17,7 @@ readonlyrest:
       groups: ["*"]
       kibana:
         access: unrestricted
-        #index: .kibana_@{acl:current_group}
+        index: .kibana_@{acl:current_group}
 
     - name: "Group1 users"
       type: allow

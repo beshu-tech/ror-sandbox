@@ -15,3 +15,4 @@ createIndex "data-business-index" && generate_log_documents 100 | putDocument "d
 createKibanaDataView "logs-frontend-*" "Frontend logs" "@timestamp" "admin" "admin" "g1"
 createKibanaDataView "logs-business-*" "Business logs" "@timestamp" "admin" "admin" "g1"
 createKibanaDataView "logs-system-*" "System logs" "@timestamp" "admin" "admin" "g2"
+createKibanaDataView "logs-system-*" "My System logs" "@timestamp" "kibana" "kibana"

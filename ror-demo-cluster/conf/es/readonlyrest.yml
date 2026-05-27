@@ -18,6 +18,7 @@ readonlyrest:
       kibana:
         access: unrestricted
         index: .kibana_@{acl:current_group}
+        hide_apps: ["app1"]
 
     - name: "Group1 users"
       type: allow
@@ -25,6 +26,7 @@ readonlyrest:
       kibana:
         access: rw
         index: .kibana_@{acl:current_group}
+        hide_apps: ["app2"]
 
     - name: "Group2 users"
       type: allow
@@ -32,6 +34,7 @@ readonlyrest:
       kibana:
         access: rw
         index: .kibana_@{acl:current_group}
+        hide_apps: ["app3"]
 
     - name: "NO tenancy user"
       type: allow
@@ -39,6 +42,7 @@ readonlyrest:
       kibana:
         access: rw
         # default kibana index
+        hide_apps: ["app4"]
 
   users:
     - username: admin

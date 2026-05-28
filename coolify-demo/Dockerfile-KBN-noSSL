@@ -19,8 +19,8 @@ RUN wget https://artifacts.elastic.co/downloads/kibana/kibana-${KBN_VERSION}-lin
 COPY ./ror-demo-cluster /build/ror-demo-cluster
 
 WORKDIR /build/ror-demo-cluster
-# disabling SSL in Kibana config
-RUN for f in ror-newplatform-kibana.yml ror-oldplatform-kibana.yml; do \
+# disabling SSL in Kibana config (upstream split ror-newplatform-kibana.yml into free/pro/enterprise — RORDEV-1585)
+RUN for f in free-ror-newplatform-kibana.yml pro-ror-newplatform-kibana.yml enterprise-ror-newplatform-kibana.yml ror-oldplatform-kibana.yml; do \
       sed -i 's/server.ssl.enabled: true/server.ssl.enabled: false/' conf/kbn/$f; \
     done
 
@@ -30,9 +30,12 @@ FROM docker.elastic.co/kibana/kibana:${KBN_VERSION}
 
 ARG KBN_VERSION
 ARG ROR_VERSION
+ARG ROR_LICENSE_EDITION=ENT
 
 USER root
-COPY --from=builder /build/ror-demo-cluster/conf/kbn/ror-newplatform-kibana.yml /usr/share/kibana/config/ror-newplatform-kibana.yml
+COPY --from=builder /build/ror-demo-cluster/conf/kbn/free-ror-newplatform-kibana.yml /usr/share/kibana/config/free-ror-newplatform-kibana.yml
+COPY --from=builder /build/ror-demo-cluster/conf/kbn/pro-ror-newplatform-kibana.yml /usr/share/kibana/config/pro-ror-newplatform-kibana.yml
+COPY --from=builder /build/ror-demo-cluster/conf/kbn/enterprise-ror-newplatform-kibana.yml /usr/share/kibana/config/enterprise-ror-newplatform-kibana.yml
 COPY --from=builder /build/ror-demo-cluster/conf/kbn/ror-oldplatform-kibana.yml /usr/share/kibana/config/ror-oldplatform-kibana.yml
 # at least .key is required even without SSL enabled ssl_config will be run @ startup
 COPY --from=builder /build/ror-demo-cluster/conf/kbn/kibana.crt /usr/share/kibana/config/kibana.crt
@@ -40,8 +43,9 @@ COPY --from=builder /build/ror-demo-cluster/conf/kbn/kibana.key /usr/share/kiban
 COPY --from=builder /build/ror-demo-cluster/images/kbn/install-ror-kbn-using-api.sh /tmp/install-ror.sh
 
 WORKDIR /usr/share/kibana
+# install-ror.sh reads ROR_LICENSE_EDITION from env to pick the right *-ror-newplatform-kibana.yml
 RUN chmod +x /tmp/install-ror.sh \
-  && /tmp/install-ror.sh \
+  && KBN_VERSION="${KBN_VERSION}" ROR_VERSION="${ROR_VERSION}" ROR_LICENSE_EDITION="${ROR_LICENSE_EDITION}" /tmp/install-ror.sh \
   && chown -R kibana:kibana /usr/share/kibana/config
 
 USER kibana

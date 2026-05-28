@@ -6,7 +6,7 @@ ARG ES_VERSION
 
 USER elasticsearch
 COPY conf/elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
-COPY conf/log4j2.properties /usr/share/elasticsearch/config/log4j2.properties
+COPY conf/log4j2.properties /usr/share/elasticsearch/config/ror/log4j2.properties
 COPY conf/elastic-certificates.p12 /usr/share/elasticsearch/config/elastic-certificates.p12
 
 RUN echo "" | /usr/share/elasticsearch/bin/elasticsearch-keystore create &&\

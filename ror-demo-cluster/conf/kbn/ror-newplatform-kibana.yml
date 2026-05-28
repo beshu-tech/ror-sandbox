@@ -14,3 +14,6 @@ server.ssl.redirectHttpFromPort: 80
 
 readonlyrest_kbn.logLevel: info
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
+
+# https://github.com/beshu-tech/ror-sandbox/pull/54#issuecomment-4558651986
+xpack.encryptedSavedObjects.encryptionKey: "min-32-byte-long-strong-encryption-key"

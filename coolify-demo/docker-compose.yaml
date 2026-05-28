@@ -48,7 +48,7 @@ services:
       ELASTICSEARCH_HOSTS: https://es-ror:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     healthcheck:
-      test: [ "CMD", "curl", "-k", "--fail", "-u", "kibana:kibana", "https://localhost:5601/api/status" ]
+      test: [ "CMD", "curl", "--fail", "-u", "kibana:kibana", "http://localhost:5601/api/status" ]
       interval: 10s
       timeout: 10s
       retries: 30

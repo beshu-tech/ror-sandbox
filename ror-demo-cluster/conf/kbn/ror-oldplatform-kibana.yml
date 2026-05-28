@@ -13,5 +13,4 @@ server.ssl.key: /usr/share/kibana/config/kibana.key
 server.ssl.redirectHttpFromPort: 80
 
 xpack.security.enabled: false
-# https://github.com/beshu-tech/ror-sandbox/pull/54#issuecomment-4558651986
 xpack.encryptedSavedObjects.encryptionKey: "min-32-byte-long-strong-encryption-key"

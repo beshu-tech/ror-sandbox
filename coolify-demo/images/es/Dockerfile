@@ -12,4 +12,4 @@ COPY conf/es/elasticsearch.key /usr/share/elasticsearch/config/elasticsearch.key
 RUN chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/config
 
 USER elasticsearch
-ENV I_UNDERSTAND_AND_ACCEPT_ES_PATCHING=yes
+ENV I_UNDERSTAND_IMPLICATION_OF_ES_PATCHING=yes

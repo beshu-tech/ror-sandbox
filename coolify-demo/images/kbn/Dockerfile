@@ -9,4 +9,4 @@ RUN chown -R kibana:kibana /usr/share/kibana/config \
  && chmod 664 /usr/share/kibana/config/kibana.yml
 
 USER kibana
-ENV I_UNDERSTAND_AND_ACCEPT_KBN_PATCHING=yes
+ENV I_UNDERSTAND_IMPLICATION_OF_KBN_PATCHING=yes

@@ -4,11 +4,11 @@ services:
     container_name: es-ror
     env_file: ".env"
     build:
-      context: ../ror-demo-cluster
-      dockerfile: images/es/Dockerfile-use-ror-binaries-from-api
+      context: .
+      dockerfile: images/es/Dockerfile
       args:
         ES_VERSION: ${ES_VERSION:-9.0.1}
-        ROR_VERSION: ${ROR_ES_VERSION:-1.64.1}
+        ROR_ES_VERSION: ${ROR_ES_VERSION:-1.64.1}
     ports:
       - "19200:9200"
       - "19300:9300"
@@ -19,7 +19,6 @@ services:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5000"
-      - ES_VERSION=${ES_VERSION:-9.0.1}
     healthcheck:
       test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "https://localhost:9200/_cluster/health" ]
       interval: 10s
@@ -35,12 +34,11 @@ services:
     container_name: kbn-ror
     env_file: ".env"
     build:
-      context: ..
-      dockerfile: coolify-demo/Dockerfile-KBN-noSSL
+      context: .
+      dockerfile: images/kbn/Dockerfile
       args:
         KBN_VERSION: ${KBN_VERSION:-9.0.1}
-        ROR_VERSION: ${ROR_KBN_VERSION:-1.64.1}
-        ROR_LICENSE_EDITION: ${ROR_LICENSE_EDITION:-ENT}
+        ROR_KBN_VERSION: ${ROR_KBN_VERSION:-1.64.1}
     depends_on:
       es-ror:
         condition: service_healthy
@@ -50,7 +48,7 @@ services:
       ELASTICSEARCH_HOSTS: https://es-ror:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
     healthcheck:
-      test: [ "CMD", "curl", "-fk", "-u", "admin:admin", "http://localhost:5601/api/features" ]
+      test: [ "CMD", "curl", "-k", "--fail", "-u", "kibana:kibana", "https://localhost:5601/api/status" ]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -63,7 +61,7 @@ services:
   initializer:
     container_name: initializer
     build:
-      context: ../ror-demo-cluster
+      context: .
       dockerfile: images/cluster-initializer/Dockerfile
     depends_on:
       es-ror:
@@ -81,4 +79,4 @@ services:
       retries: 30
       start_period: 60s
     volumes:
-      - ../ror-demo-cluster/init-scripts:/scripts:ro
+      - ./init-scripts:/scripts:ro

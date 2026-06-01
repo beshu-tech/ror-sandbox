@@ -55,7 +55,7 @@ services:
         soft: -1
         hard: -1
 
-  kbn-ror:
+  kbn-ror-1:
     build:
       context: .
       dockerfile: images/kbn/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
@@ -70,11 +70,10 @@ services:
       keycloak:
         condition: service_healthy
         required: false
-    ports:
-      - "15601:5601"
     environment:
       ELASTICSEARCH_HOSTS: https://es-ror:9200
       ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+      SERVER_NAME: kbn-ror-1
     healthcheck:
       test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]
       interval: 10s
@@ -88,6 +87,59 @@ services:
         soft: -1
         hard: -1
 
+  kbn-ror-2:
+    build:
+      context: .
+      dockerfile: images/kbn/${KBN2_DOCKERFILE:-KBN2_DOCKERFILE_NOT_CONFIGURED}
+      args:
+        KBN_VERSION: ${KBN2_VERSION:-KBN2_VERSION_NOT_CONFIGURED}
+        ROR_FILE: ${KBN2_ROR_FILE:-KBN2_ROR_FILE_NOT_CONFIGURED}
+        ROR_LICENSE_EDITION: ${ROR_LICENSE_EDITION:-ROR_LICENSE_EDITION_NOT_CONFIGURED}
+    depends_on:
+      es-ror:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+        required: false
+    environment:
+      ELASTICSEARCH_HOSTS: https://es-ror:9200
+      ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+      SERVER_NAME: kbn-ror-2
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    networks:
+      - es-ror-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      kbn-ror-1:
+        condition: service_healthy
+      kbn-ror-2:
+        condition: service_healthy
+    ports:
+      - "15601:5601"
+    volumes:
+      - ./conf/nginx/nginx.conf:/etc/nginx/conf.d/kibana.conf:ro
+      - ./conf/kbn/kibana.crt:/etc/nginx/certs/kibana.crt:ro
+      - ./conf/kbn/kibana.key:/etc/nginx/certs/kibana.key:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO /dev/null --no-check-certificate https://127.0.0.1:5601 2>/dev/null || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - es-ror-network
+
   initializer:
     build:
       context: .
@@ -95,13 +147,15 @@ services:
     depends_on:
       es-ror:
         condition: service_healthy
-      kbn-ror:
+      kbn-ror-1:
+        condition: service_healthy
+      kbn-ror-2:
         condition: service_healthy
     environment:
       ELASTICSEARCH_ADDRESS: https://es-ror:9200
       ELASTICSEARCH_USER: kibana
       ELASTICSEARCH_PASSWORD: kibana
-      KIBANA_ADDRESS: https://kbn-ror:5601
+      KIBANA_ADDRESS: https://kbn-ror-1:5601
     healthcheck:
       test: "test -f /tmp/init_done || exit 1"
       interval: 10s

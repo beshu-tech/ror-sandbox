@@ -14,6 +14,8 @@ server.ssl.redirectHttpFromPort: 80
 
 xpack.encryptedSavedObjects.encryptionKey: "min-32-byte-long-strong-encryption-key"
 
+
+readonlyrest_kbn.store_sessions_in_index: true
 readonlyrest_kbn.logLevel: info
 readonlyrest_kbn.cookiePass: '12312313123213123213123abcdefghijklm'
 readonlyrest_kbn:

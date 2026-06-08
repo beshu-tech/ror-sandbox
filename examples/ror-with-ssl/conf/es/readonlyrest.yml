@@ -15,8 +15,8 @@ readonlyrest:
 
     # dehydrated
     server_certificate_file: "certs-dehydrated/my-domain.com/fullchain.pem"
-#    server_certificate_key_file: "certs-dehydrated/my-domain.com/privkey.pem"
-    server_certificate_key_file: "certs-dehydrated/my-domain.com/privkey-pkcs8.pem"
+    server_certificate_key_file: "certs-dehydrated/my-domain.com/privkey.pem"
+#    server_certificate_key_file: "certs-dehydrated/my-domain.com/privkey-pkcs8.pem"
 
   access_control_rules:
 

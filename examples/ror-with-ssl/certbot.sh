@@ -14,3 +14,6 @@ certbot certonly \
   --config-dir /certs \
   --force-renewal \
   -d $DOMAIN
+
+chown 1000 /certs/live/$DOMAIN /certs/archive /certs/archive/$DOMAIN
+chown 1000 /certs/live/$DOMAIN/privkey.pem /certs/live/$DOMAIN/fullchain.pem

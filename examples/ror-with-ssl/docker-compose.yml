@@ -36,7 +36,7 @@ services:
     command: /certbot.sh
 
   es-ror:
-    image: beshultd/elasticsearch-readonlyrest:8.14.3-ror-latest
+    image: beshultd/elasticsearch-readonlyrest:8.14.3-ror-1.70.0
     user: "0:0"
     ports:
       - "9200:9200"

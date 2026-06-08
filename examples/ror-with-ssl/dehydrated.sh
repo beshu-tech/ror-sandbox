@@ -28,6 +28,9 @@ dehydrated \
 
 # create copy in pkcs8 format
 CERT_DIR=$(find /certs -name "privkey.pem" -not -path "*/accounts/*" | head -1 | xargs dirname)
+chown 1000 $CERT_DIR
 openssl pkcs8 -topk8 -nocrypt \
   -in $CERT_DIR/privkey.pem \
   -out $CERT_DIR/privkey-pkcs8.pem
+
+chown 1000 $CERT_DIR/privkey.pem $CERT_DIR/privkey-pkcs8.pem $CERT_DIR/fullchain.pem

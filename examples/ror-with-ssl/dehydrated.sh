@@ -28,9 +28,11 @@ dehydrated \
 
 # create copy in pkcs8 format
 CERT_DIR=$(find /certs -name "privkey.pem" -not -path "*/accounts/*" | head -1 | xargs dirname)
-chown 1000 $CERT_DIR
 openssl pkcs8 -topk8 -nocrypt \
   -in $CERT_DIR/privkey.pem \
   -out $CERT_DIR/privkey-pkcs8.pem
 
-chown 1000 $CERT_DIR/privkey.pem $CERT_DIR/privkey-pkcs8.pem $CERT_DIR/fullchain.pem
+# ES runs internally as UID 1000 regardless of the Docker user setting.
+# Files created by this container are owned by root, so chown is required
+# for ES to be able to read the cert files on Linux.
+chown 1000 $CERT_DIR $CERT_DIR/privkey.pem $CERT_DIR/privkey-pkcs8.pem $CERT_DIR/fullchain.pem

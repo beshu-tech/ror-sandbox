@@ -1,0 +1,12 @@
+readonlyrest:
+
+  # Permissive config for the REMOTE test cluster only.
+  # A single match-all block ('actions: ["*"]') allows every request, including:
+  #  - the main cluster's internal cross-cluster _resolve/index call
+  #    (carries an xpack node-authentication header), and
+  #  - the forwarded search phase (carries the original user).
+  # Do NOT use this in production - it disables all access control.
+  access_control_rules:
+
+    - name: "REMOTE TEST CLUSTER - allow everything (test only)"
+      actions: ["*"]

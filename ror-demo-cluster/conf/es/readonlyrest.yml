@@ -11,25 +11,25 @@ readonlyrest:
       auth_key: kibana:kibana
       verbosity: error
 
-    - name: "Test1"
-      auth_key: user:test
-      indices: ["*:asdasd"]
-      headers: ["test:1"]
+    - name: "Test remote"
+      auth_key: user1:test
+      indices: ["*:asdasd", "*:*asdasd", "*:asdasd*", "*:*asdasd*"]
 
-    - name: "Test2"
-      auth_key: user:test
-      indices: ["*:*asdasd"]
-      headers: ["test:2"]
+    - name: "Test remote (forbid)"
+      type:
+        policy: forbid
+        response_message: "test"
+      auth_key: user1:test
 
-    - name: "Test3"
-      auth_key: user:test
-      indices: ["*:asdasd*"]
-      headers: ["test:3"]
+    - name: "Test local"
+      auth_key: user2:test
+      indices: ["asdasd", "*asdasd", "asdasd*", "*asdasd*"]
 
-    - name: "Test4"
-      auth_key: user:test
-      indices: ["*:*asdasd*"]
-      headers: ["test:4"]
+    - name: "Test local (forbid)"
+      type:
+        policy: forbid
+        response_message: "test"
+      auth_key: user2:test
 
     - name: "Admins"
       auth_key: admin:admin

@@ -42,6 +42,11 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Dcom.readonlyrest.settings.loading.attempts.count=1 -Dcom.readonlyrest.settings.loading.delay=1"
       - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+      # Cross-cluster search: register the 'es-remote' node as remote cluster 'remote1'.
+      # This makes ROR see remote clusters as configured, so 'skipRemoteIndicesIfNeeded'
+      # no longer rewrites 'cluster:index' requests into a nonexistent local index.
+      - cluster.remote.remote1.mode=proxy
+      - cluster.remote.remote1.proxy_address=es-remote:9300
     healthcheck:
       test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:9200/_cluster/health >/dev/null || exit 1"]
       interval: 10s
@@ -55,28 +60,32 @@ services:
         soft: -1
         hard: -1
 
-  kbn-ror:
+  # Second ES node acting as the REMOTE cluster for cross-cluster search tests.
+  # Same image (ROR + certs) as es-ror, different cluster/node name, permissive ROR config.
+  es-remote:
     build:
       context: .
-      dockerfile: images/kbn/${KBN_DOCKERFILE:-KBN_DOCKERFILE_NOT_CONFIGURED}
+      dockerfile: images/es/${ES_DOCKERFILE:-ES_DOCKERFILE_NOT_CONFIGURED}
       args:
-        KBN_VERSION: ${KBN_VERSION:-KBN_VERSION_NOT_CONFIGURED}
-        ROR_VERSION: ${ROR_KBN_VERSION:-ROR_KBN_VERSION_NOT_CONFIGURED}
-        ROR_FILE: ${KBN_ROR_FILE:-KBN_ROR_FILE_NOT_CONFIGURED}
-        ROR_LICENSE_EDITION: ${ROR_LICENSE_EDITION:-ROR_LICENSE_EDITION_NOT_CONFIGURED}
-    depends_on:
-      es-ror:
-        condition: service_healthy
-      keycloak:
-        condition: service_healthy
-        required: false
+        ES_VERSION: ${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+        ROR_VERSION: ${ROR_ES_VERSION:-ROR_ES_VERSION_NOT_CONFIGURED}
+        ROR_FILE: ${ES_ROR_FILE:-ES_ROR_FILE_NOT_CONFIGURED}
     ports:
-      - "15601:5601"
+      - "29200:9200"
+      - "29300:9300"
     environment:
-      ELASTICSEARCH_HOSTS: https://es-ror:9200
-      ROR_ACTIVATION_KEY: $ROR_ACTIVATION_KEY
+      - cluster.name=ror-remote-cluster
+      - node.name=es-remote-single
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -Dcom.readonlyrest.settings.loading.attempts.count=1 -Dcom.readonlyrest.settings.loading.delay=1"
+      - ES_VERSION=${ES_VERSION:-ES_VERSION_NOT_CONFIGURED}
+    volumes:
+      # Override the baked-in ACL with a permissive one so the main cluster's internal
+      # cross-cluster resolve/search calls are always allowed on the remote.
+      - ./conf/es-remote/readonlyrest.yml:/usr/share/elasticsearch/config/readonlyrest.yml:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:5601/api/features >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fksS --connect-timeout 3 --max-time 5 --retry 2 --retry-connrefused -u admin:admin https://127.0.0.1:9200/_cluster/health >/dev/null || exit 1"]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -88,14 +97,30 @@ services:
         soft: -1
         hard: -1
 
+  # One-shot job: seeds test indices on the remote cluster during stack init.
+  # Reuses the cluster-initializer image (curl+jq) but runs a custom script.
+  remote-initializer:
+    build:
+      context: .
+      dockerfile: images/cluster-initializer/Dockerfile
+    depends_on:
+      es-remote:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "/init-remote-indices.sh"]
+    environment:
+      REMOTE_ES_ADDRESS: https://es-remote:9200
+    volumes:
+      - ./conf/es-remote/init-remote-indices.sh:/init-remote-indices.sh:ro
+    restart: "no"
+    networks:
+      - es-ror-network
+
   initializer:
     build:
       context: .
       dockerfile: images/cluster-initializer/Dockerfile
     depends_on:
       es-ror:
-        condition: service_healthy
-      kbn-ror:
         condition: service_healthy
     environment:
       ELASTICSEARCH_ADDRESS: https://es-ror:9200

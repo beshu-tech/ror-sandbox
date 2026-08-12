@@ -13,6 +13,7 @@ COPY conf/kbn/free-ror-newplatform-kibana.yml /usr/share/kibana/config/free-ror-
 COPY conf/kbn/kibana.crt /usr/share/kibana/config/kibana.crt
 COPY conf/kbn/kibana.key /usr/share/kibana/config/kibana.key
 COPY images/kbn/install-ror-kbn-using-api.sh /tmp/install-ror.sh
+COPY conf/es/readonlyrest.yml /usr/share/kibana/config/readonlyrest.yml
 
 USER root
 

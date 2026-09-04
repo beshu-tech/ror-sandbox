@@ -20,7 +20,7 @@ readonlyrest:
       groups: ["EndUsers"]
       indices: ["*-frontend-*", "kibana_sample_data_*"]
       kibana:
-        index: .kibana_end_@{user}
+        #index: .kibana_end_@{user}
         access: rw
         hide_apps: ["Security", "Observability"]
 
@@ -28,7 +28,7 @@ readonlyrest:
       groups: ["BusinessUsers"]
       indices: ["*-business-*", "kibana_sample_data_*"]
       kibana:
-        index: .kibana_business_@{user}
+        #index: .kibana_business_@{user}
         access: ro
         hide_apps: ["Security", "Observability"]
 

@@ -14,6 +14,7 @@ COPY conf/kbn/kibana.crt /usr/share/kibana/config/kibana.crt
 COPY conf/kbn/kibana.key /usr/share/kibana/config/kibana.key
 COPY images/kbn/install-ror-kbn-using-file.sh /tmp/install-ror.sh
 COPY $ROR_FILE /tmp/ror.zip
+COPY conf/es/readonlyrest.yml /usr/share/kibana/config/readonlyrest.yml
 
 USER root
 
